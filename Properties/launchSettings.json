@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Chess Game": {
+      "commandName": "Project"
+    },
+    "Debug Chess": {
+      "commandName": "Executable",
+      "executablePath": "G:\\Programs\\Godot\\Godot_v4.1.1-stable_mono_win64.exe",
+      "workingDirectory": "C:\\Users\\rocke\\Documents\\Godot Projects\\Chess Game"
+    }
+  }
+}
