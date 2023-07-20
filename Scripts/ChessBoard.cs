@@ -1,12 +1,13 @@
 using ChessGame.Scripts;
 using Godot;
 using System;
+using System.Diagnostics;
 
 public partial class ChessBoard : TileMap
 {
-	private int _gridMargin = 3;
+	private Vector2I _gridMargin = new Vector2I(3, 3);
 
-	private Node2D _pieceNode;
+	private Node2D _piecesNode;
 	private PackedScene _basePieceScene;
 
     [Export]
@@ -35,18 +36,39 @@ public partial class ChessBoard : TileMap
 
 		PlacePlayerPieces();
 		PlaceAiPieces();
+
+		BuildPieces();
+	}
+
+	private void InitPieceGrid()
+	{
+		for (int rank = 0; rank < 8; rank++)
+		{
+			for (int file = 0; file < 8; file++)
+			{
+				_chessPieceGrid[rank, file] = new ChessPiece(PieceColor.White, ChessPieceId.Empty);
+			}
+		}
 	}
 
 	private void BuildPieces()
 	{
-		for (int i = 0; i < 8; i++)
+		for (int rank = 0; rank < 8; rank++)
 		{
-			for (int j = 0; j < 8; j++)
+			for (int file = 0; file < 8; file++)
 			{
-				if (_chessPieceGrid[i, j] != null)
-				{
-					var newPieceNode = _basePieceScene.Instantiate();
+				Vector2I boardCoords = new Vector2I(file, rank);
+				ChessPiece pieceAtCoords = _chessPieceGrid[rank, file];
 
+				if (pieceAtCoords != null && pieceAtCoords.Id != ChessPieceId.Empty)
+				{
+					var newPieceNode = (VisualChessPiece)_basePieceScene.Instantiate();
+					_piecesNode.AddChild(newPieceNode);
+
+					newPieceNode.UpdatePieceInfoAndSprite(pieceAtCoords.Id, pieceAtCoords.Color);
+					newPieceNode.Position = ConvertBoardCoordsToWorld(boardCoords);
+
+					Debugger.Log(2, "inf", $"Placing {Enum.GetName(newPieceNode.Color)} {Enum.GetName(newPieceNode.Piece)} at position {newPieceNode.Position}\n");
 				}
 			}
 		}
@@ -119,14 +141,23 @@ public partial class ChessBoard : TileMap
 
 	private Godot.Collections.Array<Node> GetPieceNodes()
 	{
-		return _pieceNode.GetChildren();
+		return _piecesNode.GetChildren();
+	}
+
+	private Vector2I ConvertBoardCoordsToWorld(Vector2I boardCoords)
+	{
+		Vector2I realGridCoords = _gridMargin + boardCoords;
+
+		return (realGridCoords * TileSet.TileSize) + (TileSet.TileSize / 2);
 	}
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
-		_pieceNode = GetNode<Node2D>("Pieces");
+		_piecesNode = GetNode<Node2D>("Pieces");
 		_basePieceScene = ResourceLoader.Load<PackedScene>("res://TemplateScenes/base_chess_piece.tscn");
+
+		ChessBoardInit();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
