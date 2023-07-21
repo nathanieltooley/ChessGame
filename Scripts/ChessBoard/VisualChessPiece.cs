@@ -1,4 +1,5 @@
 using ChessGame.Scripts;
+using ChessGame.Scripts.Helpers;
 using Godot;
 using System;
 
@@ -6,8 +7,10 @@ public partial class VisualChessPiece : Node2D
 {
 	public PieceColor Color { get; set; }
 	public ChessPieceId Piece { get; set; }
+    public int Rank { get; set; }	
+	public int File { get; set; }
 
-	private string[] _colorPrefixes = { "w", "b" };
+    private string[] _colorPrefixes = { "w", "b" };
 	private string[] _pieceSpriteNames = { "", "P", "K", "B", "R", "N", "Q" };
 
 	private string _fileExt = "svg";
@@ -54,6 +57,14 @@ public partial class VisualChessPiece : Node2D
 
         SetTexture(GetPieceTexture(Color, Piece));
     }
+
+	public void UpdateGridPosition(int rank, int file, Vector2I boardMargin, Vector2I tileSize)
+	{
+		Rank = rank;
+		File = file;
+
+		Position = GridMathHelpers.ConvertBoardCoordsToWorld(new Vector2I(file, rank) + boardMargin, tileSize);
+	}
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
