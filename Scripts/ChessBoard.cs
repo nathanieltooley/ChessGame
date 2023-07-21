@@ -106,26 +106,26 @@ public partial class ChessBoard : TileMap
         // Pawn Placement
         for (int i = 0; i < 8; i++)
         {
-            _chessPieceGrid[1, i] = new ChessPiece(playerColor, ChessPieceId.Pawn);
+            _chessPieceGrid[1, i] = new ChessPiece(aiColor, ChessPieceId.Pawn);
         }
 
         // Rook Placement
-        _chessPieceGrid[0, 0] = new ChessPiece(playerColor, ChessPieceId.Rook);
-        _chessPieceGrid[0, 7] = new ChessPiece(playerColor, ChessPieceId.Rook);
+        _chessPieceGrid[0, 0] = new ChessPiece(aiColor, ChessPieceId.Rook);
+        _chessPieceGrid[0, 7] = new ChessPiece(aiColor, ChessPieceId.Rook);
 
         // Knight Placement
-        _chessPieceGrid[0, 1] = new ChessPiece(playerColor, ChessPieceId.Knight);
-        _chessPieceGrid[0, 6] = new ChessPiece(playerColor, ChessPieceId.Knight);
+        _chessPieceGrid[0, 1] = new ChessPiece(aiColor, ChessPieceId.Knight);
+        _chessPieceGrid[0, 6] = new ChessPiece(aiColor, ChessPieceId.Knight);
 
         // Bishop Placement
-        _chessPieceGrid[0, 2] = new ChessPiece(playerColor, ChessPieceId.Bishop);
-        _chessPieceGrid[0, 5] = new ChessPiece(playerColor, ChessPieceId.Bishop);
+        _chessPieceGrid[0, 2] = new ChessPiece(aiColor, ChessPieceId.Bishop);
+        _chessPieceGrid[0, 5] = new ChessPiece(aiColor, ChessPieceId.Bishop);
 
         // Queen Placement
-        _chessPieceGrid[0, 4] = new ChessPiece(playerColor, ChessPieceId.Queen);
+        _chessPieceGrid[0, 4] = new ChessPiece(aiColor, ChessPieceId.Queen);
 
         // King Placement
-        _chessPieceGrid[0, 3] = new ChessPiece(playerColor, ChessPieceId.King);
+        _chessPieceGrid[0, 3] = new ChessPiece(aiColor, ChessPieceId.King);
     }
 
 	private PieceColor InvertColor(PieceColor color)
