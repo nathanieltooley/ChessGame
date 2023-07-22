@@ -5,10 +5,8 @@ using System;
 
 public partial class VisualChessPiece : Node2D
 {
-	public PieceColor Color { get; set; }
+	public ChessColor Color { get; set; }
 	public ChessPieceId Piece { get; set; }
-    public int Rank { get; set; }	
-	public int File { get; set; }
 
     private string[] _colorPrefixes = { "w", "b" };
 	private string[] _pieceSpriteNames = { "", "P", "K", "B", "R", "N", "Q" };
@@ -19,17 +17,17 @@ public partial class VisualChessPiece : Node2D
 
 	private Sprite2D _pieceSprite;
 
-	private string ConstructPieceTextureName(PieceColor color, ChessPieceId piece)
+	private string ConstructPieceTextureName(ChessColor color, ChessPieceId piece)
 	{
 		return $"{_colorPrefixes[(int)color]}{_pieceSpriteNames[(int)piece]}.{_fileExt}";
 	}
 
-	private string GetFullTexturePath(PieceColor color, ChessPieceId piece)
+	private string GetFullTexturePath(ChessColor color, ChessPieceId piece)
 	{
 		return $"{_pathToAssetFolder}/{ConstructPieceTextureName(color, piece)}";
 	}
 
-	private Texture2D GetPieceTexture(PieceColor color, ChessPieceId piece)
+	private Texture2D GetPieceTexture(ChessColor color, ChessPieceId piece)
 	{
 		string texturePath = GetFullTexturePath(color, piece);
 		return ResourceLoader.Load<Texture2D>(texturePath);
@@ -45,26 +43,18 @@ public partial class VisualChessPiece : Node2D
 		Piece = piece;
 	}
 
-	public void ChangeColor(PieceColor color)
+	public void ChangeColor(ChessColor color)
 	{
 		Color = color;
 	}
 
-	public void UpdatePieceInfoAndSprite(ChessPieceId newId, PieceColor newColor)
+	public void UpdatePieceInfoAndSprite(ChessPieceId newId, ChessColor newColor)
 	{
 		ChangePieceType(newId);
 		ChangeColor(newColor);
 
         SetTexture(GetPieceTexture(Color, Piece));
     }
-
-	public void UpdateGridPosition(int rank, int file, Vector2I boardMargin, Vector2I tileSize)
-	{
-		Rank = rank;
-		File = file;
-
-		Position = GridMathHelpers.ConvertBoardCoordsToWorld(new Vector2I(file, rank) + boardMargin, tileSize);
-	}
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()

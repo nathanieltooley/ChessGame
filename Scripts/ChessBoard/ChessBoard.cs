@@ -1,101 +1,38 @@
 using ChessGame.Scripts;
+using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.ChessBoard.Controllers;
 using ChessGame.Scripts.Helpers;
 using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 public partial class ChessBoard : TileMap
 {
 	private Vector2I _gridMargin = new Vector2I(3, 3);
 
-	private BoardController _boardController;
+	private LogicalBoard _logicalBoard;
 	private VisualChessPiece _pieceBeingDragged;
+	private Vector2I _originalDraggedPieceLoc;
+	private PackedScene _templatePiece;
 	private bool _isDragging;
 	private int _tileSize;
 	private Vector2I _tileSizeVector;
 
-	private List<VisualChessPiece> _pieceList = new List<VisualChessPiece>();
-
     [Export]
-	private PieceColor playerColor = PieceColor.White;
+	private ChessColor playerColor = ChessColor.White;
 
-	private PieceColor aiColor = PieceColor.Black;
+	private ChessColor aiColor = ChessColor.Black;
 
-	private void BuildPieces()
+	private ChessColor InvertColor(ChessColor color)
 	{
-		for (int rank = 0; rank < 8; rank++)
+		if (color == ChessColor.White)
 		{
-			for (int file = 0; file < 8; file++)
-			{
-				_boardController.BuildPiece(rank, file, ref _pieceList);
-			}
-		}
-	}
-
-	private void PlacePlayerPieces()
-	{
-		// Pawn Placement
-		for (int i = 0; i < 8; i++)
-		{
-			_boardController.AddPiece(6, i, new ChessPiece(playerColor, ChessPieceId.Pawn));
-		}
-
-		// Rook Placement
-		_boardController.AddPiece(7, 0, new ChessPiece(playerColor, ChessPieceId.Rook));
-        _boardController.AddPiece(7, 7, new ChessPiece(playerColor, ChessPieceId.Rook));
-
-        // Knight Placement
-        _boardController.AddPiece(7, 1, new ChessPiece(playerColor, ChessPieceId.Knight));
-		_boardController.AddPiece(7, 6, new ChessPiece(playerColor, ChessPieceId.Knight));
-
-		// Bishop Placement
-		_boardController.AddPiece(7, 2, new ChessPiece(playerColor, ChessPieceId.Bishop));
-		_boardController.AddPiece(7, 5, new ChessPiece(playerColor, ChessPieceId.Bishop));
-
-		// Queen Placement
-		_boardController.AddPiece(7, 3, new ChessPiece(playerColor, ChessPieceId.Queen));
-
-		// King Placement
-		_boardController.AddPiece(7, 4, new ChessPiece(playerColor, ChessPieceId.King));
-	}
-
-	private void PlaceAiPieces()
-	{
-        // Pawn Placement
-        for (int i = 0; i < 8; i++)
-        {
-            _boardController.AddPiece(1, i, new ChessPiece(aiColor, ChessPieceId.Pawn));
-        }
-
-        // Rook Placement
-        _boardController.AddPiece(0, 0, new ChessPiece(aiColor, ChessPieceId.Rook));
-        _boardController.AddPiece(0, 7, new ChessPiece(aiColor, ChessPieceId.Rook));
-
-        // Knight Placement
-        _boardController.AddPiece(0, 1, new ChessPiece(aiColor, ChessPieceId.Knight));
-        _boardController.AddPiece(0, 6, new ChessPiece(aiColor, ChessPieceId.Knight));
-
-        // Bishop Placement
-        _boardController.AddPiece(0, 2, new ChessPiece(aiColor, ChessPieceId.Bishop));
-        _boardController.AddPiece(0, 5, new ChessPiece(aiColor, ChessPieceId.Bishop));
-
-        // Queen Placement
-        _boardController.AddPiece(0, 4, new ChessPiece(aiColor, ChessPieceId.Queen));
-
-        // King Placement
-        _boardController.AddPiece(0, 3, new ChessPiece(aiColor, ChessPieceId.King));
-    }
-
-	private PieceColor InvertColor(PieceColor color)
-	{
-		if (color == PieceColor.White)
-		{
-			return PieceColor.Black;
+			return ChessColor.Black;
 		} else
 		{
-			return PieceColor.White;
+			return ChessColor.White;
 		}
 	}
 
@@ -104,15 +41,12 @@ public partial class ChessBoard : TileMap
 	{
 		_tileSize = TileSet.TileSize.X;
 		_tileSizeVector = TileSet.TileSize;
-		_pieceDragging = new PieceDragging(_tileSize);
-		_boardController = new BoardController(TileSet.TileSize, this);
+		_templatePiece = ResourceLoader.Load<PackedScene>("res://TemplateScenes/base_chess_piece.tscn");
+		_logicalBoard = new LogicalBoard(this, _templatePiece, _tileSize);
 
         aiColor = InvertColor(playerColor);
 
-        PlacePlayerPieces();
-        PlaceAiPieces();
-
-        BuildPieces();
+		_logicalBoard.BuildBoardFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -136,17 +70,24 @@ public partial class ChessBoard : TileMap
 					if (mbEvent.IsPressed())
 					{
                         var mousePos = mbEvent.Position;
+						var pieces = _logicalBoard.VisualPiecesList;
 
-                        foreach (var piece in _pieceList)
+                        foreach (VisualChessPiece piece in pieces)
                         {
                             if (mousePos.DistanceTo(piece.Position) <= _tileSize / 2)
                             {
                                 _isDragging = true;
                                 _pieceBeingDragged = piece;
+								_originalDraggedPieceLoc = GridMathHelpers.ConvertWorldCoordsToBoard(mousePos, _tileSizeVector, _gridMargin);
                             }
                         }
                     } else if (mbEvent.IsReleased()) 
 					{
+						if (!_isDragging)
+						{
+							return;
+						}
+
 						_isDragging = false;
 
 						Vector2I boardPos = GridMathHelpers.ConvertWorldCoordsToBoard(GetViewport().GetMousePosition(), _tileSizeVector, _gridMargin);
@@ -154,13 +95,13 @@ public partial class ChessBoard : TileMap
 						int newRank = boardPos.Y;
 						int newFile = boardPos.X;
 
-						int oldRank = _pieceBeingDragged.Rank;
-						int oldFile = _pieceBeingDragged.File;
+						int oldRank = _originalDraggedPieceLoc.Y;
+						int oldFile = _originalDraggedPieceLoc.X;
 
-                        _pieceBeingDragged.UpdateGridPosition(newRank, newFile, _gridMargin, _tileSizeVector);
-						_boardController.MovePiece(oldRank, oldFile, newRank, newFile);
+						_logicalBoard.MovePiece(oldRank, oldFile, newRank, newFile);
 
 						_pieceBeingDragged = null;
+						_originalDraggedPieceLoc = Vector2I.Zero;
 					}
 
                     

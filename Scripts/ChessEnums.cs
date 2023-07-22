@@ -13,7 +13,7 @@ namespace ChessGame.Scripts
         Queen = 6
     }
 
-    public enum PieceColor
+    public enum ChessColor
     {
         White = 0,
         Black = 1,
