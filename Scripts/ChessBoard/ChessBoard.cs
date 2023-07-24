@@ -42,7 +42,7 @@ public partial class ChessBoard : TileMap
 		_tileSize = TileSet.TileSize.X;
 		_tileSizeVector = TileSet.TileSize;
 		_templatePiece = ResourceLoader.Load<PackedScene>("res://TemplateScenes/base_chess_piece.tscn");
-		_logicalBoard = new LogicalBoard(this, _templatePiece, _tileSize);
+		_logicalBoard = new LogicalBoard(this, _templatePiece, _tileSize, playerColor);
 
         aiColor = InvertColor(playerColor);
 
@@ -78,7 +78,13 @@ public partial class ChessBoard : TileMap
                             {
                                 _isDragging = true;
                                 _pieceBeingDragged = piece;
-								_originalDraggedPieceLoc = GridMathHelpers.ConvertWorldCoordsToBoard(mousePos, _tileSizeVector, _gridMargin);
+
+								Vector2I pieceCoords = GridMathHelpers.ConvertWorldCoordsToBoard(mousePos, _tileSizeVector, _gridMargin);
+
+								_originalDraggedPieceLoc = pieceCoords;
+
+								var moves = _logicalBoard.GetMovesForPiece(pieceCoords.Y, pieceCoords.X);
+								LogHelpers.DebugLog($"{moves.Count}");
                             }
                         }
                     } else if (mbEvent.IsReleased()) 
@@ -99,6 +105,7 @@ public partial class ChessBoard : TileMap
 						int oldFile = _originalDraggedPieceLoc.X;
 
 						_logicalBoard.MovePiece(oldRank, oldFile, newRank, newFile);
+						_pieceBeingDragged.Position = _logicalBoard.GetTile(newRank, newFile).TileCenter;
 
 						_pieceBeingDragged = null;
 						_originalDraggedPieceLoc = Vector2I.Zero;

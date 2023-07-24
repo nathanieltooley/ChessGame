@@ -35,6 +35,8 @@ namespace ChessGame.Scripts.ChessBoard
             _pointerToMainList = pointerToMainList;
         }
 
+        // List may be null because BoardTiles can be created outside of the LogicalBoard class (good idea?). This is
+        // risky however, as errors can happen when assuming the list has already been set
         public static BoardTile BuildEmptyTile(int rank, int file, List<VisualChessPiece> pointerToMainList = null)
         {
             var tile = new BoardTile();
@@ -75,7 +77,16 @@ namespace ChessGame.Scripts.ChessBoard
             BuildTile(templatePiece, rootPieceNode);
         }
 
-        // Just Build Tile
+        /// <summary>
+        ///     Builds this tile by creating a VisualChessPiece based on the stored Color and Piece Id and sets its position to the center of this tile.
+        ///     Does not create any piece if this tile is empty
+        /// </summary>
+        /// <param name="templatePiece">
+        ///     The Godot scene that is a template for the chess piece. Should be of class VisualChessPiece and should have its own Sprite2D Node as a child.
+        /// </param>
+        /// <param name="rootPieceNode">
+        ///     The Node2D that is the parent of the newly build VisualChessPiece. Used as a way to add the new node to the SceneTree
+        /// </param>
         public void BuildTile(PackedScene templatePiece, Node2D rootPieceNode)
         {
             if (PieceId != ChessPieceId.Empty)
@@ -84,6 +95,11 @@ namespace ChessGame.Scripts.ChessBoard
             }
         }
 
+        /// <summary>
+        ///     Adds a list, usually stored in LogicalBoard, that contains all of the VisualChessPieces created and added on the board.
+        ///     This function may be needed because the list was not orignally passed in the constructor
+        /// </summary>
+        /// <param name="list"></param>
         public void AddPointerToVPList(List<VisualChessPiece> list)
         {
             _pointerToMainList = list;
@@ -109,6 +125,8 @@ namespace ChessGame.Scripts.ChessBoard
             if (VisualPiece != null)
             {
                 _pointerToMainList.Remove(VisualPiece);
+
+                // Making sure we don't have memory leaks
                 VisualPiece.QueueFree();
                 VisualPiece = null;
             }

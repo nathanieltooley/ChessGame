@@ -1,10 +1,6 @@
 ﻿using ChessGame.Scripts.ChessBoard.Controllers;
 using Godot;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessGame.Scripts.ChessBoard
 {
@@ -15,12 +11,15 @@ namespace ChessGame.Scripts.ChessBoard
         private Node2D _rootPieceNode;
         private PackedScene _pieceTemplate;
 
+        private ChessColor _playerColor;
+
         public List<VisualChessPiece> VisualPiecesList { get; set; } = new List<VisualChessPiece>();
 
-        public LogicalBoard(Node2D rootNode, PackedScene pieceTemplate, int tileSize) 
+        public LogicalBoard(Node2D rootNode, PackedScene pieceTemplate, int tileSize, ChessColor playerColor) 
         {
             _rootPieceNode = rootNode;
             _pieceTemplate = pieceTemplate;
+            _playerColor = playerColor;
 
             // Init Board
             for (int rank =  0; rank < 8; rank++)
@@ -55,10 +54,14 @@ namespace ChessGame.Scripts.ChessBoard
 
         public void MovePiece(int rank, int file, int targetRank, int targetFile)
         {
-            BoardTile movingTile = GetTile(rank, file);
+            BoardTile startingTile = GetTile(rank, file);
+            BoardTile targetTile = GetTile(targetRank, targetFile);
 
-            AddPiece(targetRank, targetFile, movingTile.PieceId, movingTile.PieceColor);
-            movingTile.ClearTile();
+            if (MoveVerificator.IsMovePossible(startingTile, targetTile, this))
+            {
+                AddPiece(targetRank, targetFile, startingTile.PieceId, startingTile.PieceColor);
+                startingTile.ClearTile();
+            }
         }
 
         public void BuildBoardFromFEN(string fenString)
@@ -103,6 +106,16 @@ namespace ChessGame.Scripts.ChessBoard
         public VisualChessPiece GetVisualChessPieceAtGridLoc(int rank, int file)
         {
             return GetTile(rank, file).VisualPiece;
+        }
+
+        public List<Vector2I> GetMovesForPiece(int rank, int file)
+        {
+            BoardTile boardTile = GetTile(rank, file);
+            bool isPlayer = boardTile.PieceColor == _playerColor;
+
+            List<Vector2I> theoMoves = MoveVerificator.GetMovesAssumingEmptyBoard(boardTile.PieceId, rank, file, isPlayer);
+
+            return MoveVerificator.GetCapableMoves(rank, file, boardTile, isPlayer, theoMoves, this);
         }
     }
 }

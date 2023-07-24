@@ -25,6 +25,16 @@ namespace ChessGame.Scripts
         public static Vector2I BoardMargin = new Vector2I(3, 3);
         public static Vector2I TileSize = new Vector2I(64, 64);
 
+        public static Vector2I NorthWestDiagonal = new Vector2I(-1, -1);
+        public static Vector2I NorthEastDiagonal = new Vector2I(-1, 1);
+        public static Vector2I SouthWestDiagonal = new Vector2I(1, -1);
+        public static Vector2I SouthEastDiagonal = new Vector2I(1, 1);
+
+        public static Vector2I UpRank = new Vector2I(-1, 0);
+        public static Vector2I DownRank = new Vector2I(1, 0);
+        public static Vector2I LeftFile = new Vector2I(0, -1);
+        public static Vector2I RightFile = new Vector2I(0, 1);
+
         public static ChessColor GetColor(int rank, int file)
         {
             return (ChessColor)ColorBoard[rank, file];
