@@ -1,12 +1,7 @@
 using ChessGame.Scripts;
 using ChessGame.Scripts.ChessBoard;
-using ChessGame.Scripts.ChessBoard.Controllers;
 using ChessGame.Scripts.Helpers;
 using Godot;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 
 public partial class ChessBoard : TileMap
 {
@@ -22,8 +17,10 @@ public partial class ChessBoard : TileMap
 
     [Export]
 	private ChessColor playerColor = ChessColor.White;
+    private ChessColor aiColor = ChessColor.Black;
 
-	private ChessColor aiColor = ChessColor.Black;
+    [Signal]
+    public delegate void UpdateMousePosEventHandler(Vector2 mousePos, Vector2 gridPos, BoardTile tile);
 
 	private ChessColor InvertColor(ChessColor color)
 	{
@@ -134,6 +131,15 @@ public partial class ChessBoard : TileMap
                     break;
 			}
         }
+
+		if (@event is InputEventMouseMotion)
+		{
+			InputEventMouseMotion mmEvent = (InputEventMouseMotion) @event;
+			Vector2I boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mmEvent.Position, _tileSizeVector, _gridMargin);
+
+
+            EmitSignal(SignalName.UpdateMousePos, mmEvent.Position, boardPos, _logicalBoard.GetTile(boardPos.X, boardPos.Y));
+		}
     }
 
 	private bool IsCellHighlighted(Vector2I gridPos)
