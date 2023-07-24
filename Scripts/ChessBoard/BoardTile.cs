@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ChessGame.Scripts.ChessBoard
 {
-    public class BoardTile
+    public partial class BoardTile : GodotObject
     {
         public ChessColor PieceColor { get; set; }
         public ChessColor TileColor { get; set; }
