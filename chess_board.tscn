@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://caaargxpskoar"]
+[gd_scene load_steps=5 format=3 uid="uid://caaargxpskoar"]
 
 [ext_resource type="TileSet" uid="uid://c7ukin0acqjbo" path="res://Assets/BoardTiles/chess_board_tileset.tres" id="1_i0ywi"]
 [ext_resource type="Script" path="res://Scripts/ChessBoard/ChessBoard.cs" id="2_5qeit"]
 [ext_resource type="Script" path="res://Scripts/ChessBoard/LogicalBoard.cs" id="3_s7sjd"]
+[ext_resource type="Script" path="res://Scripts/UI/DebugMenu.cs" id="4_1htrv"]
 
 [node name="Main" type="Node2D"]
 
@@ -22,3 +23,39 @@ script = ExtResource("2_5qeit")
 
 [node name="LogicalBoard" type="Node2D" parent="ChessBoard"]
 script = ExtResource("3_s7sjd")
+
+[node name="DebugMenu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 39.0
+offset_bottom = 41.0
+script = ExtResource("4_1htrv")
+
+[node name="DebugTextContainer" type="VBoxContainer" parent="DebugMenu"]
+layout_mode = 2
+offset_left = 639.0
+offset_top = 9.0
+offset_right = 882.0
+offset_bottom = 189.0
+
+[node name="MousePosLabel" type="Label" parent="DebugMenu/DebugTextContainer"]
+layout_mode = 2
+text = "MousePos: (0, 0)"
+horizontal_alignment = 2
+
+[node name="MousePosGridLabel" type="Label" parent="DebugMenu/DebugTextContainer"]
+layout_mode = 2
+text = "MousePosGrid: (0, 0)"
+horizontal_alignment = 2
+
+[node name="ChessPieceColorLabel" type="Label" parent="DebugMenu/DebugTextContainer"]
+layout_mode = 2
+text = "Piece Color: "
+horizontal_alignment = 2
+
+[node name="ChessPieceLabel" type="Label" parent="DebugMenu/DebugTextContainer"]
+layout_mode = 2
+text = "Piece: "
+horizontal_alignment = 2
+
+[connection signal="UpdateMousePos" from="ChessBoard" to="DebugMenu" method="OnUpdateMousePos"]
