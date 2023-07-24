@@ -54,42 +54,31 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
                 move.Deconstruct(out rank, out file);
 
-                BoardTile targetTile = board.GetTile(rank, file);
-
                 // Out of bounds Check
                 if ((rank > 7 || rank < 0) || (file > 7 || file < 0))
                 {
-                    capableMoves.Add(move);
                     continue;
                 }
+
+                BoardTile targetTile = board.GetTile(rank, file);
 
                 // Same color Check
-                if (targetTile.PieceColor == startingTile.PieceColor)
-                {
-                    capableMoves.Add(move);
+                if (targetTile.PieceColor == startingTile.PieceColor && targetTile.PieceId != ChessPieceId.Empty)
+                { 
                     continue;
                 }
 
-                switch (piece)
+                Vector2I distanceFromStartingTile = GetDistanceFromStart(startingRank, startingFile, rank, file);
+                Vector2I line = GetLineMoveIsOn(startingRank, startingFile, rank, file);
+
+                Vector2I block;
+                blockedDict.TryGetValue(line, out block);
+
+                Vector2I blockDistance = GetDistanceFromStart(startingRank, startingFile, block.X, block.Y);
+
+                if (distanceFromStartingTile > blockDistance)
                 {
-                    case ChessPieceId.Bishop:
-                    case ChessPieceId.Rook:
-                    case ChessPieceId.Queen:
-
-                        Vector2I distanceFromStartingTile = GetDistanceFromStart(startingRank, startingFile, rank, file);
-                        Vector2I line = GetLineMoveIsOn(startingRank, startingFile, rank, file);
-
-                        Vector2I block;
-                        blockedDict.TryGetValue(distanceFromStartingTile, out block);
-
-                        Vector2I blockDistance = GetDistanceFromStart(startingRank, startingFile, block.X, block.Y);
-
-                        if (distanceFromStartingTile > blockDistance)
-                        {
-                            capableMoves.Add(move);
-                        }
-
-                        break;
+                    capableMoves.Add(move);
                 }
             }
 
@@ -302,7 +291,12 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             int rankMag = Math.Abs(distance.X);
             int fileMag = Math.Abs(distance.Y);
 
-            return (distance / new Vector2I(rankMag, fileMag));
+            Vector2I resultVec = new Vector2I();
+
+            resultVec.X = rankMag == 0 ? 0 : (distance.X / rankMag);
+            resultVec.Y = fileMag == 0 ? 0 : (distance.Y / fileMag);
+
+            return resultVec;
         }
     }
 }
