@@ -1,0 +1,108 @@
+\doxysection{Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board Class Reference}
+\hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board}{}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board}\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+Inheritance diagram for Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_ad380d887f6595a0b13b8ef799da83838}{Logical\+Board}} (Node2D root\+Node, Packed\+Scene piece\+Template, int tile\+Size)
+\item 
+\mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_board_tile}{Board\+Tile}} \mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_aa1b7aac20528b75a46c48dd235c691d6}{Get\+Tile}} (int rank, int file)
+\item 
+void \mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a2960f70080d750deeeb6beaca2718fa7}{Add\+Piece}} (int rank, int file, \mbox{\hyperlink{namespace_chess_game_1_1_scripts_ae254424620de16eb1353dd772f9544e3}{Chess\+Piece\+Id}} piece, \mbox{\hyperlink{namespace_chess_game_1_1_scripts_a7f6e3fee0de2d4d40435cda9b7c97140}{Chess\+Color}} color)
+\item 
+void \mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a91301876add91c8e3ae46692c2855682}{Remove\+Piece}} (int rank, int file)
+\item 
+void \mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a979245ec48fe06916e4c4de3dc039bb3}{Move\+Piece}} (int rank, int file, int target\+Rank, int target\+File)
+\item 
+void \mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a2842dda36c998dd866d6f033ac1ea822}{Build\+Board\+From\+FEN}} (string fen\+String)
+\item 
+void \mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a6b45f54c2f25b0e922894ce073fe8699}{Clear\+Board}} ()
+\item 
+void \mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_accdc0978c3bfe12d6a1b59fcb718c698}{Build\+Current\+Board}} ()
+\item 
+\mbox{\hyperlink{class_visual_chess_piece}{Visual\+Chess\+Piece}} \mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_ad68845939f80d529e2048f6bcd2a843d}{Get\+Visual\+Chess\+Piece\+At\+Grid\+Loc}} (int rank, int file)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+List$<$ \mbox{\hyperlink{class_visual_chess_piece}{Visual\+Chess\+Piece}} $>$ \mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a320658c198f999a08e7e0d1b63e63028}{Visual\+Pieces\+List}} = new List$<$\mbox{\hyperlink{class_visual_chess_piece}{Visual\+Chess\+Piece}}$>$()\hspace{0.3cm}{\ttfamily  \mbox{[}get, set\mbox{]}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_ad380d887f6595a0b13b8ef799da83838}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_ad380d887f6595a0b13b8ef799da83838} 
+\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}!LogicalBoard@{LogicalBoard}}
+\index{LogicalBoard@{LogicalBoard}!ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+\doxysubsubsection{\texorpdfstring{LogicalBoard()}{LogicalBoard()}}
+{\footnotesize\ttfamily Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board.\+Logical\+Board (\begin{DoxyParamCaption}\item[{Node2D}]{root\+Node,  }\item[{Packed\+Scene}]{piece\+Template,  }\item[{int}]{tile\+Size }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a2960f70080d750deeeb6beaca2718fa7}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a2960f70080d750deeeb6beaca2718fa7} 
+\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}!AddPiece@{AddPiece}}
+\index{AddPiece@{AddPiece}!ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+\doxysubsubsection{\texorpdfstring{AddPiece()}{AddPiece()}}
+{\footnotesize\ttfamily void Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board.\+Add\+Piece (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{file,  }\item[{\mbox{\hyperlink{namespace_chess_game_1_1_scripts_ae254424620de16eb1353dd772f9544e3}{Chess\+Piece\+Id}}}]{piece,  }\item[{\mbox{\hyperlink{namespace_chess_game_1_1_scripts_a7f6e3fee0de2d4d40435cda9b7c97140}{Chess\+Color}}}]{color }\end{DoxyParamCaption})}
+
+\Hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a2842dda36c998dd866d6f033ac1ea822}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a2842dda36c998dd866d6f033ac1ea822} 
+\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}!BuildBoardFromFEN@{BuildBoardFromFEN}}
+\index{BuildBoardFromFEN@{BuildBoardFromFEN}!ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+\doxysubsubsection{\texorpdfstring{BuildBoardFromFEN()}{BuildBoardFromFEN()}}
+{\footnotesize\ttfamily void Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board.\+Build\+Board\+From\+FEN (\begin{DoxyParamCaption}\item[{string}]{fen\+String }\end{DoxyParamCaption})}
+
+\Hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_accdc0978c3bfe12d6a1b59fcb718c698}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_accdc0978c3bfe12d6a1b59fcb718c698} 
+\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}!BuildCurrentBoard@{BuildCurrentBoard}}
+\index{BuildCurrentBoard@{BuildCurrentBoard}!ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+\doxysubsubsection{\texorpdfstring{BuildCurrentBoard()}{BuildCurrentBoard()}}
+{\footnotesize\ttfamily void Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board.\+Build\+Current\+Board (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\Hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a6b45f54c2f25b0e922894ce073fe8699}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a6b45f54c2f25b0e922894ce073fe8699} 
+\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}!ClearBoard@{ClearBoard}}
+\index{ClearBoard@{ClearBoard}!ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+\doxysubsubsection{\texorpdfstring{ClearBoard()}{ClearBoard()}}
+{\footnotesize\ttfamily void Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board.\+Clear\+Board (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\Hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_aa1b7aac20528b75a46c48dd235c691d6}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_aa1b7aac20528b75a46c48dd235c691d6} 
+\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}!GetTile@{GetTile}}
+\index{GetTile@{GetTile}!ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+\doxysubsubsection{\texorpdfstring{GetTile()}{GetTile()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_chess_game_1_1_scripts_1_1_chess_board_1_1_board_tile}{Board\+Tile}} Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board.\+Get\+Tile (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{file }\end{DoxyParamCaption})}
+
+\Hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_ad68845939f80d529e2048f6bcd2a843d}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_ad68845939f80d529e2048f6bcd2a843d} 
+\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}!GetVisualChessPieceAtGridLoc@{GetVisualChessPieceAtGridLoc}}
+\index{GetVisualChessPieceAtGridLoc@{GetVisualChessPieceAtGridLoc}!ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+\doxysubsubsection{\texorpdfstring{GetVisualChessPieceAtGridLoc()}{GetVisualChessPieceAtGridLoc()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_visual_chess_piece}{Visual\+Chess\+Piece}} Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board.\+Get\+Visual\+Chess\+Piece\+At\+Grid\+Loc (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{file }\end{DoxyParamCaption})}
+
+\Hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a979245ec48fe06916e4c4de3dc039bb3}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a979245ec48fe06916e4c4de3dc039bb3} 
+\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}!MovePiece@{MovePiece}}
+\index{MovePiece@{MovePiece}!ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+\doxysubsubsection{\texorpdfstring{MovePiece()}{MovePiece()}}
+{\footnotesize\ttfamily void Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board.\+Move\+Piece (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{file,  }\item[{int}]{target\+Rank,  }\item[{int}]{target\+File }\end{DoxyParamCaption})}
+
+\Hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a91301876add91c8e3ae46692c2855682}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a91301876add91c8e3ae46692c2855682} 
+\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}!RemovePiece@{RemovePiece}}
+\index{RemovePiece@{RemovePiece}!ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+\doxysubsubsection{\texorpdfstring{RemovePiece()}{RemovePiece()}}
+{\footnotesize\ttfamily void Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board.\+Remove\+Piece (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{file }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a320658c198f999a08e7e0d1b63e63028}\label{class_chess_game_1_1_scripts_1_1_chess_board_1_1_logical_board_a320658c198f999a08e7e0d1b63e63028} 
+\index{ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}!VisualPiecesList@{VisualPiecesList}}
+\index{VisualPiecesList@{VisualPiecesList}!ChessGame.Scripts.ChessBoard.LogicalBoard@{ChessGame.Scripts.ChessBoard.LogicalBoard}}
+\doxysubsubsection{\texorpdfstring{VisualPiecesList}{VisualPiecesList}}
+{\footnotesize\ttfamily List$<$\mbox{\hyperlink{class_visual_chess_piece}{Visual\+Chess\+Piece}}$>$ Chess\+Game.\+Scripts.\+Chess\+Board.\+Logical\+Board.\+Visual\+Pieces\+List = new List$<$\mbox{\hyperlink{class_visual_chess_piece}{Visual\+Chess\+Piece}}$>$()\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [set]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Scripts/\+Chess\+Board/\mbox{\hyperlink{_logical_board_8cs}{Logical\+Board.\+cs}}\end{DoxyCompactItemize}
