@@ -1,12 +1,18 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chess Game", "Chess Game.csproj", "{526F248A-2195-4778-AD2C-CBC90B1553C2}"
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chess Game", "Chess Game.csproj", "{526F248A-2195-4778-AD2C-CBC90B1553C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessTests", "Tests\ChessTests\ChessTests.csproj", "{BE5E5B19-DF37-4765-A2DF-42AF1A996726}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-	Debug|Any CPU = Debug|Any CPU
-	ExportDebug|Any CPU = ExportDebug|Any CPU
-	ExportRelease|Any CPU = ExportRelease|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		ExportDebug|Any CPU = ExportDebug|Any CPU
+		ExportRelease|Any CPU = ExportRelease|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{526F248A-2195-4778-AD2C-CBC90B1553C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -15,5 +21,18 @@ Global
 		{526F248A-2195-4778-AD2C-CBC90B1553C2}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
 		{526F248A-2195-4778-AD2C-CBC90B1553C2}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
 		{526F248A-2195-4778-AD2C-CBC90B1553C2}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{526F248A-2195-4778-AD2C-CBC90B1553C2}.Release|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{526F248A-2195-4778-AD2C-CBC90B1553C2}.Release|Any CPU.Build.0 = ExportRelease|Any CPU
+		{BE5E5B19-DF37-4765-A2DF-42AF1A996726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE5E5B19-DF37-4765-A2DF-42AF1A996726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE5E5B19-DF37-4765-A2DF-42AF1A996726}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE5E5B19-DF37-4765-A2DF-42AF1A996726}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{BE5E5B19-DF37-4765-A2DF-42AF1A996726}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{BE5E5B19-DF37-4765-A2DF-42AF1A996726}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
+		{BE5E5B19-DF37-4765-A2DF-42AF1A996726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE5E5B19-DF37-4765-A2DF-42AF1A996726}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
