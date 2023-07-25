@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using ChessGame.Scripts.DataTypes;
+using Godot;
 using System;
 using System.Collections.Generic;
 

@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChessGame.Scripts
+namespace ChessGame.Scripts.DataTypes
 {
     public class ChessConstants
     {
         // White = 0
         // Black = 1
-        public static readonly int[,] ColorBoard = new int[8,8] {
+        public static readonly int[,] ColorBoard = new int[8, 8] {
             { 0, 1, 0, 1, 0, 1, 0, 1 },
             { 1, 0, 1, 0, 1, 0, 1, 0 },
             { 0, 1, 0, 1, 0, 1, 0, 1 },

@@ -127,6 +127,9 @@ public partial class ChessBoard : TileMap
                             
                         }
 
+						// remove highlights
+						ClearLayer(1);
+
                         _pieceBeingDragged = null;
 						_originalDraggedPieceLoc = null;
                     }
