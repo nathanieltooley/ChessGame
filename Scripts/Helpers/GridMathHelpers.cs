@@ -9,14 +9,15 @@ namespace ChessGame.Scripts.Helpers
 {
     public static class GridMathHelpers
     {
-        public static Vector2I ConvertBoardCoordsToWorld(Vector2I boardCoords, Vector2I tileSize)
+        public static Vector2I ConvertBoardCoordsToWorld(BoardPos boardCoords, Vector2I tileSize, Vector2I _gridMargin)
         {
-            int worldX = boardCoords.Y;
-            int worldY = boardCoords.X;
+            int boardX = boardCoords.File;
+            int boardY = boardCoords.Rank;
 
-            Vector2I worldCoords = new Vector2I(worldX, worldY);
+            Vector2I gridCoord = new Vector2I(boardX, boardY) + _gridMargin;
 
-            return (worldCoords * tileSize) + (tileSize / 2);
+
+            return (gridCoord * tileSize) + (tileSize / 2);
         }
 
         public static Vector2I ConvertWorldCoordsToGridCoords(Vector2 worldCoords, Vector2I tileSize)
@@ -27,28 +28,19 @@ namespace ChessGame.Scripts.Helpers
             return new Vector2I(boardX, boardY);
         }
 
-        public static Vector2I ConvertWorldCoordsToBoardChords(Vector2 worldCoords, Vector2I tileSize, Vector2I _gridMarginOffset)
+        public static BoardPos ConvertWorldCoordsToBoardChords(Vector2 worldCoords, Vector2I tileSize, Vector2I _gridMarginOffset)
         {
             var gridCoords = ConvertWorldCoordsToGridCoords(worldCoords, tileSize);
 
-            int rank;
-            int file;
+            int rank = gridCoords.Y - _gridMarginOffset.Y;
+            int file = gridCoords.X - _gridMarginOffset.X;
 
-            gridCoords.Deconstruct(out file, out rank);
-
-            return new Vector2I(rank, file) - _gridMarginOffset;
+            return new BoardPos(rank, file);
         }
 
-        public static Vector2I ConvertBoardCoordToGridChord(Vector2I rankAndFile, Vector2I gridMargin)
+        public static Vector2I ConvertBoardCoordToGridChord(BoardPos boardPos, Vector2I gridMargin)
         {
-            int x;
-            int y;
-
-            rankAndFile.Deconstruct(out y, out x);
-
-            var gridCoords = new Vector2I(x, y);
-
-            return gridCoords + gridMargin;
+            return new Vector2I(boardPos.File + gridMargin.X, boardPos.Rank  + gridMargin.Y);
         }
     }
 }
