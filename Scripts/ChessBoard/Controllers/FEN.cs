@@ -37,7 +37,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
                 if (emptyCount > 0)
                 {
-                    board[rank, file] = BoardTile.BuildEmptyTile(rank, file);
+                    board[rank, file] = BoardTile.BuildEmptyTile(new BoardPos(rank, file));
                     emptyCount--;
 
                     file++;
@@ -55,7 +55,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                     int tempFile = file;
                     for (int j = tempFile; j < 8; j++)
                     {
-                        board[rank, tempFile] = BoardTile.BuildEmptyTile(rank, tempFile);
+                        board[rank, tempFile] = BoardTile.BuildEmptyTile(new BoardPos(rank, tempFile));
                     }
 
                     rank++;
@@ -76,7 +76,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                     ChessColor color = GetColorFromChar(c);
                     ChessPieceId pieceId = GetPieceIdFromChar(c);
 
-                    BoardTile newTile = BoardTile.BuildEmptyTile(rank, file);
+                    BoardTile newTile = BoardTile.BuildEmptyTile(new BoardPos(rank, file));
 
                     newTile.PieceId = pieceId;
                     newTile.PieceColor = color;
