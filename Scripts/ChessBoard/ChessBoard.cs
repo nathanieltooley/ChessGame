@@ -9,7 +9,7 @@ public partial class ChessBoard : TileMap
 
 	private LogicalBoard _logicalBoard;
 	private VisualChessPiece _pieceBeingDragged;
-	private Vector2I _originalDraggedPieceLoc;
+	private BoardPos _originalDraggedPieceLoc;
 	private PackedScene _templatePiece;
 	private bool _isDragging;
 	private int _tileSize;
@@ -20,7 +20,7 @@ public partial class ChessBoard : TileMap
     private ChessColor aiColor = ChessColor.Black;
 
     [Signal]
-    public delegate void UpdateMousePosEventHandler(Vector2 mousePos, Vector2 gridPos, BoardTile tile);
+    public delegate void UpdateMousePosEventHandler(Vector2 mousePos, BoardPos gridPos, BoardTile tile);
 
 	private ChessColor InvertColor(ChessColor color)
 	{
@@ -73,7 +73,7 @@ public partial class ChessBoard : TileMap
 						var boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, _tileSizeVector, _gridMargin);
 
 
-                        if (_logicalBoard.GetTile(boardPos.X, boardPos.Y).PieceId == ChessPieceId.Empty)
+                        if (_logicalBoard.GetTile(boardPos.Rank, boardPos.File).PieceId == ChessPieceId.Empty)
 						{
 							ToggleHighlightCell(gridPos);
 							return;
@@ -88,7 +88,7 @@ public partial class ChessBoard : TileMap
 
 								_originalDraggedPieceLoc = boardPos;
 
-								var moves = _logicalBoard.GetMovesForPiece(boardPos.X, boardPos.Y);
+								var moves = _logicalBoard.GetMovesForPiece(boardPos.Rank, boardPos.File, _pieceBeingDragged.Color == playerColor);
 								LogHelpers.DebugLog($"{moves.Count}");
 
 								foreach (var move in moves)
@@ -106,25 +106,29 @@ public partial class ChessBoard : TileMap
 
 						_isDragging = false;
 
-						Vector2I boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(GetViewport().GetMousePosition(), _tileSizeVector, _gridMargin);
+						var mp = GetViewport().GetMousePosition();
 
-						int newRank = boardPos.X;
-						int newFile = boardPos.Y;
+						BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(GetViewport().GetMousePosition(), _tileSizeVector, _gridMargin);
 
-						int oldRank = _originalDraggedPieceLoc.X;
-						int oldFile = _originalDraggedPieceLoc.Y;
-
-						if (newRank == oldRank && newFile == oldFile)
+						if (boardPos == _originalDraggedPieceLoc)
 						{
-							_pieceBeingDragged.Position = GridMathHelpers.ConvertBoardCoordsToWorld(_originalDraggedPieceLoc, _tileSizeVector);
+							_pieceBeingDragged.Position = GridMathHelpers.ConvertBoardCoordsToWorld(_originalDraggedPieceLoc, _tileSizeVector, _gridMargin);
 						} else
 						{
-                            _logicalBoard.MovePiece(oldRank, oldFile, newRank, newFile);
-                            _pieceBeingDragged.Position = _logicalBoard.GetTile(newRank, newFile).TileCenter;
+							bool success;
+							_logicalBoard.MovePiece(_originalDraggedPieceLoc, boardPos, _pieceBeingDragged.Color == playerColor, out success);
+                            if (success)
+							{
+                                _pieceBeingDragged.Position = _logicalBoard.GetTile(boardPos.Rank, boardPos.File).TileCenter;
+                            } else
+							{
+                                _pieceBeingDragged.Position = _logicalBoard.GetTile(_originalDraggedPieceLoc.Rank, _originalDraggedPieceLoc.File).TileCenter;
+							}
+                            
                         }
 
                         _pieceBeingDragged = null;
-                        _originalDraggedPieceLoc = Vector2I.Zero;
+						_originalDraggedPieceLoc = null;
                     }
 
                     
@@ -135,10 +139,10 @@ public partial class ChessBoard : TileMap
 		if (@event is InputEventMouseMotion)
 		{
 			InputEventMouseMotion mmEvent = (InputEventMouseMotion) @event;
-			Vector2I boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mmEvent.Position, _tileSizeVector, _gridMargin);
+			BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mmEvent.Position, _tileSizeVector, _gridMargin);
 
 
-            EmitSignal(SignalName.UpdateMousePos, mmEvent.Position, boardPos, _logicalBoard.GetTile(boardPos.X, boardPos.Y));
+            EmitSignal(SignalName.UpdateMousePos, mmEvent.Position, boardPos, _logicalBoard.GetTile(boardPos.Rank, boardPos.File));
 		}
     }
 

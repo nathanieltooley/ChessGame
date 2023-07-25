@@ -12,8 +12,14 @@ namespace ChessGame.Scripts.ChessBoard
         private PackedScene _pieceTemplate;
 
         private ChessColor _playerColor;
+        private Dictionary<BoardPos, List<BoardPos>> _cachedMoves = new Dictionary<BoardPos, List<BoardPos>>();
 
         public List<VisualChessPiece> VisualPiecesList { get; set; } = new List<VisualChessPiece>();
+
+        public LogicalBoard()
+        {
+
+        }
 
         public LogicalBoard(Node2D rootNode, PackedScene pieceTemplate, int tileSize, ChessColor playerColor) 
         {
@@ -26,7 +32,7 @@ namespace ChessGame.Scripts.ChessBoard
             {
                 for (int file = 0; file < 8; file++)
                 {
-                    _board[rank, file] = BoardTile.BuildEmptyTile(rank, file, VisualPiecesList);
+                    _board[rank, file] = BoardTile.BuildEmptyTile(new BoardPos(rank, file), VisualPiecesList);
                 }
             }
         }
@@ -50,17 +56,39 @@ namespace ChessGame.Scripts.ChessBoard
         {
             BoardTile tile = GetTile(rank, file);
             tile.ClearTile();
+
+            _cachedMoves.Remove(tile.TilePos);
         }
 
-        public void MovePiece(int rank, int file, int targetRank, int targetFile)
+        public void MovePiece(BoardPos startingPos, BoardPos targetPos, bool isPlayerMove, out bool success)
         {
-            BoardTile startingTile = GetTile(rank, file);
-            BoardTile targetTile = GetTile(targetRank, targetFile);
+            BoardTile startingTile = GetTile(startingPos.Rank, startingPos.File);
+            BoardTile targetTile = GetTile(targetPos.Rank, targetPos.File);
 
-            if (MoveVerificator.IsMovePossible(startingTile, targetTile, this))
+            List<BoardPos> moves;
+
+            if (_cachedMoves.ContainsKey(startingTile.TilePos))
             {
-                AddPiece(targetRank, targetFile, startingTile.PieceId, startingTile.PieceColor);
+                _cachedMoves.TryGetValue(startingTile.TilePos, out moves);
+            } else
+            {
+                MoveFinder mf = new MoveFinder(this, startingTile, isPlayerMove);
+
+                moves = mf.GetCapableMoves(startingPos.Rank, startingPos.File, startingTile, mf.GetMovesAssumingEmptyBoard());
+                AddToCachedMoves(startingPos, moves);
+            }
+
+            if (MoveFinder.IsMovePossible(targetPos, moves))
+            {
+                AddPiece(targetPos.Rank, targetPos.File, startingTile.PieceId, startingTile.PieceColor);
                 startingTile.ClearTile();
+
+                _cachedMoves.Remove(startingTile.TilePos);
+
+                success = true;
+            } else
+            {
+                success = false;
             }
         }
 
@@ -108,14 +136,35 @@ namespace ChessGame.Scripts.ChessBoard
             return GetTile(rank, file).VisualPiece;
         }
 
-        public List<Vector2I> GetMovesForPiece(int rank, int file)
+        public List<BoardPos> GetMovesForPiece(int rank, int file, bool isPlayerMove)
         {
             BoardTile boardTile = GetTile(rank, file);
             bool isPlayer = boardTile.PieceColor == _playerColor;
 
-            List<Vector2I> theoMoves = MoveVerificator.GetMovesAssumingEmptyBoard(boardTile.PieceId, rank, file, isPlayer);
+            if (_cachedMoves.ContainsKey(boardTile.TilePos))
+            {
+                List<BoardPos> moves;
 
-            return MoveVerificator.GetCapableMoves(rank, file, boardTile, isPlayer, theoMoves, this);
+                _cachedMoves.TryGetValue(boardTile.TilePos, out moves);
+                return moves;
+            } else
+            {
+                MoveFinder mf = new MoveFinder(this, boardTile, isPlayerMove);
+                return mf.GetCapableMoves(rank, file, boardTile, mf.GetMovesAssumingEmptyBoard());
+            }
+        }
+
+        private void AddToCachedMoves(BoardPos boardPos, List<BoardPos> moves)
+        {
+            if (!_cachedMoves.ContainsKey(boardPos))
+            {
+                _cachedMoves.Add(boardPos, moves);
+            } else
+            {
+                // Update the cache if we already have this key
+                _cachedMoves.Remove(boardPos);
+                _cachedMoves.Add(boardPos, moves);
+            }
         }
     }
 }

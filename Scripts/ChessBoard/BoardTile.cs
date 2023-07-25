@@ -1,19 +1,15 @@
 ﻿using Godot;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessGame.Scripts.ChessBoard
 {
     public partial class BoardTile : GodotObject
     {
         public ChessColor PieceColor { get; set; }
-        public ChessColor TileColor { get; set; }
         public ChessPieceId PieceId { get; set; }
         public VisualChessPiece VisualPiece { get; set; }
         public Vector2 TileCenter { get; set; }
+        public BoardPos TilePos { get; set; }
 
         private List<VisualChessPiece> _pointerToMainList;
 
@@ -22,38 +18,35 @@ namespace ChessGame.Scripts.ChessBoard
 
         }
 
-        public BoardTile(ChessColor pieceColor, ChessPieceId pieceId, VisualChessPiece visualPiece, int rank, int file, List<VisualChessPiece> pointerToMainList)
+        public BoardTile(ChessColor pieceColor, ChessPieceId pieceId, VisualChessPiece visualPiece, BoardPos boardPos, List<VisualChessPiece> pointerToMainList)
         {
-            ChessColor tileColor = ChessConstants.GetColor(rank, file);
-
             PieceColor = pieceColor;
-            TileColor = tileColor;
             PieceId = pieceId;
             VisualPiece = visualPiece;
+            TilePos = boardPos;
 
-            CalculateTileCenter(rank, file);
+            CalculateTileCenter();
             _pointerToMainList = pointerToMainList;
         }
 
         // List may be null because BoardTiles can be created outside of the LogicalBoard class (good idea?). This is
         // risky however, as errors can happen when assuming the list has already been set
-        public static BoardTile BuildEmptyTile(int rank, int file, List<VisualChessPiece> pointerToMainList = null)
+        public static BoardTile BuildEmptyTile(BoardPos pos, List<VisualChessPiece> pointerToMainList = null)
         {
             var tile = new BoardTile();
-            ChessColor tileColor = ChessConstants.GetColor(rank, file);
-
+            
+            tile.TilePos = pos;
             tile.PieceColor = ChessColor.White;
-            tile.TileColor = tileColor;
             tile.PieceId = ChessPieceId.Empty;
             tile.AddPointerToVPList(pointerToMainList);
-            tile.CalculateTileCenter(rank, file);
+            tile.CalculateTileCenter();
 
             return tile;
         }
 
-        public void CalculateTileCenter(int rank, int file)
+        public void CalculateTileCenter()
         {
-            Vector2 gridPosition = new Vector2(file, rank) + ChessConstants.BoardMargin;
+            Vector2 gridPosition = new Vector2(TilePos.File, TilePos.Rank) + ChessConstants.BoardMargin;
             Vector2 worldPosition = gridPosition * ChessConstants.TileSize;
             Vector2 center = worldPosition + (ChessConstants.TileSize / 2);
 
