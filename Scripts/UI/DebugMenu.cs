@@ -1,3 +1,4 @@
+using ChessGame.Scripts;
 using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.Helpers;
 using Godot;
@@ -23,11 +24,11 @@ public partial class DebugMenu : Control
 		_pieceLabel = _debugContainer.GetNode<Label>("ChessPieceLabel");
 	}
 
-	public void OnUpdateMousePos(Vector2 mousePos, Vector2I boardPos, BoardTile tile)
+	public void OnUpdateMousePos(Vector2 mousePos, BoardPos boardPos, BoardTile tile)
 	{
 		_mousePosLabel.Text = $"MousePos: {mousePos}";
 
-		if ((boardPos.X < 0 || boardPos.X > 7) || (boardPos.Y < 0 || boardPos.Y > 7)) 
+		if ((boardPos.Rank < 0 || boardPos.Rank > 7) || (boardPos.File < 0 || boardPos.File > 7)) 
 		{
 			_mousePosGridLabel.Text = "Rank: OOB, File: OOB";
 
@@ -35,7 +36,7 @@ public partial class DebugMenu : Control
 			_pieceLabel.Text = "Piece: OOB";
 		} else
 		{
-            _mousePosGridLabel.Text = $"Rank: {boardPos.X}, File: {boardPos.Y}";
+            _mousePosGridLabel.Text = $"Rank: {boardPos.Rank}, File: {boardPos.File}";
 
 			_pieceColorLabel.Text = $"Piece Color: {tile.PieceColor}";
 			_pieceLabel.Text = $"Piece: {tile.PieceId}";
