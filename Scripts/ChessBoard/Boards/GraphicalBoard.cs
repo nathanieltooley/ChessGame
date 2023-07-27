@@ -20,8 +20,14 @@ namespace ChessGame.Scripts.ChessBoard.Boards
 
         public void AddPiece(BoardPos piecePos, PieceInfo info)
         {
+            if (info.PieceId == ChessPieceId.Empty)
+            {
+                return;
+            }
+
             var newPiece = _pieceTemplate.Instantiate<VisualChessPiece>();
             _rootPieceNode.AddChild(newPiece);
+
             newPiece.UpdateSprite(info);
 
             var tileSize = ChessConstants.TileSize;
