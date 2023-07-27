@@ -20,8 +20,6 @@ layer_1/z_index = 0
 layer_1/tile_data = PackedInt32Array()
 script = ExtResource("2_5qeit")
 
-[node name="LogicalBoard" type="Node2D" parent="ChessBoard"]
-
 [node name="DebugMenu" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
