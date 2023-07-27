@@ -9,7 +9,8 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
     {
 
         private LogicalBoard _board;
-        private BoardTile _startingTile;
+        private PieceInfo _piece;
+        private BoardPos _piecePos;
         private bool _isPlayer;
 
         private List<BoardPos> _capableMoves;
@@ -19,10 +20,11 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             
         }
 
-        public MoveFinder(LogicalBoard board, BoardTile startingTile, bool isPlayer)
+        public MoveFinder(LogicalBoard board, PieceInfo piece, BoardPos piecePos, bool isPlayer)
         {
             _board = board;
-            _startingTile = startingTile;
+            _piece = piece;
+            _piecePos = piecePos;
             _isPlayer = isPlayer;
         }
 
@@ -39,13 +41,11 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             return false;
         }
 
-        public List<BoardPos> GetCapableMoves(int startingRank, int startingFile, BoardTile startingTile, List<BoardPos> theoreticalMoves)
+        public List<BoardPos> GetCapableMoves(int startingRank, int startingFile, List<BoardPos> theoreticalMoves)
         {
             // copy list
             List<BoardPos> capableMoves = new List<BoardPos>();
             Dictionary<Vector2I, Vector2I> blockedDict = new Dictionary<Vector2I, Vector2I>();
-
-            ChessPieceId piece = startingTile.PieceId;
 
             int tilesLeft;
             int tilesRight;
@@ -77,16 +77,18 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                 int rank = move.Rank;
                 int file = move.File;
 
+                BoardPos pos = new BoardPos(rank, file);
+
                 // Out of bounds Check
                 if ((rank > 7 || rank < 0) || (file > 7 || file < 0))
                 {
                     continue;
                 }
 
-                BoardTile targetTile = _board.GetTile(rank, file);
+                PieceInfo pieceAtTarget = _board.GetPieceInfoAtPos(pos);
 
                 // Same color Check
-                if (targetTile.PieceColor == startingTile.PieceColor && targetTile.PieceId != ChessPieceId.Empty)
+                if (pieceAtTarget.Color == _piece.Color && pieceAtTarget.PieceId != ChessPieceId.Empty)
                 { 
                     continue;
                 }
@@ -110,10 +112,10 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         public List<BoardPos> GetMovesAssumingEmptyBoard()
         {
-            ChessPieceId pieceId = _startingTile.PieceId;
+            ChessPieceId pieceId = _piece.PieceId;
 
-            int startingRank = _startingTile.TilePos.Rank;
-            int startingFile = _startingTile.TilePos.File;
+            int startingRank = _piecePos.Rank;
+            int startingFile = _piecePos.File;
 
             List<BoardPos> moves = new List<BoardPos>();
 
@@ -297,7 +299,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                 bool rankOOB = (tempRank < 0 || tempRank > 7);
                 bool fileOOB = (tempFile < 0 || tempFile > 7);
 
-                if ((rankOOB || fileOOB) || board.GetTile(tempRank, tempFile).PieceId != ChessPieceId.Empty)
+                if ((rankOOB || fileOOB) || board.GetPieceInfoAtPos(new BoardPos(tempRank, tempFile)).PieceId != ChessPieceId.Empty)
                 {
                     return new Vector2I(tempRank, tempFile);
                 }

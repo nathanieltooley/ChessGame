@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://caaargxpskoar"]
+[gd_scene load_steps=4 format=3 uid="uid://caaargxpskoar"]
 
 [ext_resource type="TileSet" uid="uid://c7ukin0acqjbo" path="res://Assets/BoardTiles/chess_board_tileset.tres" id="1_i0ywi"]
 [ext_resource type="Script" path="res://Scripts/ChessBoard/ChessBoard.cs" id="2_5qeit"]
-[ext_resource type="Script" path="res://Scripts/ChessBoard/LogicalBoard.cs" id="3_s7sjd"]
 [ext_resource type="Script" path="res://Scripts/UI/DebugMenu.cs" id="4_1htrv"]
 
 [node name="Main" type="Node2D"]
@@ -22,7 +21,6 @@ layer_1/tile_data = PackedInt32Array()
 script = ExtResource("2_5qeit")
 
 [node name="LogicalBoard" type="Node2D" parent="ChessBoard"]
-script = ExtResource("3_s7sjd")
 
 [node name="DebugMenu" type="Control" parent="."]
 layout_mode = 3

@@ -1,23 +1,20 @@
 using ChessGame.Scripts;
-using ChessGame.Scripts.Helpers;
+using ChessGame.Scripts.DataTypes;
 using Godot;
-using System;
 
 public partial class VisualChessPiece : Node2D
 {
-	public ChessColor Color { get; set; }
-	public ChessPieceId Piece { get; set; }
 
-    private string[] _colorPrefixes = { "w", "b" };
-	private string[] _pieceSpriteNames = { "", "P", "K", "B", "R", "N", "Q" };
+    private static string[] _colorPrefixes = { "w", "b" };
+	private static string[] _pieceSpriteNames = { "", "P", "K", "B", "R", "N", "Q" };
 
-	private string _fileExt = "svg";
+	private static string _fileExt = "svg";
 
-	private string _pathToAssetFolder = "res://Assets/ChessPieces/";
+	private static string _pathToAssetFolder = "res://Assets/ChessPieces/";
 
 	private Sprite2D _pieceSprite;
 
-	private string ConstructPieceTextureName(ChessColor color, ChessPieceId piece)
+    private string ConstructPieceTextureName(ChessColor color, ChessPieceId piece)
 	{
 		return $"{_colorPrefixes[(int)color]}{_pieceSpriteNames[(int)piece]}.{_fileExt}";
 	}
@@ -38,31 +35,15 @@ public partial class VisualChessPiece : Node2D
 		_pieceSprite.Texture = texture;
 	}
 
-	public void ChangePieceType(ChessPieceId piece)
+	public void UpdateSprite(PieceInfo info)
 	{
-		Piece = piece;
-	}
-
-	public void ChangeColor(ChessColor color)
-	{
-		Color = color;
-	}
-
-	public void UpdatePieceInfoAndSprite(ChessPieceId newId, ChessColor newColor)
-	{
-		ChangePieceType(newId);
-		ChangeColor(newColor);
-
-        SetTexture(GetPieceTexture(Color, Piece));
+        SetTexture(GetPieceTexture(info.Color, info.PieceId));
     }
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		_pieceSprite = GetNode<Sprite2D>("PieceSprite");
-		ChangePieceType(ChessPieceId.Pawn);
-		
-		SetTexture(GetPieceTexture(Color, Piece));
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

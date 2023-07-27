@@ -1,5 +1,7 @@
 using ChessGame.Scripts;
 using ChessGame.Scripts.ChessBoard;
+using ChessGame.Scripts.ChessBoard.Controllers;
+using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Helpers;
 using Godot;
 
@@ -7,20 +9,20 @@ public partial class ChessBoard : TileMap
 {
 	private Vector2I _gridMargin = new Vector2I(3, 3);
 
-	private LogicalBoard _logicalBoard;
 	private VisualChessPiece _pieceBeingDragged;
+	private PieceInfo _pieceBeingDraggedInfo;
 	private BoardPos _originalDraggedPieceLoc;
 	private PackedScene _templatePiece;
 	private bool _isDragging;
-	private int _tileSize;
-	private Vector2I _tileSizeVector;
+
+	private BoardController _boardController;
 
     [Export]
 	private ChessColor playerColor = ChessColor.White;
     private ChessColor aiColor = ChessColor.Black;
 
     [Signal]
-    public delegate void UpdateMousePosEventHandler(Vector2 mousePos, BoardPos gridPos, BoardTile tile);
+    public delegate void UpdateMousePosEventHandler(Vector2 mousePos, BoardPos gridPos, PieceInfo piece);
 
 	private ChessColor InvertColor(ChessColor color)
 	{
@@ -36,14 +38,11 @@ public partial class ChessBoard : TileMap
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
-		_tileSize = TileSet.TileSize.X;
-		_tileSizeVector = TileSet.TileSize;
-		_templatePiece = ResourceLoader.Load<PackedScene>("res://TemplateScenes/base_chess_piece.tscn");
-		_logicalBoard = new LogicalBoard(this, _templatePiece, _tileSize, playerColor);
+		_boardController = new BoardController(playerColor, this);
 
         aiColor = InvertColor(playerColor);
 
-		_logicalBoard.BuildBoardFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+		_boardController.CreateDefaultBoard();
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -67,13 +66,13 @@ public partial class ChessBoard : TileMap
 					if (mbEvent.IsPressed())
 					{
                         var mousePos = mbEvent.Position;
-						var pieces = _logicalBoard.VisualPiecesList;
+						var pieces = _boardController.GetVisualPieces();
 
-						var gridPos = GridMathHelpers.ConvertWorldCoordsToGridCoords(mousePos, _tileSizeVector);
-						var boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, _tileSizeVector, _gridMargin);
+						var gridPos = GridMathHelpers.ConvertWorldCoordsToGridCoords(mousePos, ChessConstants.TileSize);
+						var boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, ChessConstants.TileSize, ChessConstants.BoardMargin);
 
 
-                        if (_logicalBoard.GetTile(boardPos.Rank, boardPos.File).PieceId == ChessPieceId.Empty)
+                        if (_boardController.GetPieceInfoAtPos(boardPos).PieceId == ChessPieceId.Empty)
 						{
 							ToggleHighlightCell(gridPos);
 							return;
@@ -81,14 +80,15 @@ public partial class ChessBoard : TileMap
 
                         foreach (VisualChessPiece piece in pieces)
                         {
-                            if (mousePos.DistanceTo(piece.Position) <= _tileSize / 2)
+                            if (mousePos.DistanceTo(piece.Position) <= ChessConstants.TileSize.X / 2)
                             {
                                 _isDragging = true;
                                 _pieceBeingDragged = piece;
+								_pieceBeingDraggedInfo = _boardController.GetPieceInfoAtPos(boardPos);
 
 								_originalDraggedPieceLoc = boardPos;
 
-								var moves = _logicalBoard.GetMovesForPiece(boardPos.Rank, boardPos.File, _pieceBeingDragged.Color == playerColor);
+								var moves = _boardController.GetMovesForPiece(boardPos, _pieceBeingDraggedInfo.Color == playerColor);
 								LogHelpers.DebugLog($"{moves.Count}");
 
 								foreach (var move in moves)
@@ -108,21 +108,20 @@ public partial class ChessBoard : TileMap
 
 						var mp = GetViewport().GetMousePosition();
 
-						BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(GetViewport().GetMousePosition(), _tileSizeVector, _gridMargin);
+						BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(GetViewport().GetMousePosition(), ChessConstants.TileSize, ChessConstants.BoardMargin);
 
 						if (boardPos == _originalDraggedPieceLoc)
 						{
-							_pieceBeingDragged.Position = GridMathHelpers.ConvertBoardCoordsToWorld(_originalDraggedPieceLoc, _tileSizeVector, _gridMargin);
+							_pieceBeingDragged.Position = GridMathHelpers.ConvertBoardCoordsToWorld(_originalDraggedPieceLoc, ChessConstants.TileSize, ChessConstants.BoardMargin);
 						} else
 						{
-							bool success;
-							_logicalBoard.MovePiece(_originalDraggedPieceLoc, boardPos, _pieceBeingDragged.Color == playerColor, out success);
+							bool success = _boardController.MovePiece(_originalDraggedPieceLoc, boardPos);
                             if (success)
 							{
-                                _pieceBeingDragged.Position = _logicalBoard.GetTile(boardPos.Rank, boardPos.File).TileCenter;
+								_pieceBeingDragged.Position = _boardController.GetTileCenter(boardPos);
                             } else
 							{
-                                _pieceBeingDragged.Position = _logicalBoard.GetTile(_originalDraggedPieceLoc.Rank, _originalDraggedPieceLoc.File).TileCenter;
+								_pieceBeingDragged.Position = _boardController.GetTileCenter(_originalDraggedPieceLoc);
 							}
                             
                         }
@@ -142,10 +141,10 @@ public partial class ChessBoard : TileMap
 		if (@event is InputEventMouseMotion)
 		{
 			InputEventMouseMotion mmEvent = (InputEventMouseMotion) @event;
-			BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mmEvent.Position, _tileSizeVector, _gridMargin);
+			BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mmEvent.Position, ChessConstants.TileSize, ChessConstants.BoardMargin);
 
 
-            EmitSignal(SignalName.UpdateMousePos, mmEvent.Position, boardPos, _logicalBoard.GetTile(boardPos.Rank, boardPos.File));
+            EmitSignal(SignalName.UpdateMousePos, mmEvent.Position, boardPos, _boardController.GetPieceInfoAtPos(boardPos));
 		}
     }
 

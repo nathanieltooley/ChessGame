@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessGame.Scripts.ChessBoard.Controllers
 {
-    internal class PlayerMovementController
+    public class PlayerMovementController
     {
     }
 }

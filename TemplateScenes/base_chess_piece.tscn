@@ -1,10 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://bo1cnxyi53rfi"]
 
+[ext_resource type="Script" path="res://Scripts/DataTypes/VisualChessPiece.cs" id="1_ermuk"]
 [ext_resource type="Texture2D" uid="uid://b3n6uywf6imsl" path="res://Assets/ChessPieces/wK.svg" id="1_eyqlb"]
-[ext_resource type="Script" path="res://Scripts/ChessBoard/VisualChessPiece.cs" id="1_v6c0o"]
 
 [node name="BaseChessPiece" type="Node2D"]
-script = ExtResource("1_v6c0o")
+script = ExtResource("1_ermuk")
 
 [node name="PieceSprite" type="Sprite2D" parent="."]
 scale = Vector2(0.03125, 0.03125)

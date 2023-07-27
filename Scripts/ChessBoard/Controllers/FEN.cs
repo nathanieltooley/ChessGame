@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessGame.Scripts.DataTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,14 +10,14 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
     public static class FEN
     {
 
-        public static void Encrypt(BoardTile[,] pieces)
+        public static void Encrypt()
         {
 
         }
 
-        public static BoardTile[,] Decrypt(string fenString)
+        public static PieceInfo[,] Decrypt(string fenString, List<PieceInfo> whitePieceOut, List<PieceInfo> blackPieceOut)
         {
-            BoardTile[,] board = new BoardTile[8,8];
+            PieceInfo[,] board = new PieceInfo[8,8];
 
             int rank = 0;
             int file = 0;
@@ -37,7 +38,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
                 if (emptyCount > 0)
                 {
-                    board[rank, file] = BoardTile.BuildEmptyTile(new BoardPos(rank, file));
+                    board[rank, file] = PieceInfo.GetEmptyPiece();
                     emptyCount--;
 
                     file++;
@@ -55,7 +56,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                     int tempFile = file;
                     for (int j = tempFile; j < 8; j++)
                     {
-                        board[rank, tempFile] = BoardTile.BuildEmptyTile(new BoardPos(rank, tempFile));
+                        board[rank, tempFile] = PieceInfo.GetEmptyPiece();
                     }
 
                     rank++;
@@ -76,12 +77,18 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                     ChessColor color = GetColorFromChar(c);
                     ChessPieceId pieceId = GetPieceIdFromChar(c);
 
-                    BoardTile newTile = BoardTile.BuildEmptyTile(new BoardPos(rank, file));
+                    var piece = new PieceInfo { Color = color, PieceId = pieceId };
 
-                    newTile.PieceId = pieceId;
-                    newTile.PieceColor = color;
+                    board[rank, file] = piece;
 
-                    board[rank, file] = newTile;
+                    if (color == ChessColor.White)
+                    {
+                        whitePieceOut.Add(piece);
+                    } else
+                    {
+                        blackPieceOut.Add(piece);
+                    }
+
                     cursor++;
                 }
 
