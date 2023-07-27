@@ -7,14 +7,13 @@ namespace ChessGame.Scripts.ChessBoard.Boards
 {
     public partial class GraphicalBoard : GodotObject
     {
-        public Dictionary<BoardPos, VisualChessPiece> VisualPieceMap { get; set; }
+        private VisualChessPiece[,] _visBoard = new VisualChessPiece[8,8];
 
         private Node2D _rootPieceNode;
         private PackedScene _pieceTemplate;
 
         public GraphicalBoard(Node2D rootPieceNode)
         {
-            VisualPieceMap = new Dictionary<BoardPos, VisualChessPiece>();
             _rootPieceNode = rootPieceNode;
             _pieceTemplate = ResourceLoader.Load<PackedScene>("res://TemplateScenes/base_chess_piece.tscn");
         }
@@ -29,18 +28,17 @@ namespace ChessGame.Scripts.ChessBoard.Boards
             var gridMargin = ChessConstants.BoardMargin;
 
             newPiece.Position = GridMathHelpers.ConvertBoardCoordsToWorld(piecePos, tileSize, gridMargin);
-            
-            VisualPieceMap.Add(piecePos, newPiece);
+
+            _visBoard[piecePos.Rank, piecePos.File] = newPiece;
         }
 
         public void RemovePiece(BoardPos piecePos)
         {
-            VisualChessPiece pieceAtPos;
-            VisualPieceMap.TryGetValue(piecePos, out pieceAtPos);
+            VisualChessPiece pieceAtPos = _visBoard[piecePos.Rank, piecePos.File];
 
             if (pieceAtPos != null)
             {
-                VisualPieceMap.Remove(piecePos);
+                _visBoard[piecePos.Rank, piecePos.File] = null;
                 pieceAtPos.QueueFree();
             }
             
@@ -55,10 +53,18 @@ namespace ChessGame.Scripts.ChessBoard.Boards
 
         public void ClearBoard()
         {
-            foreach (var key in VisualPieceMap.Keys)
+            for (int i = 0; i < 8; i++)
             {
-                RemovePiece(key);
+                for (int j = 0; j < 8; j++)
+                {
+                    RemovePiece(new BoardPos(i, j));
+                }
             }
+        }
+
+        public VisualChessPiece GetPiece(BoardPos startingPos)
+        {
+            return _visBoard[startingPos.Rank, startingPos.File];
         }
 
         public static Vector2 CalculateTileCenter(BoardPos boardPos)

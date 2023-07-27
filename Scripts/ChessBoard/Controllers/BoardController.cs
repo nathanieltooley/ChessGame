@@ -71,7 +71,22 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         public List<VisualChessPiece> GetVisualPieces()
         {
-            return _gBoard.VisualPieceMap.Values.ToList();
+            List<VisualChessPiece> pieces = new List<VisualChessPiece>();
+
+            for (int rank = 0; rank < 8; rank++)
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    var piece = _gBoard.GetPiece(new BoardPos(rank, file));
+
+                    if (piece != null)
+                    {
+                        pieces.Add(piece);
+                    }
+                }
+            }
+
+            return pieces;
         }
 
         public List<BoardPos> GetMovesForPiece(BoardPos pos, bool isPlayerMove) 
