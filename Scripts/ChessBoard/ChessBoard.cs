@@ -16,6 +16,7 @@ public partial class ChessBoard : TileMap
 	private bool _isDragging;
 
 	private BoardController _boardController;
+	private GameState _gameState;
 
     [Export]
 	private ChessColor playerColor = ChessColor.White;
@@ -38,11 +39,20 @@ public partial class ChessBoard : TileMap
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
-		_boardController = new BoardController(playerColor, this);
-
+		_gameState = GetNode<GameState>("/root/GameState");
+        _boardController = new BoardController(playerColor, this);
         aiColor = InvertColor(playerColor);
 
-		_boardController.CreateDefaultBoard();
+        switch (_gameState.CurrentGameState)
+		{
+			case ChessState.NormalGame:
+                _boardController.CreateDefaultBoard();
+                break;
+			case ChessState.Test:
+				_boardController.Test();
+				break;
+		}
+		
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
