@@ -1,6 +1,7 @@
 ﻿using ChessGame.Scripts.ChessBoard.Boards;
 using ChessGame.Scripts.DataTypes;
 using Godot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -100,6 +101,11 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             return GraphicalBoard.CalculateTileCenter(pos);
         }
 
+        public void Test()
+        {
+            AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Queen });
+        }
+
         private PieceInfo[,] GetBoardFromFEN(string fenString)
         {
             PieceInfo[,] newBoard = FEN.Decrypt(fenString, _whitePieces, _blackPieces);
@@ -119,5 +125,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                 }
             }
         }
+
+        
     }
 }
