@@ -103,7 +103,8 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         public void Test()
         {
-            AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Queen });
+           // AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Queen });
+           AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Knight });
         }
 
         private PieceInfo[,] GetBoardFromFEN(string fenString)

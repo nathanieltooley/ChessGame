@@ -108,7 +108,8 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                 Vector2I absBlockDistance = blockDistance.Abs();
 
                 // if this move is closer to the piece than the block
-                if (absStartDistance < absBlockDistance)
+                // or if knight
+                if (absStartDistance < absBlockDistance || _piece.PieceId == ChessPieceId.Knight)
                 {
                     capableMoves.Add(move);
                 }
