@@ -18,4 +18,10 @@ namespace ChessGame.Scripts
         White = 0,
         Black = 1,
     }
+
+    public enum ChessState
+    {
+        NormalGame = 0,
+        Test = 1
+    }
 }
