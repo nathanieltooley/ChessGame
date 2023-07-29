@@ -93,6 +93,9 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                     continue;
                 }
 
+                // r0 f7
+
+                // these distances are in vector form rather than a magnitude
                 Vector2I distanceFromStartingTile = GetDistanceFromStart(startingRank, startingFile, rank, file);
                 Vector2I line = GetLineMoveIsOn(startingRank, startingFile, rank, file);
 
@@ -101,7 +104,11 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
                 Vector2I blockDistance = GetDistanceFromStart(startingRank, startingFile, block.X, block.Y);
 
-                if (distanceFromStartingTile > blockDistance)
+                Vector2I absStartDistance = distanceFromStartingTile.Abs();
+                Vector2I absBlockDistance = blockDistance.Abs();
+
+                // if this move is closer to the piece than the block
+                if (absStartDistance < absBlockDistance)
                 {
                     capableMoves.Add(move);
                 }
@@ -181,75 +188,75 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
         {
             if (startingRank == 1 && !_isPlayer)
             {
-                moves.Add(new BoardPos(startingRank + MoveDownBoard(1), startingFile));
-                moves.Add(new BoardPos(startingRank + MoveDownBoard(2), startingFile));
+                AddValidMove(startingRank + MoveDownBoard(1), startingFile, moves);
+                AddValidMove(startingRank + MoveDownBoard(2), startingFile, moves);
             } else if (!_isPlayer)
             {
-                moves.Add(new BoardPos(startingRank + MoveDownBoard(1), startingFile));
+                AddValidMove(startingRank + MoveDownBoard(1), startingFile, moves); 
             }
 
             if (startingRank == 6 && _isPlayer)
             {
-                moves.Add(new BoardPos(startingRank + MoveUpBoard(1), startingFile));
-                moves.Add(new BoardPos(startingRank + MoveUpBoard(2), startingFile));
+                AddValidMove(startingRank + MoveUpBoard(1), startingFile, moves);
+                AddValidMove(startingRank + MoveUpBoard(2), startingFile, moves);
             } else if (_isPlayer)
             {
-                moves.Add(new BoardPos(startingRank + MoveUpBoard(1), startingFile));
+                AddValidMove(startingRank + MoveUpBoard(1), startingFile, moves);
             }
         }
 
         private void RookMoves(int startingRank, int startingFile, List<BoardPos> moves)
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 1; i < 9; i++)
             {
                 // Up
-                moves.Add(new BoardPos(startingRank + MoveUpBoard(i), startingFile));
+                AddValidMove(startingRank + MoveUpBoard(i), startingFile, moves);
 
                 // Down
-                moves.Add(new BoardPos(startingRank + MoveDownBoard(i), startingFile));
+                AddValidMove(startingRank + MoveDownBoard(i), startingFile, moves);
 
                 // Left
-                moves.Add(new BoardPos(startingRank, startingFile + MoveLeft(i)));
+                AddValidMove(startingRank, startingFile + MoveLeft(i), moves);
 
                 // Right
-                moves.Add(new BoardPos(startingRank, startingFile + MoveRight(i)));
+                AddValidMove(startingRank, startingFile + MoveRight(i), moves);
             }
         }
 
         private void KnightMoves(int startingRank, int startingFile, List<BoardPos> moves)
         {
             // Up
-            moves.Add(new BoardPos(startingRank + MoveUpBoard(3), startingFile + MoveLeft(1)));
-            moves.Add(new BoardPos(startingRank + MoveUpBoard(3), startingFile + MoveRight(1)));
+            AddValidMove(startingRank + MoveUpBoard(3), startingFile + MoveLeft(1), moves);
+            AddValidMove(startingRank + MoveUpBoard(3), startingFile + MoveRight(1), moves);
 
             // Down
-            moves.Add(new BoardPos(startingRank + MoveDownBoard(3), startingFile + MoveLeft(1)));
-            moves.Add(new BoardPos(startingRank + MoveDownBoard(3), startingFile + MoveRight(1)));
+            AddValidMove(startingRank + MoveDownBoard(3), startingFile + MoveLeft(1), moves);
+            AddValidMove(startingRank + MoveDownBoard(3), startingFile + MoveRight(1), moves);
 
             // Right
-            moves.Add(new BoardPos(startingRank + MoveUpBoard(1), startingFile + MoveRight(3)));
-            moves.Add(new BoardPos(startingRank + MoveDownBoard(1), startingFile + MoveRight(3)));
+            AddValidMove(startingRank + MoveUpBoard(1), startingFile + MoveRight(3), moves);
+            AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveRight(3), moves);
 
             // Left
-            moves.Add(new BoardPos(startingRank + MoveUpBoard(1), startingFile + MoveLeft(3)));
-            moves.Add(new BoardPos(startingRank + MoveDownBoard(1), startingFile + MoveLeft(3)));
+            AddValidMove(startingRank + MoveUpBoard(1), startingFile + MoveLeft(3), moves);
+            AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveLeft(3), moves);
         }
 
         private void BishopMoves(int startingRank, int startingFile, List<BoardPos> moves)
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 1; i < 9; i++)
             {
                 // Diagonal NW
-                moves.Add(new BoardPos(startingRank + MoveUpBoard(i), startingFile + MoveLeft(i)));
+                AddValidMove(startingRank + MoveUpBoard(i), startingFile + MoveLeft(i), moves);
 
                 // Diagonal NE
-                moves.Add(new BoardPos(startingRank + MoveUpBoard(i), startingFile + MoveRight(i)));
+                AddValidMove(startingRank + MoveUpBoard(i), startingFile + MoveRight(i), moves);
 
                 // Diagonal SW
-                moves.Add(new BoardPos(startingRank + MoveDownBoard(i), startingFile + MoveLeft(i)));
+                AddValidMove(startingRank + MoveDownBoard(i), startingFile + MoveLeft(i), moves);
 
                 // Diagonal SW
-                moves.Add(new BoardPos(startingRank + MoveDownBoard(i), startingFile + MoveRight(i)));
+                AddValidMove(startingRank + MoveDownBoard(i), startingFile + MoveRight(i), moves);
             }
         }
 
@@ -265,22 +272,22 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             // Add castling at some point
 
             // Up
-            moves.Add(new BoardPos(startingRank + MoveUpBoard(1), startingFile));
+            AddValidMove(startingRank + MoveUpBoard(1), startingFile, moves);
             // Down
-            moves.Add(new BoardPos(startingRank + MoveDownBoard(1), startingFile));
+            AddValidMove(startingRank + MoveDownBoard(1), startingFile, moves);
             // Left
-            moves.Add(new BoardPos(startingRank, startingFile + MoveLeft(1)));
+            AddValidMove(startingRank, startingFile + MoveLeft(1), moves);
             // Right    
-            moves.Add(new BoardPos(startingRank, startingFile + MoveRight(1)));
+            AddValidMove(startingRank, startingFile + MoveRight(1), moves);
 
             // NW
-            moves.Add(new BoardPos(startingRank + MoveUpBoard(1), startingFile + MoveLeft(1)));
+            AddValidMove(startingRank + MoveUpBoard(1), startingFile + MoveLeft(1), moves);
             // NE
-            moves.Add(new BoardPos(startingRank + MoveUpBoard(1), startingFile + MoveRight(1)));
+            AddValidMove(startingRank + MoveUpBoard(1), startingFile + MoveRight(1), moves);
             // SW
-            moves.Add(new BoardPos(startingRank + MoveDownBoard(1), startingFile + MoveLeft(1)));
+            AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveLeft(1), moves);
             // SE
-            moves.Add(new BoardPos(startingRank + MoveDownBoard(1), startingFile + MoveRight(1)));
+            AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveRight(1), moves);
 
         }
 
@@ -327,6 +334,17 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             resultVec.Y = fileMag == 0 ? 0 : (distance.Y / fileMag);
 
             return resultVec;
+        }
+
+        private void AddValidMove(int rank, int file, List<BoardPos> moves)
+        {
+            if (rank < 0 || rank > 7 || file < 0 || file > 7)
+            {
+                return;
+            } else
+            {
+                moves.Add(new BoardPos(rank, file));
+            }
         }
     }
 }
