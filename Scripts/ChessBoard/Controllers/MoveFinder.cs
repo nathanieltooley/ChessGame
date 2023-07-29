@@ -226,20 +226,20 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
         private void KnightMoves(int startingRank, int startingFile, List<BoardPos> moves)
         {
             // Up
-            AddValidMove(startingRank + MoveUpBoard(3), startingFile + MoveLeft(1), moves);
-            AddValidMove(startingRank + MoveUpBoard(3), startingFile + MoveRight(1), moves);
+            AddValidMove(startingRank + MoveUpBoard(2), startingFile + MoveLeft(1), moves);
+            AddValidMove(startingRank + MoveUpBoard(2), startingFile + MoveRight(1), moves);
 
             // Down
-            AddValidMove(startingRank + MoveDownBoard(3), startingFile + MoveLeft(1), moves);
-            AddValidMove(startingRank + MoveDownBoard(3), startingFile + MoveRight(1), moves);
+            AddValidMove(startingRank + MoveDownBoard(2), startingFile + MoveLeft(1), moves);
+            AddValidMove(startingRank + MoveDownBoard(2), startingFile + MoveRight(1), moves);
 
             // Right
-            AddValidMove(startingRank + MoveUpBoard(1), startingFile + MoveRight(3), moves);
-            AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveRight(3), moves);
+            AddValidMove(startingRank + MoveUpBoard(1), startingFile + MoveRight(2), moves);
+            AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveRight(2), moves);
 
             // Left
-            AddValidMove(startingRank + MoveUpBoard(1), startingFile + MoveLeft(3), moves);
-            AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveLeft(3), moves);
+            AddValidMove(startingRank + MoveUpBoard(1), startingFile + MoveLeft(2), moves);
+            AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveLeft(2), moves);
         }
 
         private void BishopMoves(int startingRank, int startingFile, List<BoardPos> moves)
