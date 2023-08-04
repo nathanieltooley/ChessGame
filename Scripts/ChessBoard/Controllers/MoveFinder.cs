@@ -11,6 +11,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
         private LogicalBoard _board;
         private PieceInfo _piece;
         private BoardPos _piecePos;
+        private ChessColor _pieceMoverColor;
         private bool _isPlayer;
 
         private List<BoardPos> _capableMoves;
@@ -20,12 +21,13 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             
         }
 
-        public MoveFinder(LogicalBoard board, PieceInfo piece, BoardPos piecePos, bool isPlayer)
+        public MoveFinder(LogicalBoard board, PieceInfo piece, BoardPos piecePos, bool isPlayer, ChessColor pieceMoverColor)
         {
             _board = board;
             _piece = piece;
             _piecePos = piecePos;
             _isPlayer = isPlayer;
+            _pieceMoverColor = pieceMoverColor;
         }
 
         public static bool IsMovePossible(BoardPos targetPos, List<BoardPos> capableMoves)
@@ -110,6 +112,12 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                 // if this move is closer to the piece than the block
                 // or if knight
                 if (absStartDistance < absBlockDistance || _piece.PieceId == ChessPieceId.Knight)
+                {
+                    capableMoves.Add(move);
+                }
+
+                // Piece capture check
+                if (pieceAtTarget.Color != _pieceMoverColor && (pos.Rank == block.X && pos.File == block.Y))
                 {
                     capableMoves.Add(move);
                 }
