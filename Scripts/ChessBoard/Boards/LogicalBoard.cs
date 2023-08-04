@@ -77,7 +77,9 @@ namespace ChessGame.Scripts.ChessBoard
 
             if (piece.CachedMoves == null || piece.CachedMoves.Count == 0)
             {
-                MoveFinder mf = new MoveFinder(this, piece, pos, isPlayerMove);
+
+
+                MoveFinder mf = new MoveFinder(this, piece, pos, isPlayerMove, isPlayerMove ? ChessColor.White : ChessColor.Black);
                 List<BoardPos> moves = mf.GetCapableMoves(pos.Rank, pos.File, mf.GetMovesAssumingEmptyBoard());
                 return moves;
             } else
