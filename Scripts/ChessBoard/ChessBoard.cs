@@ -18,6 +18,8 @@ public partial class ChessBoard : TileMap
 
     [Signal]
     public delegate void UpdateMousePosEventHandler(Vector2 mousePos, BoardPos gridPos, PieceInfo piece);
+	[Signal]
+	public delegate void UpdateBoardStateEventHandler(string fenString);
 
     private ChessColor InvertColor(ChessColor color)
 	{
