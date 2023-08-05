@@ -2,7 +2,7 @@ using ChessGame.Scripts;
 using ChessGame.Scripts.DataTypes;
 using Godot;
 
-public partial class DebugMenu : Control
+public partial class DebugMenuLogic : Control
 {
 	private VBoxContainer _debugContainer;
 
@@ -12,17 +12,21 @@ public partial class DebugMenu : Control
 	private Label _pieceColorLabel;
 	private Label _pieceLabel;
 
+	private Label _fenLabel;
+
 	public override void _Ready()
 	{
-		_debugContainer = GetNode<VBoxContainer>("DebugTextContainer");
+		_debugContainer = GetNode<VBoxContainer>("DebugMenuContainer/DebugTextContainer");
 
 		_mousePosLabel = _debugContainer.GetNode<Label>("MousePosLabel");
 		_mousePosGridLabel = _debugContainer.GetNode<Label>("MousePosGridLabel");
 		_pieceColorLabel = _debugContainer.GetNode<Label>("ChessPieceColorLabel");
 		_pieceLabel = _debugContainer.GetNode<Label>("ChessPieceLabel");
+
+		_fenLabel = GetNode<Label>("FENDebug");
 	}
 
-	public void OnUpdateMousePos(Vector2 mousePos, BoardPos boardPos, PieceInfo pieceInfo)
+	public void OnChessBoardUpdateMousePos(Vector2 mousePos, BoardPos boardPos, PieceInfo piece)
 	{
 		_mousePosLabel.Text = $"MousePos: {mousePos}";
 
@@ -36,8 +40,8 @@ public partial class DebugMenu : Control
 		{
             _mousePosGridLabel.Text = $"Rank: {boardPos.Rank}, File: {boardPos.File}";
 
-			_pieceColorLabel.Text = $"Piece Color: {pieceInfo.Color}";
-			_pieceLabel.Text = $"Piece: {pieceInfo.PieceId}";
+			_pieceColorLabel.Text = $"Piece Color: {piece.Color}";
+			_pieceLabel.Text = $"Piece: {piece.PieceId}";
 
 		}
     }
