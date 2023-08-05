@@ -88,6 +88,11 @@ namespace ChessGame.Scripts.ChessBoard
             }
         }
 
+        public PieceInfo[,] GetBoard()
+        {
+            return _board;
+        }
+
         private void CacheMoves(BoardPos boardPos, List<BoardPos> moves)
         {
             PieceInfo pieceAtPos = GetPieceInfoAtPos(boardPos);
