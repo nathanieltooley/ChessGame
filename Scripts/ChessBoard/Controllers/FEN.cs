@@ -1,18 +1,83 @@
 ﻿using ChessGame.Scripts.DataTypes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessGame.Scripts.ChessBoard.Controllers
 {
     public static class FEN
     {
 
-        public static void Encrypt()
+        private static Dictionary<ChessPieceId, char> pieceIdChars = new Dictionary<ChessPieceId, char>
         {
+            { ChessPieceId.Pawn, 'p' },
+            { ChessPieceId.Rook, 'r' },
+            { ChessPieceId.Bishop, 'b' },
+            { ChessPieceId.Knight, 'n' },
+            { ChessPieceId.Queen, 'q' },
+            { ChessPieceId.King, 'k' }
+        };
 
+        private static Dictionary<char, ChessPieceId> charToPieceMap = new Dictionary<char, ChessPieceId>
+        {
+            { 'p', ChessPieceId.Pawn },
+            { 'r', ChessPieceId.Rook },
+            { 'b', ChessPieceId.Bishop },
+            { 'n', ChessPieceId.Knight },
+            { 'q', ChessPieceId.Queen },
+            { 'k', ChessPieceId.King }
+        };
+
+        public static string Encrypt(PieceInfo[,] board)
+        {
+            string fenString = "";
+            int emptyCount = 0;
+
+            for (int rank = 0; rank < 8; rank++)
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    PieceInfo currentTile = board[rank, file];
+                    char pieceChar = 'z'; // can't have a null char variable nor can it be empty so z is our 'empty' char
+
+                    if (currentTile.PieceId == ChessPieceId.Empty)
+                    {
+                        emptyCount++;
+                    }
+
+                    if (currentTile.PieceId != ChessPieceId.Empty)
+                    {
+                        if (emptyCount > 0)
+                        {
+                            fenString += emptyCount.ToString();
+                            emptyCount = 0;
+                        }
+
+                        pieceChar = GetCharFromPieceId(currentTile.PieceId);
+
+                        if (currentTile.Color == ChessColor.White)
+                        {
+                            pieceChar = char.ToUpper(pieceChar);
+                        }
+                    }
+
+                    if (pieceChar != 'z')
+                    {
+                        fenString += pieceChar;
+                    }
+                }
+
+                if (emptyCount > 0)
+                {
+                    fenString += emptyCount.ToString();
+                    emptyCount = 0;
+                }
+
+                if (rank != 7)
+                {
+                    fenString += "/";
+                }
+            }
+
+            return fenString;
         }
 
         public static PieceInfo[,] Decrypt(string fenString, List<PieceInfo> whitePieceOut, List<PieceInfo> blackPieceOut)
@@ -112,20 +177,20 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
         private static ChessPieceId GetPieceIdFromChar(char c)
         {
             char lower = char.ToLower(c);
-            Dictionary<char, ChessPieceId> charToPieceMap = new Dictionary<char, ChessPieceId>
-            {
-                { 'p', ChessPieceId.Pawn },
-                { 'r', ChessPieceId.Rook },
-                { 'b', ChessPieceId.Bishop },
-                { 'n', ChessPieceId.Knight },
-                { 'q', ChessPieceId.Queen },
-                { 'k', ChessPieceId.King }
-            };
 
             ChessPieceId pieceId; 
             charToPieceMap.TryGetValue(lower, out pieceId);
 
             return pieceId;
+        }
+
+        private static char GetCharFromPieceId(ChessPieceId pieceId)
+        {
+            char lower;
+
+            pieceIdChars.TryGetValue(pieceId, out lower);
+
+            return lower;
         }
     }
 }
