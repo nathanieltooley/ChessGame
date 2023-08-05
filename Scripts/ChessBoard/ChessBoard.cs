@@ -36,7 +36,7 @@ public partial class ChessBoard : TileMap
     public override void _Ready()
 	{
 		_gameState = GetNode<GameState>("/root/GameState");
-        _boardController = new BoardController(playerColor, this);
+        _boardController = new BoardController(playerColor, this, EmitFenStringSignal);
 		_playerMovementController = new PlayerMovementController(playerColor, _boardController, ToggleHighlightCell, ClearLayer, EmitInputUpdateSignal);
 
         aiColor = InvertColor(playerColor);
@@ -88,5 +88,10 @@ public partial class ChessBoard : TileMap
 	private void EmitInputUpdateSignal(Vector2 mousePos, BoardPos pos, PieceInfo pInfo)
 	{
 		EmitSignal(SignalName.UpdateMousePos, mousePos, pos, pInfo);
+	}
+
+	private void EmitFenStringSignal(string fenString)
+	{
+		EmitSignal(SignalName.UpdateBoardState, fenString);
 	}
 }

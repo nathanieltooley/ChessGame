@@ -45,4 +45,9 @@ public partial class DebugMenuLogic : Control
 
 		}
     }
+
+	public void OnUpdateBoardState(string newFen)
+	{
+		_fenLabel.Text = $"Current FEN: {newFen}";
+	}
 }

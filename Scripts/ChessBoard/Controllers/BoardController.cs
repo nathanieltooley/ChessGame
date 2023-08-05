@@ -1,5 +1,6 @@
 ﻿using ChessGame.Scripts.ChessBoard.Boards;
 using ChessGame.Scripts.DataTypes;
+using ChessGame.Scripts.Helpers;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -18,13 +19,15 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         private ChessColor _playerColor;
         private static string _startingFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        private Action<string> _emitBoardStateUpdate;
 
-        public BoardController(ChessColor playerColor, Node2D rootPieceNode)
+        public BoardController(ChessColor playerColor, Node2D rootPieceNode, Action<string> boardStateUpdate)
         {
             _playerColor = playerColor;
 
             _logicBoard = new LogicalBoard();
             _gBoard = new GraphicalBoard(rootPieceNode);
+            _emitBoardStateUpdate = boardStateUpdate;
         }
 
         public void CreateDefaultBoard()
@@ -103,8 +106,11 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         public void Test()
         {
-           // AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Queen });
-           AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Knight });
+            // AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Queen });
+            // AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Knight });
+
+            //LogHelpers.DebugLog();
+            _emitBoardStateUpdate(FEN.Encrypt(_logicBoard.GetBoard()));
         }
 
         private PieceInfo[,] GetBoardFromFEN(string fenString)
