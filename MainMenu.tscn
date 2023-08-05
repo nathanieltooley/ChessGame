@@ -13,12 +13,12 @@ script = ExtResource("1_svoc1")
 
 [node name="MainMenu" type="Control" parent="."]
 anchors_preset = 0
-offset_right = 900.0
+offset_right = 1198.0
 offset_bottom = 900.0
 
 [node name="PanelContainer" type="PanelContainer" parent="MainMenu"]
 layout_mode = 2
-offset_right = 900.0
+offset_right = 1202.0
 offset_bottom = 900.0
 
 [node name="CenterContainer" type="CenterContainer" parent="MainMenu/PanelContainer"]

@@ -2,9 +2,50 @@
 
 [ext_resource type="TileSet" uid="uid://c7ukin0acqjbo" path="res://Assets/BoardTiles/chess_board_tileset.tres" id="1_i0ywi"]
 [ext_resource type="Script" path="res://Scripts/ChessBoard/ChessBoard.cs" id="2_5qeit"]
-[ext_resource type="Script" path="res://Scripts/UI/DebugMenu.cs" id="4_1htrv"]
+[ext_resource type="Script" path="res://Scripts/UI/DebugMenuLogic.cs" id="3_tmi2x"]
 
 [node name="Main" type="Node2D"]
+
+[node name="MainGameGUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1200.0
+offset_bottom = 897.0
+
+[node name="BG" type="PanelContainer" parent="MainGameGUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MainGameGUI"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.613
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_top = 200
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 200
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainGameGUI/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 200
+
+[node name="Label" type="Label" parent="MainGameGUI/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 100
+text = "5:00"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="MainGameGUI/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 100
+text = "5:00"
+horizontal_alignment = 1
 
 [node name="ChessBoard" type="TileMap" parent="."]
 tile_set = ExtResource("1_i0ywi")
@@ -20,38 +61,53 @@ layer_1/z_index = 0
 layer_1/tile_data = PackedInt32Array()
 script = ExtResource("2_5qeit")
 
-[node name="DebugMenu" type="Control" parent="."]
+[node name="DebugMenuLogic" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 39.0
-offset_bottom = 41.0
-script = ExtResource("4_1htrv")
+offset_right = 1199.0
+offset_bottom = 894.0
+script = ExtResource("3_tmi2x")
 
-[node name="DebugTextContainer" type="VBoxContainer" parent="DebugMenu"]
+[node name="FENDebug" type="Label" parent="DebugMenuLogic"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.158
+anchor_top = 0.098
+anchor_right = 0.158
+anchor_bottom = 0.098
+offset_left = 10.158
+offset_top = 55.294
+offset_right = 444.158
+offset_bottom = 81.294
+text = "Current Board State: "
+
+[node name="DebugMenuContainer" type="MarginContainer" parent="DebugMenuLogic"]
 layout_mode = 2
-offset_left = 639.0
-offset_top = 9.0
-offset_right = 882.0
-offset_bottom = 189.0
+offset_right = 454.0
+offset_bottom = 136.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="MousePosLabel" type="Label" parent="DebugMenu/DebugTextContainer"]
+[node name="DebugTextContainer" type="VBoxContainer" parent="DebugMenuLogic/DebugMenuContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="MousePosLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
 layout_mode = 2
 text = "MousePos: (0, 0)"
-horizontal_alignment = 2
 
-[node name="MousePosGridLabel" type="Label" parent="DebugMenu/DebugTextContainer"]
+[node name="MousePosGridLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
 layout_mode = 2
 text = "MousePosGrid: (0, 0)"
-horizontal_alignment = 2
 
-[node name="ChessPieceColorLabel" type="Label" parent="DebugMenu/DebugTextContainer"]
+[node name="ChessPieceColorLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
 layout_mode = 2
 text = "Piece Color: "
-horizontal_alignment = 2
 
-[node name="ChessPieceLabel" type="Label" parent="DebugMenu/DebugTextContainer"]
+[node name="ChessPieceLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
 layout_mode = 2
 text = "Piece: "
-horizontal_alignment = 2
 
-[connection signal="UpdateMousePos" from="ChessBoard" to="DebugMenu" method="OnUpdateMousePos"]
+[connection signal="UpdateMousePos" from="ChessBoard" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]
