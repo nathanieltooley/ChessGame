@@ -45,12 +45,16 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
         {
             _gBoard.AddPiece(pos, piece);
             _logicBoard.AddPiece(pos, piece);
+
+            SendFENUpdate();
         }
 
         public void RemovePiece(BoardPos pos)
         {
             _gBoard.RemovePiece(pos);
             _logicBoard.RemovePiece(pos);
+
+            SendFENUpdate();
         }
 
         public bool MovePiece(BoardPos pos, BoardPos targetPos)
@@ -63,6 +67,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             if (success)
             {
                 _gBoard.MovePiece(pos, movingPieceInfo, targetPos);
+                SendFENUpdate();
             }
 
             return success;
@@ -106,11 +111,11 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         public void Test()
         {
-            // AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Queen });
+            AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Queen });
             // AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Knight });
 
             //LogHelpers.DebugLog();
-            _emitBoardStateUpdate(FEN.Encrypt(_logicBoard.GetBoard()));
+            
         }
 
         private PieceInfo[,] GetBoardFromFEN(string fenString)
@@ -131,6 +136,13 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                     AddPiece(new BoardPos(rank, file), board[rank, file]);
                 }
             }
+
+            SendFENUpdate();
+        }
+
+        private void SendFENUpdate()
+        {
+            _emitBoardStateUpdate(FEN.Encrypt(_logicBoard.GetBoard()));
         }
 
         
