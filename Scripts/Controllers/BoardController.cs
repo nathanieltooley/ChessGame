@@ -1,6 +1,7 @@
 ﻿using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.ChessBoard.Boards;
 using ChessGame.Scripts.DataTypes;
+using ChessGame.Scripts.Helpers;
 using Godot;
 using System.Collections.Generic;
 
@@ -23,10 +24,11 @@ namespace ChessGame.Scripts.Controllers
 
         public override void _Ready()
         {
-            _gameInfoService = GetNode<GameInfoService>("/root/Main/GameInfoService");
+            _gameInfoService = ServiceHelpers.GetGameInfoService();
+            _timerService = ServiceHelpers.GetTimerService();
+            _turnService = ServiceHelpers.GetTurnService();
+
             _gBoard = GetNode<GraphicalBoard>("/root/Main/GraphicalBoard");
-            _timerService = GetNode<TimerService>("/root/Main/TimerService");
-            _turnService = GetNode<TurnService>("/root/Main/TurnService");
 
             _playerColor = _gameInfoService.PlayerSideColor;
 

@@ -27,7 +27,7 @@ namespace ChessGame.Scripts.Controllers
 
         public override void _Ready()
         {
-            GameInfoService gameInfoService = GetNode<GameInfoService>("/root/Main/GameInfoService");
+            GameInfoService gameInfoService = ServiceHelpers.GetGameInfoService();
 
             _playerColor = gameInfoService.PlayerSideColor;
             _boardController = GetNode<BoardController>("/root/Main/BoardController");
