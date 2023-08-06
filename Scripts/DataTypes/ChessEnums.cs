@@ -24,4 +24,10 @@ namespace ChessGame.Scripts
         NormalGame = 0,
         Test = 1
     }
+
+    public enum ChessSide
+    {
+        Enemy = 0,
+        Player = 1,
+    }
 }

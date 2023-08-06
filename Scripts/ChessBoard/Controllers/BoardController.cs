@@ -12,7 +12,8 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
     {
         private GraphicalBoard _gBoard { get; set; }
         private LogicalBoard _logicBoard { get; set; }
-        private PlayerMovementController PlayerMovement { get; set; }
+
+        private Func<ChessColor> _getCurrentTurn;
 
         private List<PieceInfo> _whitePieces = new List<PieceInfo>();
         private List<PieceInfo> _blackPieces = new List<PieceInfo>();
@@ -21,13 +22,15 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
         private static string _startingFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         private Action<string> _emitBoardStateUpdate;
 
-        public BoardController(ChessColor playerColor, Node2D rootPieceNode, Action<string> boardStateUpdate)
+        public BoardController(ChessColor playerColor, Node2D rootPieceNode, Action<string> boardStateUpdate, Func<ChessColor> getCurrentTurn)
         {
             _playerColor = playerColor;
 
             _logicBoard = new LogicalBoard();
             _gBoard = new GraphicalBoard(rootPieceNode);
             _emitBoardStateUpdate = boardStateUpdate;
+            _getCurrentTurn = getCurrentTurn;
+
         }
 
         public void CreateDefaultBoard()

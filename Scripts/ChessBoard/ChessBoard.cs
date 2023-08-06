@@ -6,7 +6,7 @@ using Godot;
 
 public partial class ChessBoard : TileMap
 {
-	private Vector2I _gridMargin = new Vector2I(3, 3);
+	private ChessColor _currentTurn = ChessColor.White;
 
 	private BoardController _boardController;
 	private GameState _gameState;
@@ -16,10 +16,21 @@ public partial class ChessBoard : TileMap
 	private ChessColor playerColor = ChessColor.White;
     private ChessColor aiColor = ChessColor.Black;
 
+	private Color _whiteColor = Color.FromHtml("f1dfc4");
+	private Color _blackColor = Color.FromHtml("3c3934");
+
     [Signal]
     public delegate void UpdateMousePosEventHandler(Vector2 mousePos, BoardPos gridPos, PieceInfo piece);
 	[Signal]
 	public delegate void UpdateBoardStateEventHandler(string fenString);
+
+	// Timer Signals
+	[Signal]
+	public delegate void UpdateSideTimeEventHandler(ChessSide side, float time);
+	[Signal]
+	public delegate void SetTimerColorEventHandler(ChessSide side, Color color);
+	[Signal]
+	public delegate void ToggleTimerEventHandler(ChessSide side);
 
     private ChessColor InvertColor(ChessColor color)
 	{
@@ -36,10 +47,13 @@ public partial class ChessBoard : TileMap
     public override void _Ready()
 	{
 		_gameState = GetNode<GameState>("/root/GameState");
-        _boardController = new BoardController(playerColor, this, EmitFenStringSignal);
+        _boardController = new BoardController(playerColor, this, EmitFenStringSignal, GetCurrentTurn);
 		_playerMovementController = new PlayerMovementController(playerColor, _boardController, ToggleHighlightCell, ClearLayer, EmitInputUpdateSignal);
 
         aiColor = InvertColor(playerColor);
+
+		EmitTimerColorUpdateSignal(ChessSide.Enemy, aiColor);
+		EmitTimerColorUpdateSignal(ChessSide.Player, playerColor);
 
         switch (_gameState.CurrentGameState)
 		{
@@ -65,6 +79,20 @@ public partial class ChessBoard : TileMap
     {
         _playerMovementController.InputHandler(@event);
     }
+
+    public void SwitchTurn()
+    {
+        if (_currentTurn == ChessColor.White)
+        {
+            _currentTurn = ChessColor.Black;
+        }
+        else
+        {
+            _currentTurn = ChessColor.White;
+        }
+    }
+
+	public ChessColor GetCurrentTurn() { return _currentTurn; }
 
     private bool IsCellHighlighted(Vector2I gridPos)
 	{
@@ -93,5 +121,12 @@ public partial class ChessBoard : TileMap
 	private void EmitFenStringSignal(string fenString)
 	{
 		EmitSignal(SignalName.UpdateBoardState, fenString);
+	}
+
+	private void EmitTimerColorUpdateSignal(ChessSide side, ChessColor color)
+	{
+		Color hexColor = (color == ChessColor.White) ? _whiteColor : _blackColor;
+
+		EmitSignal(SignalName.SetTimerColor, (int)side, hexColor);
 	}
 }

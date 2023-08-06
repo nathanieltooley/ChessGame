@@ -10,4 +10,6 @@ public partial class GameState : Node
 	{
         CurrentGameState = ChessState.NormalGame;
 	}
+
+    
 }
