@@ -13,6 +13,9 @@ public partial class MainGameGUI : Control
 	private Label[] timerMap = new Label[2];
 	private bool[] disabledMap = new bool[2];
 
+	private double _enemyTimerCopy = 5;
+	private double _playerTimerCopy = 5;
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
@@ -57,4 +60,21 @@ public partial class MainGameGUI : Control
 			disabledMap[(int)side] = false;
 		}
     }
+
+	public void OnUpdateTimerTime(ChessSide side, double newTime) 
+	{
+		double inMinutes = (double)newTime / 60;
+		int minutes = (int)Math.Floor(newTime / 60);
+		int seconds = (int)Math.Floor((inMinutes - minutes) * 60);
+
+		if (seconds == 60)
+		{
+			seconds = 0;
+		}
+
+		Label timer = timerMap[(int)side];
+
+		string secondsPrefix = seconds < 10 ? "0" : "";
+		timer.Text = $"{minutes}:{secondsPrefix}{seconds}";
+	}
 }

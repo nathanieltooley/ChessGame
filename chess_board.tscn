@@ -124,3 +124,4 @@ script = ExtResource("2_5qeit")
 [connection signal="ToggleTimer" from="ChessBoard" to="MainGameGUI" method="OnToggleTimer"]
 [connection signal="UpdateBoardState" from="ChessBoard" to="DebugMenuLogic" method="OnUpdateBoardState"]
 [connection signal="UpdateMousePos" from="ChessBoard" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]
+[connection signal="UpdateSideTime" from="ChessBoard" to="MainGameGUI" method="OnUpdateTimerTime"]

@@ -1,9 +1,7 @@
 using ChessGame.Scripts;
 using ChessGame.Scripts.ChessBoard.Controllers;
 using ChessGame.Scripts.DataTypes;
-using ChessGame.Scripts.Helpers;
 using Godot;
-using System.Collections.Generic;
 
 public partial class ChessBoard : TileMap
 {
@@ -18,10 +16,11 @@ public partial class ChessBoard : TileMap
 	private ChessColor playerColor = ChessColor.White;
     private ChessColor aiColor = ChessColor.Black;
 
-	private Dictionary<ChessSide, ChessColor> sideColors;
-
 	private Color _whiteColor = Color.FromHtml("f1dfc4");
 	private Color _blackColor = Color.FromHtml("3c3934");
+
+	private double playerTimer;
+	private double enemyTimer;
 
     [Signal]
     public delegate void UpdateMousePosEventHandler(Vector2 mousePos, BoardPos gridPos, PieceInfo piece);
@@ -30,7 +29,7 @@ public partial class ChessBoard : TileMap
 
 	// Timer Signals
 	[Signal]
-	public delegate void UpdateSideTimeEventHandler(ChessSide side, float time);
+	public delegate void UpdateSideTimeEventHandler(ChessSide side, double time);
 	[Signal]
 	public delegate void SetTimerColorEventHandler(ChessSide side, Color color);
 	[Signal]
@@ -56,9 +55,11 @@ public partial class ChessBoard : TileMap
 
         aiColor = InvertColor(playerColor);
 
+		// Init Timer BG Colors
 		EmitTimerColorUpdateSignal(ChessSide.Enemy, aiColor);
 		EmitTimerColorUpdateSignal(ChessSide.Player, playerColor);
 
+		// Setup Timers and Turn tracking
 		if (playerColor == _currentTurn)
 		{
 			EmitTimerToggleDisableSignal(ChessSide.Enemy);
@@ -69,11 +70,10 @@ public partial class ChessBoard : TileMap
 			_currentTurnSide = ChessSide.Enemy;
 		}
 
-		sideColors = new Dictionary<ChessSide, ChessColor>
-		{
-			{ ChessSide.Player, playerColor },
-			{ ChessSide.Enemy, aiColor },
-		};
+		double startingTime = 300;
+
+		playerTimer = startingTime;
+		enemyTimer = startingTime;
 
         switch (_gameState.CurrentGameState)
 		{
@@ -93,6 +93,8 @@ public partial class ChessBoard : TileMap
         {
             _playerMovementController.PieceBeingDragged.Position = GetViewport().GetMousePosition();
         }
+
+		UpdateTimer(delta);
     }
 
     public override void _Input(InputEvent @event)
@@ -154,6 +156,19 @@ public partial class ChessBoard : TileMap
 		}
     }
 
+	private void UpdateTimer(double delta)
+	{
+		if (_currentTurnSide == ChessSide.Player)
+		{
+			playerTimer -= delta;
+			EmitTimerUpdateTimeSignal(_currentTurnSide, playerTimer);
+		} else
+		{
+			enemyTimer -= delta;
+            EmitTimerUpdateTimeSignal(_currentTurnSide, enemyTimer);
+        }
+    }
+
 	private void EmitInputUpdateSignal(Vector2 mousePos, BoardPos pos, PieceInfo pInfo)
 	{
 		EmitSignal(SignalName.UpdateMousePos, mousePos, pos, pInfo);
@@ -174,5 +189,10 @@ public partial class ChessBoard : TileMap
 	private void EmitTimerToggleDisableSignal(ChessSide side)
 	{
 		EmitSignal(SignalName.ToggleTimer, (int)side);
+	}
+
+	private void EmitTimerUpdateTimeSignal(ChessSide side, double newTime)
+	{
+		EmitSignal(SignalName.UpdateSideTime, (int)side, newTime);
 	}
 }
