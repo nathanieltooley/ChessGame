@@ -1,14 +1,12 @@
-﻿using ChessGame.Scripts.ChessBoard.Boards;
+﻿using ChessGame.Scripts.ChessBoard;
+using ChessGame.Scripts.ChessBoard.Boards;
 using ChessGame.Scripts.DataTypes;
-using ChessGame.Scripts.Helpers;
 using Godot;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace ChessGame.Scripts.ChessBoard.Controllers
+namespace ChessGame.Scripts.Controllers
 {
-    public class BoardController
+    public partial class BoardController : Node
     {
         private GraphicalBoard _gBoard { get; set; }
         private LogicalBoard _logicBoard { get; set; }
@@ -18,21 +16,21 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         private ChessColor _playerColor;
         private static string _startingFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-        private Action<string> _emitBoardStateUpdate;
-        private Action _switchTurn;
-        private Func<ChessColor> _getTurn;
 
-        public BoardController(ChessColor playerColor, Node2D rootPieceNode, Action<string> boardStateUpdate, Action switchTurn, Func<ChessColor> getTurn)
+        private TimerService _timerService;
+        private TurnService _turnService;
+        private GameInfoService _gameInfoService;
+
+        public override void _Ready()
         {
-            _playerColor = playerColor;
+            _gameInfoService = GetNode<GameInfoService>("/root/Main/GameInfoService");
+            _gBoard = GetNode<GraphicalBoard>("/root/Main/GraphicalBoard");
+            _timerService = GetNode<TimerService>("/root/Main/TimerService");
+            _turnService = GetNode<TurnService>("/root/Main/TurnService");
+
+            _playerColor = _gameInfoService.PlayerSideColor;
 
             _logicBoard = new LogicalBoard();
-            _gBoard = new GraphicalBoard(rootPieceNode);
-            _emitBoardStateUpdate = boardStateUpdate;
-
-            _switchTurn = switchTurn;
-            _getTurn = getTurn;
-
         }
 
         public void CreateDefaultBoard()
@@ -67,7 +65,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             bool success;
             var movingPieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
 
-            if (movingPieceInfo.Color != _getTurn())
+            if (movingPieceInfo.Color != _turnService.GetCurrentTurnColor())
             {
                 return false;
             }
@@ -77,7 +75,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             if (success)
             {
                 _gBoard.MovePiece(pos, movingPieceInfo, targetPos);
-                _switchTurn();
+                _turnService.SwitchTurn();
 
                 SendFENUpdate();
 
@@ -111,7 +109,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             return pieces;
         }
 
-        public List<BoardPos> GetMovesForPiece(BoardPos pos, bool isPlayerMove) 
+        public List<BoardPos> GetMovesForPiece(BoardPos pos, bool isPlayerMove)
         {
             var pieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
             return _logicBoard.GetMovesForPiece(pos, isPlayerMove);
@@ -128,7 +126,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             // AddPiece(new BoardPos(4, 4), new PieceInfo { Color = ChessColor.White, PieceId = ChessPieceId.Knight });
 
             //LogHelpers.DebugLog();
-            
+
         }
 
         private PieceInfo[,] GetBoardFromFEN(string fenString)
@@ -155,9 +153,9 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         private void SendFENUpdate()
         {
-            _emitBoardStateUpdate(FEN.Encrypt(_logicBoard.GetBoard()));
+            _gameInfoService.EmitFenStringSignal(FEN.Encrypt(_logicBoard.GetBoard()));
         }
 
-        
+
     }
 }

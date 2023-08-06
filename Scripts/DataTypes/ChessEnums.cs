@@ -19,12 +19,6 @@ namespace ChessGame.Scripts
         Black = 1,
     }
 
-    public enum ChessState
-    {
-        NormalGame = 0,
-        Test = 1
-    }
-
     public enum ChessSide
     {
         Enemy = 0,

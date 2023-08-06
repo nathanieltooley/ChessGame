@@ -5,16 +5,16 @@ using System.Collections.Generic;
 
 namespace ChessGame.Scripts.ChessBoard.Boards
 {
-    public partial class GraphicalBoard : GodotObject
+    public partial class GraphicalBoard : TileMap
     {
         private VisualChessPiece[,] _visBoard = new VisualChessPiece[8,8];
 
         private Node2D _rootPieceNode;
         private PackedScene _pieceTemplate;
 
-        public GraphicalBoard(Node2D rootPieceNode)
+        public override void _Ready()
         {
-            _rootPieceNode = rootPieceNode;
+            _rootPieceNode = this;
             _pieceTemplate = ResourceLoader.Load<PackedScene>("res://TemplateScenes/base_chess_piece.tscn");
         }
 
@@ -80,6 +80,25 @@ namespace ChessGame.Scripts.ChessBoard.Boards
             Vector2 center = worldPosition + (ChessConstants.TileSize / 2);
 
             return center;
+        }
+
+        public bool IsCellHighlighted(Vector2I gridPos)
+        {
+            var td = GetCellTileData(1, gridPos);
+
+            return td == null ? false : true;
+        }
+
+        public void ToggleHighlightCell(Vector2I gridPos)
+        {
+            if (!IsCellHighlighted(gridPos))
+            {
+                SetCell(1, gridPos, 0, new Vector2I(0, 0));
+            }
+            else
+            {
+                EraseCell(1, gridPos);
+            }
         }
     }
 }

@@ -1,12 +1,13 @@
-﻿using ChessGame.Scripts.DataTypes;
+﻿using ChessGame.Scripts.ChessBoard.Boards;
+using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Helpers;
 using Godot;
 using System;
 using System.Linq;
 
-namespace ChessGame.Scripts.ChessBoard.Controllers
+namespace ChessGame.Scripts.Controllers
 {
-    public class PlayerMovementController
+    public partial class PlayerMovementController : Node
     {
 
         public VisualChessPiece PieceBeingDragged { get; set; }
@@ -17,27 +18,21 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         private ChessColor _playerColor;
         private BoardController _boardController;
+        private GraphicalBoard _graphicalBoard;
 
-        private Action<Vector2I> _ToggleHighlight;
-        private Action<int> _ClearLayer;
-        private Action<Vector2, BoardPos, PieceInfo> _EmitInputUpdateSignal;
-
-        public PlayerMovementController(ChessColor playerColor, 
-            BoardController boardController, 
-            Action<Vector2I> highlightFunc, 
-            Action<int> clearLayerFunc, 
-            Action<Vector2, BoardPos, PieceInfo> emitSignal)
-        {
-            _playerColor = playerColor;
-            _boardController = boardController;
-
-            _ToggleHighlight = highlightFunc;
-            _ClearLayer = clearLayerFunc;
-            _EmitInputUpdateSignal = emitSignal;
-        }
+        [Signal]
+        public delegate void UpdateMousePosEventHandler(Vector2 mousePos, BoardPos gridPos, PieceInfo piece);
 
         // Called every frame. 'delta' is the elapsed time since the previous frame.
-        
+
+        public override void _Ready()
+        {
+            GameInfoService gameInfoService = GetNode<GameInfoService>("/root/Main/GameInfoService");
+
+            _playerColor = gameInfoService.PlayerSideColor;
+            _boardController = GetNode<BoardController>("/root/Main/BoardController");
+            _graphicalBoard = GetNode<GraphicalBoard>("/root/Main/GraphicalBoard");
+        }
 
         public void InputHandler(InputEvent @event)
         {
@@ -51,7 +46,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                     case MouseButton.Left:
                         if (mbEvent.IsPressed())
                         {
-                            
+
                             var pieces = _boardController.GetVisualPieces();
 
                             var gridPos = GridMathHelpers.ConvertWorldCoordsToGridCoords(mousePos, ChessConstants.TileSize);
@@ -60,7 +55,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
                             if (_boardController.GetPieceInfoAtPos(boardPos).PieceId == ChessPieceId.Empty)
                             {
-                                _ToggleHighlight(gridPos);
+                                _graphicalBoard.ToggleHighlightCell(gridPos);
                                 return;
                             }
 
@@ -79,7 +74,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
                                     foreach (var move in moves)
                                     {
-                                        _ToggleHighlight(GridMathHelpers.ConvertBoardCoordToGridChord(move, ChessConstants.BoardMargin));
+                                        _graphicalBoard.ToggleHighlightCell(GridMathHelpers.ConvertBoardCoordToGridChord(move, ChessConstants.BoardMargin));
                                     }
                                 }
                             }
@@ -115,7 +110,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                             }
 
                             // remove highlights
-                            _ClearLayer(1);
+                            _graphicalBoard.ClearLayer(1);
 
                             PieceBeingDragged = null;
                             _originalDraggedPieceLoc = null;
@@ -131,7 +126,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                 InputEventMouseMotion mmEvent = (InputEventMouseMotion)@event;
                 BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mmEvent.Position, ChessConstants.TileSize, ChessConstants.BoardMargin);
 
-                _EmitInputUpdateSignal(mmEvent.Position, boardPos, _boardController.GetPieceInfoAtPos(boardPos));
+                EmitSignal(SignalName.UpdateMousePos, mmEvent.Position, boardPos, _boardController.GetPieceInfoAtPos(boardPos));
             }
         }
     }

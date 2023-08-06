@@ -1,9 +1,10 @@
-﻿using ChessGame.Scripts.DataTypes;
+﻿using ChessGame.Scripts.ChessBoard;
+using ChessGame.Scripts.DataTypes;
 using Godot;
 using System;
 using System.Collections.Generic;
 
-namespace ChessGame.Scripts.ChessBoard.Controllers
+namespace ChessGame.Scripts.Controllers
 {
     public class MoveFinder
     {
@@ -18,7 +19,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         public MoveFinder()
         {
-            
+
         }
 
         public MoveFinder(LogicalBoard board, PieceInfo piece, BoardPos piecePos, bool isPlayer, ChessColor pieceMoverColor)
@@ -82,7 +83,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                 BoardPos pos = new BoardPos(rank, file);
 
                 // Out of bounds Check
-                if ((rank > 7 || rank < 0) || (file > 7 || file < 0))
+                if (rank > 7 || rank < 0 || file > 7 || file < 0)
                 {
                     continue;
                 }
@@ -91,7 +92,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
                 // Same color Check
                 if (pieceAtTarget.Color == _piece.Color && pieceAtTarget.PieceId != ChessPieceId.Empty)
-                { 
+                {
                     continue;
                 }
 
@@ -117,7 +118,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                 }
 
                 // Piece capture check
-                if (pieceAtTarget.Color != _pieceMoverColor && (pos.Rank == block.X && pos.File == block.Y))
+                if (pieceAtTarget.Color != _pieceMoverColor && pos.Rank == block.X && pos.File == block.Y)
                 {
                     capableMoves.Add(move);
                 }
@@ -199,16 +200,18 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             {
                 AddValidMove(startingRank + MoveDownBoard(1), startingFile, moves);
                 AddValidMove(startingRank + MoveDownBoard(2), startingFile, moves);
-            } else if (!_isPlayer)
+            }
+            else if (!_isPlayer)
             {
-                AddValidMove(startingRank + MoveDownBoard(1), startingFile, moves); 
+                AddValidMove(startingRank + MoveDownBoard(1), startingFile, moves);
             }
 
             if (startingRank == 6 && _isPlayer)
             {
                 AddValidMove(startingRank + MoveUpBoard(1), startingFile, moves);
                 AddValidMove(startingRank + MoveUpBoard(2), startingFile, moves);
-            } else if (_isPlayer)
+            }
+            else if (_isPlayer)
             {
                 AddValidMove(startingRank + MoveUpBoard(1), startingFile, moves);
             }
@@ -309,13 +312,13 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
             while (true)
             {
-                tempRank = startingRank + (i * diagonal.X);
-                tempFile = startingFile + (i * diagonal.Y);
+                tempRank = startingRank + i * diagonal.X;
+                tempFile = startingFile + i * diagonal.Y;
 
-                bool rankOOB = (tempRank < 0 || tempRank > 7);
-                bool fileOOB = (tempFile < 0 || tempFile > 7);
+                bool rankOOB = tempRank < 0 || tempRank > 7;
+                bool fileOOB = tempFile < 0 || tempFile > 7;
 
-                if ((rankOOB || fileOOB) || board.GetPieceInfoAtPos(new BoardPos(tempRank, tempFile)).PieceId != ChessPieceId.Empty)
+                if (rankOOB || fileOOB || board.GetPieceInfoAtPos(new BoardPos(tempRank, tempFile)).PieceId != ChessPieceId.Empty)
                 {
                     return new Vector2I(tempRank, tempFile);
                 }
@@ -339,8 +342,8 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
             Vector2I resultVec = new Vector2I();
 
-            resultVec.X = rankMag == 0 ? 0 : (distance.X / rankMag);
-            resultVec.Y = fileMag == 0 ? 0 : (distance.Y / fileMag);
+            resultVec.X = rankMag == 0 ? 0 : distance.X / rankMag;
+            resultVec.Y = fileMag == 0 ? 0 : distance.Y / fileMag;
 
             return resultVec;
         }
@@ -350,7 +353,8 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             if (rank < 0 || rank > 7 || file < 0 || file > 7)
             {
                 return;
-            } else
+            }
+            else
             {
                 moves.Add(new BoardPos(rank, file));
             }

@@ -1,7 +1,7 @@
 ﻿using ChessGame.Scripts.DataTypes;
 using System.Collections.Generic;
 
-namespace ChessGame.Scripts.ChessBoard.Controllers
+namespace ChessGame.Scripts.Controllers
 {
     public static class FEN
     {
@@ -82,7 +82,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
         public static PieceInfo[,] Decrypt(string fenString, List<PieceInfo> whitePieceOut, List<PieceInfo> blackPieceOut)
         {
-            PieceInfo[,] board = new PieceInfo[8,8];
+            PieceInfo[,] board = new PieceInfo[8, 8];
 
             int rank = 0;
             int file = 0;
@@ -92,7 +92,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
 
             int cursor = 0;
 
-            while (true) 
+            while (true)
             {
                 if (cursor >= fenString.Length)
                 {
@@ -149,7 +149,8 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
                     if (color == ChessColor.White)
                     {
                         whitePieceOut.Add(piece);
-                    } else
+                    }
+                    else
                     {
                         blackPieceOut.Add(piece);
                     }
@@ -168,7 +169,8 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             if (char.IsLower(c))
             {
                 return ChessColor.Black;
-            } else
+            }
+            else
             {
                 return ChessColor.White;
             }
@@ -178,7 +180,7 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
         {
             char lower = char.ToLower(c);
 
-            ChessPieceId pieceId; 
+            ChessPieceId pieceId;
             charToPieceMap.TryGetValue(lower, out pieceId);
 
             return pieceId;

@@ -3,11 +3,11 @@ using System;
 
 public partial class MainMenu : Control
 {
-	private GameState _gameState;
+	private RunInfo _gameState;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		_gameState = GetNode<GameState>("/root/GameState");
+		_gameState = GetNode<RunInfo>("/root/RunInfo");
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -17,13 +17,13 @@ public partial class MainMenu : Control
 
 	public void PlayButtonPressed()
 	{
-		_gameState.CurrentGameState = ChessGame.Scripts.ChessState.NormalGame;
+		_gameState.GameRunEnvironment = RunEnvironment.Normal;
 		GetTree().ChangeSceneToFile("res://chess_board.tscn");
 	}
 
 	public void TestButtonPressed()
 	{
-		_gameState.CurrentGameState = ChessGame.Scripts.ChessState.Test;
+		_gameState.GameRunEnvironment = RunEnvironment.Test;
         GetTree().ChangeSceneToFile("res://chess_board.tscn");
     }
 }

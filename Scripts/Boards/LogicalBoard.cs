@@ -1,4 +1,4 @@
-﻿using ChessGame.Scripts.ChessBoard.Controllers;
+﻿using ChessGame.Scripts.Controllers;
 using ChessGame.Scripts.DataTypes;
 using Godot;
 using System.Collections.Generic;
