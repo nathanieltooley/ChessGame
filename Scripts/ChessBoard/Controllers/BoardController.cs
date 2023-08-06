@@ -13,23 +13,25 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
         private GraphicalBoard _gBoard { get; set; }
         private LogicalBoard _logicBoard { get; set; }
 
-        private Func<ChessColor> _getCurrentTurn;
-
         private List<PieceInfo> _whitePieces = new List<PieceInfo>();
         private List<PieceInfo> _blackPieces = new List<PieceInfo>();
 
         private ChessColor _playerColor;
         private static string _startingFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         private Action<string> _emitBoardStateUpdate;
+        private Action _switchTurn;
+        private Func<ChessColor> _getTurn;
 
-        public BoardController(ChessColor playerColor, Node2D rootPieceNode, Action<string> boardStateUpdate, Func<ChessColor> getCurrentTurn)
+        public BoardController(ChessColor playerColor, Node2D rootPieceNode, Action<string> boardStateUpdate, Action switchTurn, Func<ChessColor> getTurn)
         {
             _playerColor = playerColor;
 
             _logicBoard = new LogicalBoard();
             _gBoard = new GraphicalBoard(rootPieceNode);
             _emitBoardStateUpdate = boardStateUpdate;
-            _getCurrentTurn = getCurrentTurn;
+
+            _switchTurn = switchTurn;
+            _getTurn = getTurn;
 
         }
 
@@ -65,12 +67,20 @@ namespace ChessGame.Scripts.ChessBoard.Controllers
             bool success;
             var movingPieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
 
+            if (movingPieceInfo.Color != _getTurn())
+            {
+                return false;
+            }
+
             _logicBoard.MovePiece(pos, targetPos, movingPieceInfo.Color == _playerColor, out success);
 
             if (success)
             {
                 _gBoard.MovePiece(pos, movingPieceInfo, targetPos);
+                _switchTurn();
+
                 SendFENUpdate();
+
             }
 
             return success;

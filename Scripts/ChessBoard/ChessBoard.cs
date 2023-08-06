@@ -3,10 +3,12 @@ using ChessGame.Scripts.ChessBoard.Controllers;
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Helpers;
 using Godot;
+using System.Collections.Generic;
 
 public partial class ChessBoard : TileMap
 {
 	private ChessColor _currentTurn = ChessColor.White;
+	private ChessSide _currentTurnSide;
 
 	private BoardController _boardController;
 	private GameState _gameState;
@@ -15,6 +17,8 @@ public partial class ChessBoard : TileMap
     [Export]
 	private ChessColor playerColor = ChessColor.White;
     private ChessColor aiColor = ChessColor.Black;
+
+	private Dictionary<ChessSide, ChessColor> sideColors;
 
 	private Color _whiteColor = Color.FromHtml("f1dfc4");
 	private Color _blackColor = Color.FromHtml("3c3934");
@@ -47,7 +51,7 @@ public partial class ChessBoard : TileMap
     public override void _Ready()
 	{
 		_gameState = GetNode<GameState>("/root/GameState");
-        _boardController = new BoardController(playerColor, this, EmitFenStringSignal, GetCurrentTurn);
+        _boardController = new BoardController(playerColor, this, EmitFenStringSignal, SwitchTurn, GetCurrentTurn);
 		_playerMovementController = new PlayerMovementController(playerColor, _boardController, ToggleHighlightCell, ClearLayer, EmitInputUpdateSignal);
 
         aiColor = InvertColor(playerColor);
@@ -58,10 +62,18 @@ public partial class ChessBoard : TileMap
 		if (playerColor == _currentTurn)
 		{
 			EmitTimerToggleDisableSignal(ChessSide.Enemy);
+			_currentTurnSide = ChessSide.Player;
 		} else
 		{
 			EmitTimerToggleDisableSignal(ChessSide.Player);
+			_currentTurnSide = ChessSide.Enemy;
 		}
+
+		sideColors = new Dictionary<ChessSide, ChessColor>
+		{
+			{ ChessSide.Player, playerColor },
+			{ ChessSide.Enemy, aiColor },
+		};
 
         switch (_gameState.CurrentGameState)
 		{
@@ -90,6 +102,19 @@ public partial class ChessBoard : TileMap
 
     public void SwitchTurn()
     {
+		var startingTurnSide = _currentTurnSide;
+
+		ToggleTurn();
+		SwitchTurnSide();
+
+		EmitTimerToggleDisableSignal(startingTurnSide);
+		EmitTimerToggleDisableSignal(_currentTurnSide);
+    }
+
+	public ChessColor GetCurrentTurn() { return _currentTurn; } 
+
+	private void ToggleTurn()
+	{
         if (_currentTurn == ChessColor.White)
         {
             _currentTurn = ChessColor.Black;
@@ -100,7 +125,16 @@ public partial class ChessBoard : TileMap
         }
     }
 
-	public ChessColor GetCurrentTurn() { return _currentTurn; }
+	private void SwitchTurnSide()
+	{
+		if (_currentTurnSide == ChessSide.Player)
+		{
+			_currentTurnSide = ChessSide.Enemy;
+		} else
+		{
+			_currentTurnSide = ChessSide.Player;
+		}
+	}
 
     private bool IsCellHighlighted(Vector2I gridPos)
 	{
@@ -118,7 +152,6 @@ public partial class ChessBoard : TileMap
 		{
 			EraseCell(1, gridPos);
 		}
-		
     }
 
 	private void EmitInputUpdateSignal(Vector2 mousePos, BoardPos pos, PieceInfo pInfo)
