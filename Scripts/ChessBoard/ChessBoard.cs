@@ -55,6 +55,14 @@ public partial class ChessBoard : TileMap
 		EmitTimerColorUpdateSignal(ChessSide.Enemy, aiColor);
 		EmitTimerColorUpdateSignal(ChessSide.Player, playerColor);
 
+		if (playerColor == _currentTurn)
+		{
+			EmitTimerToggleDisableSignal(ChessSide.Enemy);
+		} else
+		{
+			EmitTimerToggleDisableSignal(ChessSide.Player);
+		}
+
         switch (_gameState.CurrentGameState)
 		{
 			case ChessState.NormalGame:
@@ -128,5 +136,10 @@ public partial class ChessBoard : TileMap
 		Color hexColor = (color == ChessColor.White) ? _whiteColor : _blackColor;
 
 		EmitSignal(SignalName.SetTimerColor, (int)side, hexColor);
+	}
+
+	private void EmitTimerToggleDisableSignal(ChessSide side)
+	{
+		EmitSignal(SignalName.ToggleTimer, (int)side);
 	}
 }

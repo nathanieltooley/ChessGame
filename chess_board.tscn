@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://caaargxpskoar"]
+[gd_scene load_steps=6 format=3 uid="uid://caaargxpskoar"]
 
 [ext_resource type="TileSet" uid="uid://c7ukin0acqjbo" path="res://Assets/BoardTiles/chess_board_tileset.tres" id="1_i0ywi"]
 [ext_resource type="Script" path="res://Scripts/UI/MainGameGUI.cs" id="1_ykarp"]
 [ext_resource type="Script" path="res://Scripts/ChessBoard/ChessBoard.cs" id="2_5qeit"]
 [ext_resource type="Script" path="res://Scripts/UI/DebugMenuLogic.cs" id="3_tmi2x"]
+
+[sub_resource type="Theme" id="Theme_qwx6e"]
 
 [node name="Main" type="Node2D"]
 
@@ -47,6 +49,7 @@ horizontal_alignment = 1
 
 [node name="PlayerTime" type="Label" parent="MainGameGUI/MarginContainer/TimeContainer"]
 layout_mode = 2
+theme = SubResource("Theme_qwx6e")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_outline_size = 15
@@ -118,5 +121,6 @@ layer_1/tile_data = PackedInt32Array()
 script = ExtResource("2_5qeit")
 
 [connection signal="SetTimerColor" from="ChessBoard" to="MainGameGUI" method="OnSetTimerColor"]
+[connection signal="ToggleTimer" from="ChessBoard" to="MainGameGUI" method="OnToggleTimer"]
 [connection signal="UpdateBoardState" from="ChessBoard" to="DebugMenuLogic" method="OnUpdateBoardState"]
 [connection signal="UpdateMousePos" from="ChessBoard" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]
