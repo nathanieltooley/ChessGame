@@ -1,13 +1,21 @@
-[gd_scene load_steps=6 format=3 uid="uid://caaargxpskoar"]
+[gd_scene load_steps=8 format=3 uid="uid://caaargxpskoar"]
 
 [ext_resource type="TileSet" uid="uid://c7ukin0acqjbo" path="res://Assets/BoardTiles/chess_board_tileset.tres" id="1_i0ywi"]
+[ext_resource type="Script" path="res://Scripts/TurnService.cs" id="1_n7sbn"]
 [ext_resource type="Script" path="res://Scripts/UI/MainGameGUI.cs" id="1_ykarp"]
+[ext_resource type="Script" path="res://Scripts/GameInfoService.cs" id="2_3pvxi"]
 [ext_resource type="Script" path="res://Scripts/ChessBoard/ChessBoard.cs" id="2_5qeit"]
 [ext_resource type="Script" path="res://Scripts/UI/DebugMenuLogic.cs" id="3_tmi2x"]
 
 [sub_resource type="Theme" id="Theme_qwx6e"]
 
 [node name="Main" type="Node2D"]
+
+[node name="TurnService" type="Node" parent="."]
+script = ExtResource("1_n7sbn")
+
+[node name="GameInfoService" type="Node" parent="."]
+script = ExtResource("2_3pvxi")
 
 [node name="MainGameGUI" type="Control" parent="."]
 layout_mode = 3
