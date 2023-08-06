@@ -36,6 +36,7 @@ public partial class TurnService : Node
 
     public void SwitchTurn()
     {
+        var startingTurnSide = GetCurrentTurnSide();
         _turnIndex++;
 
         if (_turnIndex > 1)
@@ -43,12 +44,9 @@ public partial class TurnService : Node
             _turnIndex = 0;
         }
 
-        /*var startingTurnSide = _currentTurnSide;
+        TimerService _timerService = GetNode<TimerService>("/root/Main/TimerService");
 
-        ToggleTurn();
-        SwitchTurnSide();
-
-        EmitTimerToggleDisableSignal(startingTurnSide);
-        EmitTimerToggleDisableSignal(_currentTurnSide);*/
+        _timerService.EmitTimerToggleDisableSignal(startingTurnSide);
+        _timerService.EmitTimerToggleDisableSignal(GetCurrentTurnSide());
     }
 }

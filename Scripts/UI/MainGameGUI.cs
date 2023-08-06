@@ -13,9 +13,6 @@ public partial class MainGameGUI : Control
 	private Label[] timerMap = new Label[2];
 	private bool[] disabledMap = new bool[2];
 
-	private double _enemyTimerCopy = 5;
-	private double _playerTimerCopy = 5;
-
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{

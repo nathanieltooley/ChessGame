@@ -44,7 +44,7 @@ public partial class TimerService : Node
 	{
         if (!TimersPaused)
         {
-            UpdateTimer(delta);
+            UpdateTimer(-delta);
         } 
     }
 
@@ -55,12 +55,15 @@ public partial class TimerService : Node
 
     private void UpdateTimer(double delta)
     {
+        var currentTurn = _turnService.GetCurrentTurnSide();
+
         float _timer;
-        _timerMap.TryGetValue(_turnService.GetCurrentTurnSide(), out _timer);
+        _timerMap.TryGetValue(currentTurn, out _timer);
 
-        _timer += (float)delta;
+        float newTime = _timer + (float)delta;
+        _timerMap[currentTurn] = newTime;
 
-        EmitTimerUpdateTimeSignal(_turnService.GetCurrentTurnSide(), _timer);
+        EmitTimerUpdateTimeSignal(_turnService.GetCurrentTurnSide(), newTime);
     }
 
     public void EmitTimerColorUpdateSignal(ChessSide side, ChessColor color)
@@ -70,12 +73,12 @@ public partial class TimerService : Node
         EmitSignal(SignalName.SetTimerColor, (int)side, hexColor);
     }
 
-    private void EmitTimerToggleDisableSignal(ChessSide side)
+    public void EmitTimerToggleDisableSignal(ChessSide side)
     {
         EmitSignal(SignalName.ToggleTimer, (int)side);
     }
 
-    private void EmitTimerUpdateTimeSignal(ChessSide side, double newTime)
+    public void EmitTimerUpdateTimeSignal(ChessSide side, double newTime)
     {
         EmitSignal(SignalName.UpdateSideTime, (int)side, newTime);
     }
