@@ -2,8 +2,6 @@
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Helpers;
 using Godot;
-using System;
-using System.Linq;
 
 namespace ChessGame.Scripts.Controllers
 {
@@ -30,7 +28,7 @@ namespace ChessGame.Scripts.Controllers
             GameInfoService gameInfoService = ServiceHelpers.GetGameInfoService();
 
             _playerColor = gameInfoService.PlayerSideColor;
-            _boardController = GetNode<BoardController>("/root/Main/BoardController");
+            _boardController = GetNode<BoardController>("/root/Main/Controllers/BoardController");
             _graphicalBoard = GetNode<GraphicalBoard>("/root/Main/GraphicalBoard");
         }
 

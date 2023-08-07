@@ -24,8 +24,8 @@ public partial class Main : Node2D
         TurnService turnService = ServiceHelpers.GetTurnService();
         TimerService timerService = ServiceHelpers.GetTimerService();
 
-        _boardController = GetNode<BoardController>("/root/Main/BoardController");
-        _playerMovementController = GetNode<PlayerMovementController>("/root/Main/PlayerInputController");
+        _boardController = GetNode<BoardController>("/root/Main/Controllers/BoardController");
+        _playerMovementController = GetNode<PlayerMovementController>("/root/Main/Controllers/PlayerInputController");
 
         aiColor = InvertColor(playerColor);
 
