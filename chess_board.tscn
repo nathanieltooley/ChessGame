@@ -16,19 +16,23 @@
 [node name="Main" type="Node2D"]
 script = ExtResource("1_xg0fo")
 
-[node name="GameInfoService" type="Node" parent="."]
+[node name="Services" type="Node" parent="."]
+
+[node name="GameInfoService" type="Node" parent="Services"]
 script = ExtResource("2_3pvxi")
 
-[node name="TurnService" type="Node" parent="."]
+[node name="TurnService" type="Node" parent="Services"]
 script = ExtResource("1_n7sbn")
 
-[node name="TimerService" type="Node" parent="."]
+[node name="TimerService" type="Node" parent="Services"]
 script = ExtResource("4_kv3it")
 
-[node name="BoardController" type="Node" parent="."]
+[node name="Controllers" type="Node" parent="."]
+
+[node name="BoardController" type="Node" parent="Controllers"]
 script = ExtResource("5_pof32")
 
-[node name="PlayerInputController" type="Node" parent="."]
+[node name="PlayerInputController" type="Node" parent="Controllers"]
 script = ExtResource("6_h8401")
 
 [node name="MainGameGUI" type="Control" parent="."]
@@ -142,8 +146,8 @@ layer_1/z_index = 0
 layer_1/tile_data = PackedInt32Array()
 script = ExtResource("8_p0nd3")
 
-[connection signal="UpdateBoardState" from="GameInfoService" to="DebugMenuLogic" method="OnUpdateBoardState"]
-[connection signal="SetTimerColor" from="TimerService" to="MainGameGUI" method="OnSetTimerColor"]
-[connection signal="ToggleTimer" from="TimerService" to="MainGameGUI" method="OnToggleTimer"]
-[connection signal="UpdateSideTime" from="TimerService" to="MainGameGUI" method="OnUpdateTimerTime"]
-[connection signal="UpdateMousePos" from="PlayerInputController" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]
+[connection signal="UpdateBoardState" from="Services/GameInfoService" to="DebugMenuLogic" method="OnUpdateBoardState"]
+[connection signal="SetTimerColor" from="Services/TimerService" to="MainGameGUI" method="OnSetTimerColor"]
+[connection signal="ToggleTimer" from="Services/TimerService" to="MainGameGUI" method="OnToggleTimer"]
+[connection signal="UpdateSideTime" from="Services/TimerService" to="MainGameGUI" method="OnUpdateTimerTime"]
+[connection signal="UpdateMousePos" from="Controllers/PlayerInputController" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]

@@ -14,7 +14,7 @@ namespace ChessGame.Scripts.Helpers
 
         private static string GetServicePath(string serviceName)
         {
-            return $"{GetMainPath()}/{serviceName}";
+            return $"{GetMainPath()}/Services/{serviceName}";
         }
 
         public static Service GetService<Service>(ServiceName name) where Service : class
