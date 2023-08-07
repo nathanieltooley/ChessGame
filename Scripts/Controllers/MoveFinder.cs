@@ -136,8 +136,8 @@ namespace ChessGame.Scripts.Controllers
                     capableMoves.Add(move);
                 }
 
-                // Piece capture check
-                if (pieceAtTarget.Color != _pieceMoverColor && pos.Rank == block.X && pos.File == block.Y)
+                // Piece capture check, make sure that pawn can only capture diagonally
+                if ((pieceAtTarget.Color != _pieceMoverColor) && (pos.Rank == block.X) && (pos.File == block.Y) && _piece.PieceId != ChessPieceId.Pawn)
                 {
                     capableMoves.Add(move);
                 }
