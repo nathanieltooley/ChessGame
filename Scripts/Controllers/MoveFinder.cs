@@ -3,6 +3,7 @@ using ChessGame.Scripts.DataTypes;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ChessGame.Scripts.Controllers
 {
@@ -110,6 +111,24 @@ namespace ChessGame.Scripts.Controllers
                 Vector2I absStartDistance = distanceFromStartingTile.Abs();
                 Vector2I absBlockDistance = blockDistance.Abs();
 
+                if (_piece.PieceId == ChessPieceId.Pawn)
+                {
+                    if (ChessConstants.DiagonalDirections.Contains(line))
+                    {
+                        // Pawn Diagonal Attack Check
+                        if ((pieceAtTarget.PieceId != ChessPieceId.Empty) && pieceAtTarget.Color != _pieceMoverColor)
+                        {
+                            capableMoves.Add(move);
+                            continue;
+                        }
+                        // Remove diagonal attack if there is no enemy piece
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                }
+
                 // if this move is closer to the piece than the block
                 // or if knight
                 if (absStartDistance < absBlockDistance || _piece.PieceId == ChessPieceId.Knight)
@@ -196,24 +215,36 @@ namespace ChessGame.Scripts.Controllers
 
         private void PawnMoves(int startingRank, int startingFile, List<BoardPos> moves)
         {
-            if (startingRank == 1 && !_isPlayer)
+            if (!_isPlayer)
             {
-                AddValidMove(startingRank + MoveDownBoard(1), startingFile, moves);
-                AddValidMove(startingRank + MoveDownBoard(2), startingFile, moves);
-            }
-            else if (!_isPlayer)
-            {
-                AddValidMove(startingRank + MoveDownBoard(1), startingFile, moves);
+                if (startingRank == 1)
+                {
+                    AddValidMove(startingRank + MoveDownBoard(1), startingFile, moves);
+                    AddValidMove(startingRank + MoveDownBoard(2), startingFile, moves);
+                }
+                else
+                {
+                    AddValidMove(startingRank + MoveDownBoard(1), startingFile, moves);
+                }
+
+                AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveLeft(1), moves);
+                AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveRight(1), moves);
             }
 
-            if (startingRank == 6 && _isPlayer)
+            if (_isPlayer)
             {
-                AddValidMove(startingRank + MoveUpBoard(1), startingFile, moves);
-                AddValidMove(startingRank + MoveUpBoard(2), startingFile, moves);
-            }
-            else if (_isPlayer)
-            {
-                AddValidMove(startingRank + MoveUpBoard(1), startingFile, moves);
+                if (startingRank == 6)
+                {
+                    AddValidMove(startingRank + MoveUpBoard(1), startingFile, moves);
+                    AddValidMove(startingRank + MoveUpBoard(2), startingFile, moves);
+                }
+                else
+                {
+                    AddValidMove(startingRank + MoveUpBoard(1), startingFile, moves);
+                }
+
+                AddValidMove(startingRank + MoveUpBoard(1), startingFile + MoveLeft(1), moves);
+                AddValidMove(startingRank + MoveUpBoard(1), startingFile + MoveRight(1), moves);
             }
         }
 
@@ -280,9 +311,6 @@ namespace ChessGame.Scripts.Controllers
 
         private void KingMoves(int startingRank, int startingFile, List<BoardPos> moves)
         {
-
-            // Add castling at some point
-
             // Up
             AddValidMove(startingRank + MoveUpBoard(1), startingFile, moves);
             // Down

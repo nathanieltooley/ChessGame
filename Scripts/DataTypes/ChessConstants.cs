@@ -35,6 +35,9 @@ namespace ChessGame.Scripts.DataTypes
         public static Vector2I LeftFile = new Vector2I(0, -1);
         public static Vector2I RightFile = new Vector2I(0, 1);
 
+        public static Vector2I[] DiagonalDirections = new Vector2I[] { NorthWestDiagonal,  NorthEastDiagonal, SouthWestDiagonal, SouthEastDiagonal };
+        public static Vector2I[] CardinalDirections = new Vector2I[] { UpRank, DownRank, LeftFile, RightFile };
+
         public static Color WhiteColor = Color.FromHtml("f1dfc4");
         public static Color BlackColor = Color.FromHtml("3c3934");
         public static ChessColor GetColor(int rank, int file)
