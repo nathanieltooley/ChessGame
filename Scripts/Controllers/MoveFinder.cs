@@ -185,29 +185,21 @@ namespace ChessGame.Scripts.Controllers
             return moves;
         }
 
-        // Foward for player is -rank
-        // Foward for AI is +rank
         private int MoveUpBoard(int amount)
         {
             return amount * -1;
         }
 
-        // Back for player is +rank
-        // Back for ai is -rank
         private int MoveDownBoard(int amount)
         {
             return amount;
         }
 
-        // Right for player is +rank
-        // Right for AI is -rank
         private int MoveRight(int amount)
         {
             return amount;
         }
 
-        // Left for player is -rank
-        // Left for ai is +rank
         private int MoveLeft(int amount)
         {
             return amount * -1;
@@ -329,6 +321,9 @@ namespace ChessGame.Scripts.Controllers
             // SE
             AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveRight(1), moves);
 
+            // Castling Moves
+            AddValidMove(startingRank, startingFile + MoveRight(2), moves);
+            AddValidMove(startingRank, startingFile + MoveLeft(2), moves);
         }
 
         private Vector2I GetPointWhereLineIsBlocked(Vector2I diagonal, int startingRank, int startingFile, LogicalBoard board)
