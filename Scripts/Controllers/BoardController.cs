@@ -47,8 +47,7 @@ namespace ChessGame.Scripts.Controllers
         {
             PieceInfo[,] fenBoard = GetBoardFromFEN(fenString);
             UpdateBoard(fenBoard);
-            UpdateBoardCache();
-            UpdateMoveCache(true);
+            UpdateMoveCache();
         }
 
         public void AddPiece(BoardPos pos, PieceInfo piece)
@@ -85,8 +84,7 @@ namespace ChessGame.Scripts.Controllers
 
                 _turnService.SwitchTurn();
 
-                UpdateMoveCache(false);
-                UpdateBoardCache();
+                UpdateMoveCache();
                 SendFENUpdate();
 
                 return true;
@@ -167,24 +165,14 @@ namespace ChessGame.Scripts.Controllers
             _gameInfoService.EmitFenStringSignal(FEN.Encrypt(_logicBoard.GetBoard()));
         }
 
-        private void UpdateMoveCache(bool forceUpdate)
+        private void UpdateMoveCache()
         {
-            PieceInfo[,] prevBoard = _gameInfoService.CachedBoard;
-            PieceInfo[,] currentBoard = _logicBoard.GetBoard();
-
-            List<BoardPos>[,] cachedMoveMatrix = (List<BoardPos>[,])_moveInfoService.MoveCache?.Clone();
             List<BoardPos>[,] boardPosMatrix = new List<BoardPos>[8, 8];
 
             for (int rank = 0; rank < 8; rank++)
             {
                 for (int file = 0; file < 8; file++)
                 {
-                    if (prevBoard[rank, file] == currentBoard[rank, file] && !forceUpdate)
-                    {
-                        boardPosMatrix[rank, file] = cachedMoveMatrix[rank, file];
-                        continue;
-                    }
-
                     BoardPos piecePos = new BoardPos(rank, file);
                     PieceInfo pieceInfo = _logicBoard.GetPieceInfoAtPos(piecePos);
 
@@ -197,11 +185,6 @@ namespace ChessGame.Scripts.Controllers
             }
 
             _moveInfoService.MoveCache = boardPosMatrix;
-        }
-
-        private void UpdateBoardCache()
-        {
-            _gameInfoService.CachedBoard = _logicBoard.GetBoard();
         }
     }
 }
