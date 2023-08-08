@@ -29,7 +29,22 @@ namespace ChessGame.Scripts
         public static BoardPos operator +(BoardPos a, Vector2I b) => new BoardPos(a.Rank + b.X, a.File + b.Y);
         public static BoardPos operator -(BoardPos a, Vector2I b) => a + (-b);
 
-        public static bool operator ==(BoardPos a, BoardPos b) => !(a is null) && !(b is null) && a.Rank == b.Rank && a.File == b.File;
+        public static bool operator ==(BoardPos a, BoardPos b) 
+        {
+            if (a is null && b is null)
+            {
+                return true;
+            } else if (a is null && !(b is null))
+            {
+                return false;
+            } else if (!(a is null) && b is null)
+            {
+                return false;
+            } else
+            {
+                return a.Rank == b.Rank && a.File == b.File;
+            }
+        } 
         public static bool operator !=(BoardPos a, BoardPos b) { return !(a == b); }
     }
 }
