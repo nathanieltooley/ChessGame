@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://caaargxpskoar"]
+[gd_scene load_steps=14 format=3 uid="uid://caaargxpskoar"]
 
 [ext_resource type="TileSet" uid="uid://c7ukin0acqjbo" path="res://Assets/BoardTiles/chess_board_tileset.tres" id="1_i0ywi"]
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_xg0fo"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://Scripts/Services/TurnService.cs" id="3_5nhfk"]
 [ext_resource type="Script" path="res://Scripts/UI/DebugMenuLogic.cs" id="3_tmi2x"]
 [ext_resource type="Script" path="res://Scripts/Services/TimerService.cs" id="4_d08ub"]
+[ext_resource type="Script" path="res://Scripts/Services/MoveInfoService.cs" id="5_dkwe6"]
 [ext_resource type="Script" path="res://Scripts/Controllers/BoardController.cs" id="5_pof32"]
 [ext_resource type="Script" path="res://Scripts/Controllers/PlayerMovementController.cs" id="6_h8401"]
 [ext_resource type="Script" path="res://Scripts/Boards/GraphicalBoard.cs" id="8_p0nd3"]
@@ -27,6 +28,9 @@ script = ExtResource("3_5nhfk")
 
 [node name="TimerService" type="Node" parent="Services"]
 script = ExtResource("4_d08ub")
+
+[node name="MoveInfoService" type="Node" parent="Services"]
+script = ExtResource("5_dkwe6")
 
 [node name="Controllers" type="Node" parent="."]
 
