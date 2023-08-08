@@ -8,7 +8,7 @@ namespace ChessGame.Scripts.Helpers
         {
             List<BoardPos > moves = new List<BoardPos>();
 
-            if (isPlayer)
+            if (!isPlayer)
             {
                 if (startingRank == 1)
                 {

@@ -5,15 +5,14 @@ using System.Collections.Generic;
 
 namespace ChessGame.Scripts.ChessBoard
 {
-    public partial class LogicalBoard : GodotObject
+    public partial class LogicalBoard : Node
     {
         private PieceInfo[,] _board = new PieceInfo[8,8];
 
-        public LogicalBoard() 
+        public override void _Ready()
         {
-
             // Init Board
-            for (int rank =  0; rank < 8; rank++)
+            for (int rank = 0; rank < 8; rank++)
             {
                 for (int file = 0; file < 8; file++)
                 {
@@ -37,15 +36,17 @@ namespace ChessGame.Scripts.ChessBoard
             _board[boardPos.Rank, boardPos.File] = PieceInfo.GetEmptyPiece();
         }
 
-        public void MovePiece(BoardPos startingPos, BoardPos targetPos, bool isPlayerMove, out bool success)
+        public void MovePiece(BoardPos startingPos, BoardPos targetPos, ChessColor pieceColor, out bool success)
         {
             PieceInfo startingPieceInfo = GetPieceInfoAtPos(startingPos);
             PieceInfo targetPieceInfo = GetPieceInfoAtPos(targetPos);
 
-            List<BoardPos> moves = GetMovesForPiece(startingPos, isPlayerMove);
+            List<BoardPos> moves = GetMovesForPiece(startingPos);
 
             if (MoveFinder.IsMovePossible(targetPos, moves))
             {
+
+
                 AddPiece(targetPos, startingPieceInfo);
                 RemovePiece(startingPos);
 
@@ -71,15 +72,13 @@ namespace ChessGame.Scripts.ChessBoard
             }
         }
 
-        public List<BoardPos> GetMovesForPiece(BoardPos pos, bool isPlayerMove)
+        public List<BoardPos> GetMovesForPiece(BoardPos pos)
         {
             PieceInfo piece = GetPieceInfoAtPos(pos);
 
             if (piece.CachedMoves == null || piece.CachedMoves.Count == 0)
             {
-
-
-                MoveFinder mf = new MoveFinder(this, piece, pos, isPlayerMove, isPlayerMove ? ChessColor.White : ChessColor.Black);
+                MoveFinder mf = new MoveFinder(this, piece, pos, piece.Color);
                 List<BoardPos> moves = mf.GetCapableMoves(pos.Rank, pos.File, mf.GetMovesAssumingEmptyBoard());
                 return moves;
             } else

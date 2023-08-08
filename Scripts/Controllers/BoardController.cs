@@ -28,11 +28,10 @@ namespace ChessGame.Scripts.Controllers
             _timerService = ServiceHelpers.GetTimerService();
             _turnService = ServiceHelpers.GetTurnService();
 
-            _gBoard = GetNode<GraphicalBoard>("/root/Main/GraphicalBoard");
+            _gBoard = GetNode<GraphicalBoard>("/root/Main/Boards/GraphicalBoard");
+            _logicBoard = GetNode<LogicalBoard>("/root/Main/Boards/LogicalBoard");
 
             _playerColor = _gameInfoService.PlayerSideColor;
-
-            _logicBoard = new LogicalBoard();
         }
 
         public void CreateDefaultBoard()
@@ -72,7 +71,7 @@ namespace ChessGame.Scripts.Controllers
                 return false;
             }
 
-            _logicBoard.MovePiece(pos, targetPos, movingPieceInfo.Color == _playerColor, out success);
+            _logicBoard.MovePiece(pos, targetPos, movingPieceInfo.Color, out success);
 
             if (success)
             {
@@ -114,7 +113,7 @@ namespace ChessGame.Scripts.Controllers
         public List<BoardPos> GetMovesForPiece(BoardPos pos, bool isPlayerMove)
         {
             var pieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
-            return _logicBoard.GetMovesForPiece(pos, isPlayerMove);
+            return _logicBoard.GetMovesForPiece(pos);
         }
 
         public Vector2 GetTileCenter(BoardPos pos)
