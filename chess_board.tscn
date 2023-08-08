@@ -137,6 +137,14 @@ text = "Piece Color: "
 layout_mode = 2
 text = "Piece: "
 
+[node name="WhiteCheckLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
+layout_mode = 2
+text = "White in Check?: "
+
+[node name="BlackCheckLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
+layout_mode = 2
+text = "Black in Check?: "
+
 [node name="Boards" type="Node" parent="."]
 
 [node name="GraphicalBoard" type="TileMap" parent="Boards"]
