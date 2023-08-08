@@ -186,5 +186,68 @@ namespace ChessGame.Scripts.Controllers
 
             _moveInfoService.MoveCache = boardPosMatrix;
         }
+        private bool WhiteCheckCheck()
+        {
+            for (int rank = 0; rank < 8; rank++)
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    var pos = new BoardPos(rank, file);
+
+                    PieceInfo piece = _logicBoard.GetPieceInfoAtPos(pos);
+                    if (piece.PieceId == ChessPieceId.Empty || piece.Color == ChessColor.White)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        var moves = _moveInfoService.GetMovesAtPos(pos);
+                        foreach (var move in moves)
+                        {
+                            PieceInfo pieceAtTarget = _logicBoard.GetPieceInfoAtPos(move);
+
+                            if (pieceAtTarget.PieceId == ChessPieceId.King && pieceAtTarget.Color == ChessColor.White)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private bool BlackCheckCheck()
+        {
+            for (int rank = 0; rank < 8; rank++)
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    var pos = new BoardPos(rank, file);
+
+                    PieceInfo piece = _logicBoard.GetPieceInfoAtPos(pos);
+                    if (piece.PieceId == ChessPieceId.Empty || piece.Color == ChessColor.Black)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        var moves = _moveInfoService.GetMovesAtPos(pos);
+                        foreach (var move in moves)
+                        {
+                            PieceInfo pieceAtTarget = _logicBoard.GetPieceInfoAtPos(move);
+
+                            if (pieceAtTarget.PieceId == ChessPieceId.King && pieceAtTarget.Color == ChessColor.Black)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
     }
 }
