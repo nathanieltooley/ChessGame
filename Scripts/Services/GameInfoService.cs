@@ -19,6 +19,8 @@ public partial class GameInfoService : Node
     public bool CanBKingSideCastle { get; set; }
     public bool CanBQueenSideCastle { get; set; }
 
+    public PieceInfo[,] CachedBoard { get; set; }   
+
     [Signal]
     public delegate void UpdateBoardStateEventHandler(string fenString);
 
