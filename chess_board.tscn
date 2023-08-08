@@ -168,4 +168,5 @@ script = ExtResource("11_0eej3")
 [connection signal="SetTimerColor" from="Services/TimerService" to="MainGameGUI" method="OnSetTimerColor"]
 [connection signal="ToggleTimer" from="Services/TimerService" to="MainGameGUI" method="OnToggleTimer"]
 [connection signal="UpdateSideTime" from="Services/TimerService" to="MainGameGUI" method="OnUpdateTimerTime"]
+[connection signal="ColorIsInCheckUpdate" from="Controllers/BoardController" to="DebugMenuLogic" method="OnColorInCheck"]
 [connection signal="UpdateMousePos" from="Controllers/PlayerInputController" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]
