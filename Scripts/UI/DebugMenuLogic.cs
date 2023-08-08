@@ -14,6 +14,9 @@ public partial class DebugMenuLogic : Control
 
 	private Label _fenLabel;
 
+	private Label _whiteCheckLabel;
+	private Label _blackCheckLabel;
+
 	public override void _Ready()
 	{
 		_debugContainer = GetNode<VBoxContainer>("DebugMenuContainer/DebugTextContainer");
@@ -22,8 +25,10 @@ public partial class DebugMenuLogic : Control
 		_mousePosGridLabel = _debugContainer.GetNode<Label>("MousePosGridLabel");
 		_pieceColorLabel = _debugContainer.GetNode<Label>("ChessPieceColorLabel");
 		_pieceLabel = _debugContainer.GetNode<Label>("ChessPieceLabel");
+		_whiteCheckLabel = _debugContainer.GetNode<Label>("WhiteCheckLabel");
+		_blackCheckLabel = _debugContainer.GetNode<Label>("BlackCheckLabel");
 
-		_fenLabel = GetNode<Label>("FENDebug");
+        _fenLabel = GetNode<Label>("FENDebug");
 	}
 
 	public void OnChessBoardUpdateMousePos(Vector2 mousePos, BoardPos boardPos, PieceInfo piece)
@@ -49,5 +54,16 @@ public partial class DebugMenuLogic : Control
 	public void OnUpdateBoardState(string newFen)
 	{
 		_fenLabel.Text = $"Current FEN: {newFen}";
+	}
+
+	public void OnColorInCheck(ChessColor colorInCheck, bool inCheck)
+	{
+		if (colorInCheck == ChessColor.White)
+		{
+			_whiteCheckLabel.Text = $"White in Check?: {inCheck}";
+		} else if (colorInCheck == ChessColor.Black)
+		{
+			_blackCheckLabel.Text = $"Black in Check?: {inCheck}";
+		}
 	}
 }

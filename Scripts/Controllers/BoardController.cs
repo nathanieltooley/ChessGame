@@ -25,6 +25,9 @@ namespace ChessGame.Scripts.Controllers
         private GameInfoService _gameInfoService;
         private MoveInfoService _moveInfoService;
 
+        [Signal]
+        public delegate void ColorIsInCheckUpdateEventHandler(ChessColor color, bool inCheck);
+
         public override void _Ready()
         {
             _gameInfoService = ServiceHelpers.GetGameInfoService();
@@ -86,6 +89,12 @@ namespace ChessGame.Scripts.Controllers
 
                 UpdateMoveCache();
                 SendFENUpdate();
+
+                bool whiteInCheck = WhiteCheckCheck();
+                bool blackInCheck = BlackCheckCheck();
+
+                EmitSignal(SignalName.ColorIsInCheckUpdate, (int)ChessColor.White, whiteInCheck);
+                EmitSignal(SignalName.ColorIsInCheckUpdate, (int)ChessColor.Black, blackInCheck);
 
                 return true;
             }
