@@ -41,9 +41,12 @@ namespace ChessGame.Scripts.Controllers
             return false;
         }
 
-        public List<BoardPos> GetCapableMoves(int startingRank, int startingFile, List<BoardPos> theoreticalMoves)
+        public List<BoardPos> GetCapableMoves(BoardPos piecePos)
         {
-            // copy list
+            int startingRank = piecePos.Rank;
+            int startingFile = piecePos.File;
+
+            List<BoardPos> theoreticalMoves = GetMovesAssumingEmptyBoard();
             List<BoardPos> capableMoves = new List<BoardPos>();
             Dictionary<Vector2I, Vector2I> blockedDict = MoveHelpers.CreateBlockedDict(startingRank, startingFile, _board);
 
