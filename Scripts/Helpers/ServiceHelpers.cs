@@ -36,12 +36,18 @@ namespace ChessGame.Scripts.Helpers
         {
             return GetService<TurnService>(ServiceName.TurnService);
         }
+
+        public static MoveInfoService GetMoveInfoService()
+        {
+            return GetService<MoveInfoService>(ServiceName.MoveInfoService);
+        }
     }
 
     public enum ServiceName
     {
         GameInfoService,
         TimerService,
-        TurnService
+        TurnService,
+        MoveInfoService
     }
 }
