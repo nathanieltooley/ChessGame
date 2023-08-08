@@ -29,7 +29,7 @@ namespace ChessGame.Scripts.Controllers
 
             _playerColor = gameInfoService.PlayerSideColor;
             _boardController = GetNode<BoardController>("/root/Main/Controllers/BoardController");
-            _graphicalBoard = GetNode<GraphicalBoard>("/root/Main/GraphicalBoard");
+            _graphicalBoard = GetNode<GraphicalBoard>("/root/Main/Boards/GraphicalBoard");
         }
 
         public void InputHandler(InputEvent @event)
