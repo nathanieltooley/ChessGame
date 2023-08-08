@@ -36,30 +36,13 @@ namespace ChessGame.Scripts.ChessBoard
             _board[boardPos.Rank, boardPos.File] = PieceInfo.GetEmptyPiece();
         }
 
-        public void MovePiece(BoardPos startingPos, BoardPos targetPos, ChessColor pieceColor, out bool success)
+        public void MovePiece(BoardPos startingPos, BoardPos targetPos)
         {
             PieceInfo startingPieceInfo = GetPieceInfoAtPos(startingPos);
-            PieceInfo targetPieceInfo = GetPieceInfoAtPos(targetPos);
 
-            List<BoardPos> moves = GetMovesForPiece(startingPos);
-
-            if (MoveFinder.IsMovePossible(targetPos, moves))
-            {
-
-
-                AddPiece(targetPos, startingPieceInfo);
-                RemovePiece(startingPos);
-
-                startingPieceInfo.CachedMoves.Clear();
-
-                success = true;
-            } else
-            {
-                success = false;
-            }
-        }
-
-        
+            AddPiece(targetPos, startingPieceInfo);
+            RemovePiece(startingPos);
+        }   
 
         public void ClearBoard()
         {
@@ -72,34 +55,9 @@ namespace ChessGame.Scripts.ChessBoard
             }
         }
 
-        public List<BoardPos> GetMovesForPiece(BoardPos pos)
-        {
-            PieceInfo piece = GetPieceInfoAtPos(pos);
-
-            if (piece.CachedMoves == null || piece.CachedMoves.Count == 0)
-            {
-                MoveFinder mf = new MoveFinder(this, piece, pos, piece.Color);
-                List<BoardPos> moves = mf.GetCapableMoves(pos.Rank, pos.File, mf.GetMovesAssumingEmptyBoard());
-                return moves;
-            } else
-            {
-                return piece.CachedMoves;
-            }
-        }
-
         public PieceInfo[,] GetBoard()
         {
             return _board;
-        }
-
-        private void CacheMoves(BoardPos boardPos, List<BoardPos> moves)
-        {
-            PieceInfo pieceAtPos = GetPieceInfoAtPos(boardPos);
-
-            if (pieceAtPos != null)
-            {
-                pieceAtPos.CachedMoves = moves;
-            }
         }
     }
 }

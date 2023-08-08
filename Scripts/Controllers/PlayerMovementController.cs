@@ -67,13 +67,17 @@ namespace ChessGame.Scripts.Controllers
 
                                     _originalDraggedPieceLoc = boardPos;
 
-                                    var moves = _boardController.GetMovesForPiece(boardPos, _pieceBeingDraggedInfo.Color == _playerColor);
-                                    LogHelpers.DebugLog($"{moves.Count}");
+                                    var moves = _boardController.GetMovesForPiece(boardPos);
 
-                                    foreach (var move in moves)
+                                    if (moves != null)
                                     {
-                                        _graphicalBoard.ToggleHighlightCell(GridMathHelpers.ConvertBoardCoordToGridChord(move, ChessConstants.BoardMargin));
+                                        foreach (var move in moves)
+                                        {
+                                            _graphicalBoard.ToggleHighlightCell(GridMathHelpers.ConvertBoardCoordToGridChord(move, ChessConstants.BoardMargin));
+                                        }
                                     }
+
+                                    return;
                                 }
                             }
                         }

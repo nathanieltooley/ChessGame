@@ -4,6 +4,8 @@ using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Helpers;
 using Godot;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ChessGame.Scripts.Controllers
 {
@@ -21,12 +23,14 @@ namespace ChessGame.Scripts.Controllers
         private TimerService _timerService;
         private TurnService _turnService;
         private GameInfoService _gameInfoService;
+        private MoveInfoService _moveInfoService;
 
         public override void _Ready()
         {
             _gameInfoService = ServiceHelpers.GetGameInfoService();
             _timerService = ServiceHelpers.GetTimerService();
             _turnService = ServiceHelpers.GetTurnService();
+            _moveInfoService = ServiceHelpers.GetMoveInfoService();
 
             _gBoard = GetNode<GraphicalBoard>("/root/Main/Boards/GraphicalBoard");
             _logicBoard = GetNode<LogicalBoard>("/root/Main/Boards/LogicalBoard");
@@ -43,6 +47,8 @@ namespace ChessGame.Scripts.Controllers
         {
             PieceInfo[,] fenBoard = GetBoardFromFEN(fenString);
             UpdateBoard(fenBoard);
+            UpdateBoardCache();
+            UpdateMoveCache(true);
         }
 
         public void AddPiece(BoardPos pos, PieceInfo piece)
@@ -63,26 +69,30 @@ namespace ChessGame.Scripts.Controllers
 
         public bool MovePiece(BoardPos pos, BoardPos targetPos)
         {
-            bool success;
             var movingPieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
+            List<BoardPos> capableMoves = _moveInfoService.GetMovesAtPos(pos);
 
             if (movingPieceInfo.Color != _turnService.GetCurrentTurnColor())
             {
                 return false;
             }
 
-            _logicBoard.MovePiece(pos, targetPos, movingPieceInfo.Color, out success);
-
-            if (success)
+            var result = capableMoves.SingleOrDefault((pos) => pos == targetPos);
+            if (result != null)
             {
+                _logicBoard.MovePiece(pos, targetPos);
                 _gBoard.MovePiece(pos, movingPieceInfo, targetPos);
+
                 _turnService.SwitchTurn();
 
+                UpdateMoveCache(false);
+                UpdateBoardCache();
                 SendFENUpdate();
 
+                return true;
             }
 
-            return success;
+            return false;
         }
 
         public PieceInfo GetPieceInfoAtPos(BoardPos pos)
@@ -110,10 +120,10 @@ namespace ChessGame.Scripts.Controllers
             return pieces;
         }
 
-        public List<BoardPos> GetMovesForPiece(BoardPos pos, bool isPlayerMove)
+        public List<BoardPos> GetMovesForPiece(BoardPos pos)
         {
-            var pieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
-            return _logicBoard.GetMovesForPiece(pos);
+            List<BoardPos> moves = _moveInfoService.GetMovesAtPos(pos);
+            return moves;
         }
 
         public Vector2 GetTileCenter(BoardPos pos)
@@ -157,6 +167,41 @@ namespace ChessGame.Scripts.Controllers
             _gameInfoService.EmitFenStringSignal(FEN.Encrypt(_logicBoard.GetBoard()));
         }
 
+        private void UpdateMoveCache(bool forceUpdate)
+        {
+            PieceInfo[,] prevBoard = _gameInfoService.CachedBoard;
+            PieceInfo[,] currentBoard = _logicBoard.GetBoard();
 
+            List<BoardPos>[,] cachedMoveMatrix = (List<BoardPos>[,])_moveInfoService.MoveCache?.Clone();
+            List<BoardPos>[,] boardPosMatrix = new List<BoardPos>[8, 8];
+
+            for (int rank = 0; rank < 8; rank++)
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    if (prevBoard[rank, file] == currentBoard[rank, file] && !forceUpdate)
+                    {
+                        boardPosMatrix[rank, file] = cachedMoveMatrix[rank, file];
+                        continue;
+                    }
+
+                    BoardPos piecePos = new BoardPos(rank, file);
+                    PieceInfo pieceInfo = _logicBoard.GetPieceInfoAtPos(piecePos);
+
+                    if (pieceInfo.PieceId != ChessPieceId.Empty)
+                    {
+                        MoveFinder mf = new MoveFinder(_logicBoard, pieceInfo, piecePos, pieceInfo.Color);
+                        boardPosMatrix[rank, file] = mf.GetCapableMoves(piecePos);
+                    }
+                }
+            }
+
+            _moveInfoService.MoveCache = boardPosMatrix;
+        }
+
+        private void UpdateBoardCache()
+        {
+            _gameInfoService.CachedBoard = _logicBoard.GetBoard();
+        }
     }
 }
