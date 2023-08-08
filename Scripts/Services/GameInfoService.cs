@@ -14,6 +14,11 @@ public partial class GameInfoService : Node
     public List<PieceInfo> CapturedWhitePieces { get; set; }
     public List<PieceInfo> CapturedBlackPieces { get; set; }
 
+    public bool CanPlayerKingSideCastle { get; set; }
+    public bool CanPlayerQueenSideCastle { get; set; }
+    public bool CanBKingSideCastle { get; set; }
+    public bool CanBQueenSideCastle { get; set; }
+
     [Signal]
     public delegate void UpdateBoardStateEventHandler(string fenString);
 
@@ -45,6 +50,11 @@ public partial class GameInfoService : Node
     public void EmitFenStringSignal(string fenString)
     {
         EmitSignal(SignalName.UpdateBoardState, fenString);
+    }
+
+    public bool IsPlayerColor(ChessColor color)
+    {
+        return color == PlayerSideColor;
     }
 }
 
