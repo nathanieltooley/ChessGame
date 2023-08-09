@@ -1,6 +1,6 @@
 using ChessGame.Scripts;
 using ChessGame.Scripts.DataTypes;
-using ChessGame.Scripts.Helpers;
+using ChessGame.Scripts.Factories;
 using Godot;
 using Godot.Collections;
 using System;
@@ -28,12 +28,7 @@ public partial class TimerService : Node
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
-        if (ServiceHelpers.RootNode == null)
-        {
-            ServiceHelpers.RootNode = this;
-        }
-
-        _turnService = ServiceHelpers.GetTurnService();
+        _turnService = ServiceFactory.GetTurnService();
 
         _playerTimer = _startingTime;
         _enemyTimer = _startingTime;

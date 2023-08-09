@@ -1,9 +1,8 @@
-﻿
-using Godot;
+﻿using Godot;
 
-namespace ChessGame.Scripts.Helpers
+namespace ChessGame.Scripts.Factories
 {
-    public static class ServiceHelpers
+    public static class ServiceFactory
     {
         public static Node RootNode { get; set; }
 

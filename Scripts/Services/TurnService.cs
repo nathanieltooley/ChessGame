@@ -1,5 +1,5 @@
 using ChessGame.Scripts;
-using ChessGame.Scripts.Helpers;
+using ChessGame.Scripts.Factories;
 using Godot;
 using System;
 
@@ -45,7 +45,7 @@ public partial class TurnService : Node
             _turnIndex = 0;
         }
 
-        TimerService _timerService = ServiceHelpers.GetTimerService();
+        TimerService _timerService = ServiceFactory.GetTimerService();
 
         _timerService.EmitTimerToggleDisableSignal(startingTurnSide);
         _timerService.EmitTimerToggleDisableSignal(GetCurrentTurnSide());

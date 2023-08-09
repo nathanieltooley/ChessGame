@@ -1,5 +1,6 @@
 ﻿using ChessGame.Scripts.ChessBoard.Boards;
 using ChessGame.Scripts.DataTypes;
+using ChessGame.Scripts.Factories;
 using ChessGame.Scripts.Helpers;
 using Godot;
 
@@ -25,7 +26,7 @@ namespace ChessGame.Scripts.Controllers
 
         public override void _Ready()
         {
-            GameInfoService gameInfoService = ServiceHelpers.GetGameInfoService();
+            GameInfoService gameInfoService = ServiceFactory.GetGameInfoService();
 
             _playerColor = gameInfoService.PlayerSideColor;
             _boardController = GetNode<BoardController>("/root/Main/Controllers/BoardController");

@@ -1,7 +1,7 @@
 ﻿using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.ChessBoard.Boards;
 using ChessGame.Scripts.DataTypes;
-using ChessGame.Scripts.Helpers;
+using ChessGame.Scripts.Factories;
 using Godot;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,10 +30,10 @@ namespace ChessGame.Scripts.Controllers
 
         public override void _Ready()
         {
-            _gameInfoService = ServiceHelpers.GetGameInfoService();
-            _timerService = ServiceHelpers.GetTimerService();
-            _turnService = ServiceHelpers.GetTurnService();
-            _moveInfoService = ServiceHelpers.GetMoveInfoService();
+            _gameInfoService = ServiceFactory.GetGameInfoService();
+            _timerService = ServiceFactory.GetTimerService();
+            _turnService = ServiceFactory.GetTurnService();
+            _moveInfoService = ServiceFactory.GetMoveInfoService();
 
             _gBoard = GetNode<GraphicalBoard>("/root/Main/Boards/GraphicalBoard");
             _logicBoard = GetNode<LogicalBoard>("/root/Main/Boards/LogicalBoard");

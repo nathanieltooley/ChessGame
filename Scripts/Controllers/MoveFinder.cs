@@ -1,5 +1,6 @@
 ﻿using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.DataTypes;
+using ChessGame.Scripts.Factories;
 using ChessGame.Scripts.Helpers;
 using Godot;
 using System;
@@ -19,7 +20,7 @@ namespace ChessGame.Scripts.Controllers
 
         public MoveFinder(LogicalBoard board, PieceInfo piece, BoardPos piecePos, ChessColor pieceMoverColor)
         {
-            GameInfoService infoService = ServiceHelpers.GetGameInfoService();
+            GameInfoService infoService = ServiceFactory.GetGameInfoService();
 
             _board = board;
             _piece = piece;
