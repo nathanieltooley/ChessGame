@@ -1,7 +1,6 @@
 ﻿using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Helpers;
 using Godot;
-using System.Collections.Generic;
 
 namespace ChessGame.Scripts.ChessBoard.Boards
 {

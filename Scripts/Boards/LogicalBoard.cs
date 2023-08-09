@@ -1,7 +1,5 @@
-﻿using ChessGame.Scripts.Controllers;
-using ChessGame.Scripts.DataTypes;
+﻿using ChessGame.Scripts.DataTypes;
 using Godot;
-using System.Collections.Generic;
 
 namespace ChessGame.Scripts.ChessBoard
 {
