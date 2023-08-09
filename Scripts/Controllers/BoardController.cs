@@ -35,8 +35,8 @@ namespace ChessGame.Scripts.Controllers
             _turnService = ServiceFactory.GetTurnService();
             _moveInfoService = ServiceFactory.GetMoveInfoService();
 
-            _gBoard = GetNode<GraphicalBoard>("/root/Main/Boards/GraphicalBoard");
-            _logicBoard = GetNode<LogicalBoard>("/root/Main/Boards/LogicalBoard");
+            _gBoard = BoardFactory.GetGraphicalBoard();
+            _logicBoard = BoardFactory.GetLogicalBoard();
 
             _playerColor = _gameInfoService.PlayerSideColor;
         }
@@ -226,7 +226,6 @@ namespace ChessGame.Scripts.Controllers
 
             return false;
         }
-
         private bool BlackCheckCheck()
         {
             for (int rank = 0; rank < 8; rank++)
