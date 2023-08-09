@@ -1,6 +1,6 @@
 using ChessGame.Scripts;
 using ChessGame.Scripts.Controllers;
-using ChessGame.Scripts.Helpers;
+using ChessGame.Scripts.Factories;
 using Godot;
 
 public partial class Main : Node2D
@@ -16,16 +16,14 @@ public partial class Main : Node2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
-        ServiceHelpers.RootNode = this;
-
         RunEnvironment runEnv = GetNode<RunInfo>("/root/RunInfo").GameRunEnvironment;
 
-        GameInfoService gameInfoService = ServiceHelpers.GetGameInfoService();
-        TurnService turnService = ServiceHelpers.GetTurnService();
-        TimerService timerService = ServiceHelpers.GetTimerService();
+        GameInfoService gameInfoService = ServiceFactory.GetGameInfoService();
+        TurnService turnService = ServiceFactory.GetTurnService();
+        TimerService timerService = ServiceFactory.GetTimerService();
 
-        _boardController = GetNode<BoardController>("/root/Main/Controllers/BoardController");
-        _playerMovementController = GetNode<PlayerMovementController>("/root/Main/Controllers/PlayerInputController");
+        _boardController = ControllerFactory.GetBoardController();
+        _playerMovementController = ControllerFactory.GetPlayerMovementController();
 
         aiColor = InvertColor(playerColor);
 
@@ -41,8 +39,6 @@ public partial class Main : Node2D
             whitePlayer = ChessSide.Enemy;
             blackPlayer = ChessSide.Player;
         }
-
-        
 
         gameInfoService.SetupGameInfo(runEnv, playerColor, aiColor);
         turnService.Setup(whitePlayer, blackPlayer);
