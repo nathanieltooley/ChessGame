@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://caaargxpskoar"]
+[gd_scene load_steps=15 format=3 uid="uid://caaargxpskoar"]
 
 [ext_resource type="TileSet" uid="uid://c7ukin0acqjbo" path="res://Assets/BoardTiles/chess_board_tileset.tres" id="1_i0ywi"]
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_xg0fo"]
 [ext_resource type="Script" path="res://Scripts/UI/MainGameGUI.cs" id="1_ykarp"]
+[ext_resource type="Script" path="res://Scripts/FactoryInit.cs" id="2_p6ca0"]
 [ext_resource type="Script" path="res://Scripts/Services/GameInfoService.cs" id="2_s2r2w"]
 [ext_resource type="Script" path="res://Scripts/Services/TurnService.cs" id="3_5nhfk"]
 [ext_resource type="Script" path="res://Scripts/UI/DebugMenuLogic.cs" id="3_tmi2x"]
@@ -17,6 +18,9 @@
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_xg0fo")
+
+[node name="FactoryInit" type="Node" parent="."]
+script = ExtResource("2_p6ca0")
 
 [node name="Services" type="Node" parent="."]
 
@@ -168,5 +172,6 @@ script = ExtResource("11_0eej3")
 [connection signal="SetTimerColor" from="Services/TimerService" to="MainGameGUI" method="OnSetTimerColor"]
 [connection signal="ToggleTimer" from="Services/TimerService" to="MainGameGUI" method="OnToggleTimer"]
 [connection signal="UpdateSideTime" from="Services/TimerService" to="MainGameGUI" method="OnUpdateTimerTime"]
+[connection signal="ColorIsInCheckUpdate" from="Controllers/BoardController" to="Services/GameInfoService" method="OnCheckUpdate"]
 [connection signal="ColorIsInCheckUpdate" from="Controllers/BoardController" to="DebugMenuLogic" method="OnColorInCheck"]
 [connection signal="UpdateMousePos" from="Controllers/PlayerInputController" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]
