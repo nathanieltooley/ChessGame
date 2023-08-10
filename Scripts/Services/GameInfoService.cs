@@ -17,7 +17,10 @@ public partial class GameInfoService : Node
     public bool CanPlayerKingSideCastle { get; set; }
     public bool CanPlayerQueenSideCastle { get; set; }
     public bool CanBKingSideCastle { get; set; }
-    public bool CanBQueenSideCastle { get; set; } 
+    public bool CanBQueenSideCastle { get; set; }
+
+    public bool WhiteInCheck { get; set; }
+    public bool BlackInCheck { get; set; }
 
     [Signal]
     public delegate void UpdateBoardStateEventHandler(string fenString);
@@ -55,6 +58,23 @@ public partial class GameInfoService : Node
     public bool IsPlayerColor(ChessColor color)
     {
         return color == PlayerSideColor;
+    }
+
+    public void OnCheckUpdate(ChessColor color, bool inCheck) 
+    {
+        if (color == ChessColor.White)
+        {
+            WhiteInCheck = inCheck;
+        } else
+        {
+            BlackInCheck = inCheck;
+        }
+    }
+
+    public bool ColorInCheck(ChessColor color)
+    {
+        var check = color == ChessColor.White ? WhiteInCheck : BlackInCheck;
+        return check;
     }
 }
 
