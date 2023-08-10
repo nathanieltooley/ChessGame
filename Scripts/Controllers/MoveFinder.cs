@@ -16,16 +16,17 @@ namespace ChessGame.Scripts.Controllers
         private BoardPos _piecePos;
 
         private ChessColor _pieceMoverColor;
+        private GameInfoService _gameInfoService;
         private bool _isPlayer;
 
         public MoveFinder(LogicalBoard board, PieceInfo piece, BoardPos piecePos, ChessColor pieceMoverColor)
         {
-            GameInfoService infoService = ServiceFactory.GetGameInfoService();
+            _gameInfoService = ServiceFactory.GetGameInfoService();
 
             _board = board;
             _piece = piece;
             _piecePos = piecePos;
-            _isPlayer = infoService.IsPlayerColor(pieceMoverColor);
+            _isPlayer = _gameInfoService.IsPlayerColor(pieceMoverColor);
             _pieceMoverColor = pieceMoverColor;
         }
 
