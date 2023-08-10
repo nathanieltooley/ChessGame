@@ -10,6 +10,7 @@ public partial class FactoryInit : Node
 
 		ServiceFactory.RootNode = rootNode;
 		ControllerFactory.RootNode = rootNode;
+		BoardFactory.RootNode = rootNode;
     }
 
 }
