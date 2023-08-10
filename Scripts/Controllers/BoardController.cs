@@ -72,9 +72,16 @@ namespace ChessGame.Scripts.Controllers
         public bool MovePiece(BoardPos pos, BoardPos targetPos)
         {
             var movingPieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
+            var pieceColor = movingPieceInfo.Color;
             List<BoardPos> capableMoves = _moveInfoService.GetMovesAtPos(pos);
 
-            if (movingPieceInfo.Color != _turnService.GetCurrentTurnColor())
+            if (pieceColor != _turnService.GetCurrentTurnColor())
+            {
+                return false;
+            }
+
+            // King in Check Check
+            if (_gameInfoService.ColorInCheck(pieceColor) && movingPieceInfo.PieceId != ChessPieceId.King)
             {
                 return false;
             }
