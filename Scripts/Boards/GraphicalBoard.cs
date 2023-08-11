@@ -99,5 +99,10 @@ namespace ChessGame.Scripts.ChessBoard.Boards
                 EraseCell(1, gridPos);
             }
         }
+
+        public void ClearHighlights()
+        {
+            ClearLayer(1);
+        }
     }
 }

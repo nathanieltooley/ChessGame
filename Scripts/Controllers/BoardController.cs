@@ -13,6 +13,7 @@ namespace ChessGame.Scripts.Controllers
     {
         private GraphicalBoard _gBoard { get; set; }
         private LogicalBoard _logicBoard { get; set; }
+        private PlayerMovementController _playerMovementController { get; set; }
 
         private List<PieceInfo> _whitePieces = new List<PieceInfo>();
         private List<PieceInfo> _blackPieces = new List<PieceInfo>();
@@ -37,8 +38,22 @@ namespace ChessGame.Scripts.Controllers
 
             _gBoard = BoardFactory.GetGraphicalBoard();
             _logicBoard = BoardFactory.GetLogicalBoard();
+            _playerMovementController = ControllerFactory.GetPlayerMovementController();
 
             _playerColor = _gameInfoService.PlayerSideColor;
+        }
+
+        public override void _Process(double delta)
+        {
+            if (_playerMovementController.IsDragging)
+            {
+                _playerMovementController.PieceBeingDragged.Position = GetViewport().GetMousePosition();
+            }
+        }
+
+        public override void _Input(InputEvent @event)
+        {
+            _playerMovementController.InputHandler(@event);
         }
 
         public void CreateDefaultBoard()

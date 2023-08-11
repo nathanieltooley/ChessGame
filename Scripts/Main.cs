@@ -7,7 +7,6 @@ public partial class Main : Node2D
 {
 
     private BoardController _boardController;
-    private PlayerMovementController _playerMovementController;
 
     [Export]
     private ChessColor playerColor = ChessColor.White;
@@ -23,7 +22,6 @@ public partial class Main : Node2D
         TimerService timerService = ServiceFactory.GetTimerService();
 
         _boardController = ControllerFactory.GetBoardController();
-        _playerMovementController = ControllerFactory.GetPlayerMovementController();
 
         aiColor = InvertColor(playerColor);
 
@@ -62,16 +60,9 @@ public partial class Main : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-        if (_playerMovementController.IsDragging)
-        {
-            _playerMovementController.PieceBeingDragged.Position = GetViewport().GetMousePosition();
-        }
+
     }
 
-    public override void _Input(InputEvent @event)
-    {
-        _playerMovementController.InputHandler(@event);
-    }
 
     private ChessColor InvertColor(ChessColor color)
     {
