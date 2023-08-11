@@ -12,8 +12,9 @@ namespace ChessGame.Scripts.Controllers
     public partial class BoardController : Node
     {
         private GraphicalBoard _gBoard { get; set; }
-        private LogicalBoard _logicBoard { get; set; }
+        private ILogicalBoard _logicBoard { get; set; }
         private PlayerMovementController _playerMovementController { get; set; }
+        private MoveController _moveController { get; set; }
 
         private List<PieceInfo> _whitePieces = new List<PieceInfo>();
         private List<PieceInfo> _blackPieces = new List<PieceInfo>();
@@ -24,7 +25,6 @@ namespace ChessGame.Scripts.Controllers
         private TimerService _timerService;
         private TurnService _turnService;
         private GameInfoService _gameInfoService;
-        private MoveInfoService _moveInfoService;
 
         [Signal]
         public delegate void ColorIsInCheckUpdateEventHandler(ChessColor color, bool inCheck);
@@ -34,11 +34,11 @@ namespace ChessGame.Scripts.Controllers
             _gameInfoService = ServiceFactory.GetGameInfoService();
             _timerService = ServiceFactory.GetTimerService();
             _turnService = ServiceFactory.GetTurnService();
-            _moveInfoService = ServiceFactory.GetMoveInfoService();
 
             _gBoard = BoardFactory.GetGraphicalBoard();
             _logicBoard = BoardFactory.GetLogicalBoard();
             _playerMovementController = ControllerFactory.GetPlayerMovementController();
+            _moveController = ControllerFactory.GetMoveController(_logicBoard);
 
             _playerColor = _gameInfoService.PlayerSideColor;
         }
@@ -65,7 +65,7 @@ namespace ChessGame.Scripts.Controllers
         {
             PieceInfo[,] fenBoard = GetBoardFromFEN(fenString);
             UpdateBoard(fenBoard);
-            UpdateMoveCache();
+            _moveController.UpdateMoveCache();
         }
 
         public void AddPiece(BoardPos pos, PieceInfo piece)
@@ -88,7 +88,7 @@ namespace ChessGame.Scripts.Controllers
         {
             var movingPieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
             var pieceColor = movingPieceInfo.Color;
-            List<BoardPos> capableMoves = _moveInfoService.GetMovesAtPos(pos);
+            List<BoardPos> capableMoves = _moveController.GetMovesAtPos(pos);
 
             if (pieceColor != _turnService.GetCurrentTurnColor())
             {
@@ -101,6 +101,13 @@ namespace ChessGame.Scripts.Controllers
                 return false;
             }
 
+            var attackingColor = pieceColor == ChessColor.White ? ChessColor.Black : ChessColor.White;
+            // Can't move a king into check
+            if (movingPieceInfo.PieceId == ChessPieceId.King && _moveController.IsTileUnderAttack(targetPos, attackingColor))
+            {
+                return false;
+            }
+
             var result = capableMoves.SingleOrDefault((pos) => pos == targetPos);
             if (result != null)
             {
@@ -109,11 +116,14 @@ namespace ChessGame.Scripts.Controllers
 
                 _turnService.SwitchTurn();
 
-                UpdateMoveCache();
+                _moveController.UpdateMoveCache();
                 SendFENUpdate();
 
-                bool whiteInCheck = WhiteCheckCheck();
-                bool blackInCheck = BlackCheckCheck();
+                var whiteKingPos = GetKingPos(ChessColor.White);
+                var blackKingPos = GetKingPos(ChessColor.Black);
+
+                bool whiteInCheck = _moveController.CheckCheck(whiteKingPos, ChessColor.Black);
+                bool blackInCheck = _moveController.CheckCheck(blackKingPos, ChessColor.White);
 
                 EmitSignal(SignalName.ColorIsInCheckUpdate, (int)ChessColor.White, whiteInCheck);
                 EmitSignal(SignalName.ColorIsInCheckUpdate, (int)ChessColor.Black, blackInCheck);
@@ -151,7 +161,7 @@ namespace ChessGame.Scripts.Controllers
 
         public List<BoardPos> GetMovesForPiece(BoardPos pos)
         {
-            List<BoardPos> moves = _moveInfoService.GetMovesAtPos(pos);
+            List<BoardPos> moves = _moveController.GetMovesAtPos(pos);
             return moves;
         }
 
@@ -196,88 +206,23 @@ namespace ChessGame.Scripts.Controllers
             _gameInfoService.EmitFenStringSignal(FEN.Encrypt(_logicBoard.GetBoard()));
         }
 
-        private void UpdateMoveCache()
-        {
-            List<BoardPos>[,] boardPosMatrix = new List<BoardPos>[8, 8];
-
-            for (int rank = 0; rank < 8; rank++)
-            {
-                for (int file = 0; file < 8; file++)
-                {
-                    BoardPos piecePos = new BoardPos(rank, file);
-                    PieceInfo pieceInfo = _logicBoard.GetPieceInfoAtPos(piecePos);
-
-                    if (pieceInfo.PieceId != ChessPieceId.Empty)
-                    {
-                        MoveFinder mf = new MoveFinder(_logicBoard, pieceInfo, piecePos, pieceInfo.Color);
-                        boardPosMatrix[rank, file] = mf.GetCapableMoves(piecePos);
-                    }
-                }
-            }
-
-            _moveInfoService.MoveCache = boardPosMatrix;
-        }
-        private bool WhiteCheckCheck()
+        private BoardPos GetKingPos(ChessColor kingColor)
         {
             for (int rank = 0; rank < 8; rank++)
             {
                 for (int file = 0; file < 8; file++)
                 {
-                    var pos = new BoardPos(rank, file);
+                    var boardPos = new BoardPos(rank, file);
+                    var pieceAtTile = _logicBoard.GetPieceInfoAtPos(boardPos);
 
-                    PieceInfo piece = _logicBoard.GetPieceInfoAtPos(pos);
-                    if (piece.PieceId == ChessPieceId.Empty || piece.Color == ChessColor.White)
+                    if (pieceAtTile.PieceId == ChessPieceId.King && pieceAtTile.Color == kingColor)
                     {
-                        continue;
-                    }
-                    else
-                    {
-                        var moves = _moveInfoService.GetMovesAtPos(pos);
-                        foreach (var move in moves)
-                        {
-                            PieceInfo pieceAtTarget = _logicBoard.GetPieceInfoAtPos(move);
-
-                            if (pieceAtTarget.PieceId == ChessPieceId.King && pieceAtTarget.Color == ChessColor.White)
-                            {
-                                return true;
-                            }
-                        }
+                        return boardPos;
                     }
                 }
             }
 
-            return false;
-        }
-        private bool BlackCheckCheck()
-        {
-            for (int rank = 0; rank < 8; rank++)
-            {
-                for (int file = 0; file < 8; file++)
-                {
-                    var pos = new BoardPos(rank, file);
-
-                    PieceInfo piece = _logicBoard.GetPieceInfoAtPos(pos);
-                    if (piece.PieceId == ChessPieceId.Empty || piece.Color == ChessColor.Black)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        var moves = _moveInfoService.GetMovesAtPos(pos);
-                        foreach (var move in moves)
-                        {
-                            PieceInfo pieceAtTarget = _logicBoard.GetPieceInfoAtPos(move);
-
-                            if (pieceAtTarget.PieceId == ChessPieceId.King && pieceAtTarget.Color == ChessColor.Black)
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false;
+            return null;
         }
     }
 }

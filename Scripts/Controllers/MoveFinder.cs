@@ -11,7 +11,7 @@ namespace ChessGame.Scripts.Controllers
 {
     public class MoveFinder
     {
-        private LogicalBoard _board;
+        private ILogicalBoard _board;
         private PieceInfo _piece;
         private BoardPos _piecePos;
 
@@ -19,7 +19,7 @@ namespace ChessGame.Scripts.Controllers
         private GameInfoService _gameInfoService;
         private bool _isPlayer;
 
-        public MoveFinder(LogicalBoard board, PieceInfo piece, BoardPos piecePos, ChessColor pieceMoverColor)
+        public MoveFinder(ILogicalBoard board, PieceInfo piece, BoardPos piecePos, ChessColor pieceMoverColor)
         {
             _gameInfoService = ServiceFactory.GetGameInfoService();
 

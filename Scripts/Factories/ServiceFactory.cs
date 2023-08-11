@@ -35,11 +35,6 @@ namespace ChessGame.Scripts.Factories
         {
             return GetService<TurnService>(ServiceName.TurnService);
         }
-
-        public static MoveInfoService GetMoveInfoService()
-        {
-            return GetService<MoveInfoService>(ServiceName.MoveInfoService);
-        }
     }
 
     public enum ServiceName

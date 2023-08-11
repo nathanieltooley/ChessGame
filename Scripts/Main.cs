@@ -28,6 +28,7 @@ public partial class Main : Node2D
         ChessSide whitePlayer;
         ChessSide blackPlayer;
 
+        // Init Player Colors
         if (playerColor == ChessColor.White)
         {
             whitePlayer = ChessSide.Player;
@@ -38,6 +39,7 @@ public partial class Main : Node2D
             blackPlayer = ChessSide.Player;
         }
 
+        // Setup Services
         gameInfoService.SetupGameInfo(runEnv, playerColor, aiColor);
         turnService.Setup(whitePlayer, blackPlayer);
         timerService.Setup(blackPlayer);

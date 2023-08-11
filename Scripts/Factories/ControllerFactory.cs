@@ -1,4 +1,5 @@
 ﻿
+using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.Controllers;
 using Godot;
 
@@ -16,6 +17,11 @@ namespace ChessGame.Scripts.Factories
         public static PlayerMovementController GetPlayerMovementController()
         {
             return RootNode.GetNode<PlayerMovementController>("/root/Main/Controllers/PlayerInputController");
+        }
+
+        public static MoveController GetMoveController(ILogicalBoard board)
+        {
+            return new MoveController(board);
         }
     }
 }

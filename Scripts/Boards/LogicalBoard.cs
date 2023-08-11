@@ -3,11 +3,11 @@ using Godot;
 
 namespace ChessGame.Scripts.ChessBoard
 {
-    public partial class LogicalBoard : Node
+    public class LogicalBoard : ILogicalBoard
     {
-        private PieceInfo[,] _board = new PieceInfo[8,8];
+        private PieceInfo[,] _board = new PieceInfo[8, 8];
 
-        public override void _Ready()
+        public LogicalBoard()
         {
             // Init Board
             for (int rank = 0; rank < 8; rank++)
@@ -40,7 +40,7 @@ namespace ChessGame.Scripts.ChessBoard
 
             AddPiece(targetPos, startingPieceInfo);
             RemovePiece(startingPos);
-        }   
+        }
 
         public void ClearBoard()
         {

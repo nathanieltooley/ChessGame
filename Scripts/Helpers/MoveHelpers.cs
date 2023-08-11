@@ -12,7 +12,7 @@ namespace ChessGame.Scripts.Helpers
     public static class MoveHelpers
     {
 
-        public static Dictionary<Vector2I, Vector2I> CreateBlockedDict(int startingRank, int startingFile, LogicalBoard board)
+        public static Dictionary<Vector2I, Vector2I> CreateBlockedDict(int startingRank, int startingFile, ILogicalBoard board)
         {
             Dictionary<Vector2I, Vector2I> blockedDict = new Dictionary<Vector2I, Vector2I>();
 
@@ -39,7 +39,7 @@ namespace ChessGame.Scripts.Helpers
             return blockedDict;
         }
 
-        public static Vector2I GetPointWhereLineIsBlocked(Vector2I diagonal, int startingRank, int startingFile, LogicalBoard board)
+        public static Vector2I GetPointWhereLineIsBlocked(Vector2I diagonal, int startingRank, int startingFile, ILogicalBoard board)
         {
             int i = 1;
 
