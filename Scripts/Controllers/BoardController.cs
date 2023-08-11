@@ -28,6 +28,8 @@ namespace ChessGame.Scripts.Controllers
 
         [Signal]
         public delegate void ColorIsInCheckUpdateEventHandler(ChessColor color, bool inCheck);
+        [Signal]
+        public delegate void ColorIsInCheckmateUpdateEventHandler(ChessColor color, bool inCheckmate);
 
         public override void _Ready()
         {
@@ -88,6 +90,13 @@ namespace ChessGame.Scripts.Controllers
         {
             var movingPieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
             var pieceColor = movingPieceInfo.Color;
+            var whiteKingPos = GetKingPos(ChessColor.White);
+            var blackKingPos = GetKingPos(ChessColor.Black);
+            var attackingColor = pieceColor == ChessColor.White ? ChessColor.Black : ChessColor.White;
+
+            var whiteCheckMate = false;
+            var blackCheckMate = false;
+
             List<BoardPos> capableMoves = _moveController.GetMovesAtPos(pos);
 
             if (pieceColor != _turnService.GetCurrentTurnColor())
@@ -101,7 +110,7 @@ namespace ChessGame.Scripts.Controllers
                 return false;
             }
 
-            var attackingColor = pieceColor == ChessColor.White ? ChessColor.Black : ChessColor.White;
+            
             // Can't move a king into check
             if (movingPieceInfo.PieceId == ChessPieceId.King && _moveController.IsTileUnderAttack(targetPos, attackingColor))
             {
@@ -117,13 +126,15 @@ namespace ChessGame.Scripts.Controllers
                 _turnService.SwitchTurn();
 
                 _moveController.UpdateMoveCache();
-                SendFENUpdate();
-
-                var whiteKingPos = GetKingPos(ChessColor.White);
-                var blackKingPos = GetKingPos(ChessColor.Black);
+                SendFENUpdate(); 
 
                 bool whiteInCheck = _moveController.CheckCheck(whiteKingPos, ChessColor.Black);
                 bool blackInCheck = _moveController.CheckCheck(blackKingPos, ChessColor.White);
+
+                whiteCheckMate = CheckMateCheck(whiteKingPos, ChessColor.Black, _moveController.GetMovesAtPos(whiteKingPos));
+                EmitSignal(SignalName.ColorIsInCheckmateUpdate, (int)ChessColor.White, whiteCheckMate);
+                blackCheckMate = CheckMateCheck(blackKingPos, ChessColor.White, _moveController.GetMovesAtPos(blackKingPos));
+                EmitSignal(SignalName.ColorIsInCheckmateUpdate, (int)ChessColor.Black, blackCheckMate);
 
                 EmitSignal(SignalName.ColorIsInCheckUpdate, (int)ChessColor.White, whiteInCheck);
                 EmitSignal(SignalName.ColorIsInCheckUpdate, (int)ChessColor.Black, blackInCheck);
@@ -223,6 +234,24 @@ namespace ChessGame.Scripts.Controllers
             }
 
             return null;
+        }
+
+        private bool CheckMateCheck(BoardPos kingPos, ChessColor attackerColor, List<BoardPos> moves)
+        {
+            if (!_moveController.IsTileUnderAttack(kingPos, attackerColor))
+            {
+                return false;
+            }
+
+            foreach (var move in moves)
+            {
+                if (!_moveController.IsTileUnderAttack(move, attackerColor))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
