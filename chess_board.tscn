@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://caaargxpskoar"]
+[gd_scene load_steps=14 format=3 uid="uid://caaargxpskoar"]
 
 [ext_resource type="TileSet" uid="uid://c7ukin0acqjbo" path="res://Assets/BoardTiles/chess_board_tileset.tres" id="1_i0ywi"]
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_xg0fo"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://Scripts/Controllers/BoardController.cs" id="5_pof32"]
 [ext_resource type="Script" path="res://Scripts/Controllers/PlayerMovementController.cs" id="6_h8401"]
 [ext_resource type="Script" path="res://Scripts/Boards/GraphicalBoard.cs" id="8_p0nd3"]
+[ext_resource type="Theme" uid="uid://c27w88x6c61gl" path="res://Assets/Themes/debugText.tres" id="10_ik7uf"]
 
 [sub_resource type="Theme" id="Theme_qwx6e"]
 
@@ -109,8 +110,8 @@ text = "Current Board State: "
 
 [node name="DebugMenuContainer" type="MarginContainer" parent="DebugMenuLogic"]
 layout_mode = 2
-offset_right = 454.0
-offset_bottom = 136.0
+offset_right = 352.0
+offset_bottom = 250.0
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
@@ -122,27 +123,41 @@ theme_override_constants/separation = 4
 
 [node name="MousePosLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
 layout_mode = 2
+theme = ExtResource("10_ik7uf")
 text = "MousePos: (0, 0)"
 
 [node name="MousePosGridLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
 layout_mode = 2
+theme = ExtResource("10_ik7uf")
 text = "MousePosGrid: (0, 0)"
 
 [node name="ChessPieceColorLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
 layout_mode = 2
+theme = ExtResource("10_ik7uf")
 text = "Piece Color: "
 
 [node name="ChessPieceLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
 layout_mode = 2
+theme = ExtResource("10_ik7uf")
 text = "Piece: "
 
 [node name="WhiteCheckLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
 layout_mode = 2
+theme = ExtResource("10_ik7uf")
 text = "White in Check?: "
 
 [node name="BlackCheckLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
 layout_mode = 2
+theme = ExtResource("10_ik7uf")
 text = "Black in Check?: "
+
+[node name="WhiteCheckmateLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
+layout_mode = 2
+theme = ExtResource("10_ik7uf")
+
+[node name="BlackCheckmateLabel" type="Label" parent="DebugMenuLogic/DebugMenuContainer/DebugTextContainer"]
+layout_mode = 2
+theme = ExtResource("10_ik7uf")
 
 [node name="Boards" type="Node" parent="."]
 
@@ -166,6 +181,7 @@ script = ExtResource("8_p0nd3")
 [connection signal="UpdateSideTime" from="Services/TimerService" to="MainGameGUI" method="OnUpdateTimerTime"]
 [connection signal="ColorIsInCheckUpdate" from="Controllers/BoardController" to="Services/GameInfoService" method="OnCheckUpdate"]
 [connection signal="ColorIsInCheckUpdate" from="Controllers/BoardController" to="DebugMenuLogic" method="OnColorInCheck"]
+[connection signal="ColorIsInCheckmateUpdate" from="Controllers/BoardController" to="DebugMenuLogic" method="OnColorInCheckmate"]
 [connection signal="ClearHighlights" from="Controllers/PlayerInputController" to="Boards/GraphicalBoard" method="ClearHighlights"]
 [connection signal="ToggleCellHighlight" from="Controllers/PlayerInputController" to="Boards/GraphicalBoard" method="ToggleHighlightCell"]
 [connection signal="UpdateMousePos" from="Controllers/PlayerInputController" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]
