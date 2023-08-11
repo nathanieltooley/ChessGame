@@ -17,120 +17,141 @@ namespace ChessGame.Scripts.Controllers
 
         private ChessColor _playerColor;
         private BoardController _boardController;
-        private GraphicalBoard _graphicalBoard;
 
         [Signal]
         public delegate void UpdateMousePosEventHandler(Vector2 mousePos, BoardPos gridPos, PieceInfo piece);
+        [Signal]
+        public delegate void ToggleCellHighlightEventHandler(Vector2I gridPos);
+        [Signal]
+        public delegate void ClearHighlightsEventHandler();
 
         // Called every frame. 'delta' is the elapsed time since the previous frame.
 
         public override void _Ready()
         {
             GameInfoService gameInfoService = ServiceFactory.GetGameInfoService();
+            _boardController = ControllerFactory.GetBoardController();
 
             _playerColor = gameInfoService.PlayerSideColor;
-            _boardController = GetNode<BoardController>("/root/Main/Controllers/BoardController");
-            _graphicalBoard = GetNode<GraphicalBoard>("/root/Main/Boards/GraphicalBoard");
         }
 
         public void InputHandler(InputEvent @event)
         {
             if (@event is InputEventMouseButton)
             {
-                InputEventMouseButton mbEvent = (InputEventMouseButton)@event;
-                var mousePos = mbEvent.Position;
-
-                switch (mbEvent.ButtonIndex)
-                {
-                    case MouseButton.Left:
-                        if (mbEvent.IsPressed())
-                        {
-
-                            var pieces = _boardController.GetVisualPieces();
-
-                            var gridPos = GridMathHelpers.ConvertWorldCoordsToGridCoords(mousePos, ChessConstants.TileSize);
-                            var boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, ChessConstants.TileSize, ChessConstants.BoardMargin);
-
-
-                            if (_boardController.GetPieceInfoAtPos(boardPos).PieceId == ChessPieceId.Empty)
-                            {
-                                _graphicalBoard.ToggleHighlightCell(gridPos);
-                                return;
-                            }
-
-                            foreach (VisualChessPiece piece in pieces)
-                            {
-                                if (mousePos.DistanceTo(piece.Position) <= ChessConstants.TileSize.X / 2)
-                                {
-                                    IsDragging = true;
-                                    PieceBeingDragged = piece;
-                                    _pieceBeingDraggedInfo = _boardController.GetPieceInfoAtPos(boardPos);
-
-                                    _originalDraggedPieceLoc = boardPos;
-
-                                    var moves = _boardController.GetMovesForPiece(boardPos);
-
-                                    if (moves != null)
-                                    {
-                                        foreach (var move in moves)
-                                        {
-                                            _graphicalBoard.ToggleHighlightCell(GridMathHelpers.ConvertBoardCoordToGridChord(move, ChessConstants.BoardMargin));
-                                        }
-                                    }
-
-                                    return;
-                                }
-                            }
-                        }
-                        else if (mbEvent.IsReleased())
-                        {
-                            if (!IsDragging)
-                            {
-                                return;
-                            }
-
-                            IsDragging = false;
-
-
-                            BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, ChessConstants.TileSize, ChessConstants.BoardMargin);
-
-                            if (boardPos == _originalDraggedPieceLoc)
-                            {
-                                PieceBeingDragged.Position = GridMathHelpers.ConvertBoardCoordsToWorld(_originalDraggedPieceLoc, ChessConstants.TileSize, ChessConstants.BoardMargin);
-                            }
-                            else
-                            {
-                                bool success = _boardController.MovePiece(_originalDraggedPieceLoc, boardPos);
-                                if (success)
-                                {
-                                    PieceBeingDragged.Position = _boardController.GetTileCenter(boardPos);
-                                }
-                                else
-                                {
-                                    PieceBeingDragged.Position = _boardController.GetTileCenter(_originalDraggedPieceLoc);
-                                }
-
-                            }
-
-                            // remove highlights
-                            _graphicalBoard.ClearLayer(1);
-
-                            PieceBeingDragged = null;
-                            _originalDraggedPieceLoc = null;
-                        }
-
-
-                        break;
-                }
+                MouseClickHandler((InputEventMouseButton)@event);
             }
 
             if (@event is InputEventMouseMotion)
             {
-                InputEventMouseMotion mmEvent = (InputEventMouseMotion)@event;
-                BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mmEvent.Position, ChessConstants.TileSize, ChessConstants.BoardMargin);
-
-                EmitSignal(SignalName.UpdateMousePos, mmEvent.Position, boardPos, _boardController.GetPieceInfoAtPos(boardPos));
+                var mEvent = (InputEventMouseMotion)@event;
+                MouseMotionHander(mEvent.Position);
             }
+        }
+
+        private void MouseClickHandler(InputEventMouseButton @event)
+        {
+            var buttonPressed = @event.ButtonIndex;
+            var isPressed = @event.IsPressed();
+            var isReleased = @event.IsReleased();
+            var mousePos = @event.Position;
+
+            switch (buttonPressed)
+            {
+                case MouseButton.Left:
+                    if (isPressed)
+                    {
+                        StartDrag(mousePos);
+                    }
+                    else if (isReleased)
+                    {
+                        EndDrag(mousePos);
+                    }
+                    break;
+            }
+        }
+
+        private void MouseMotionHander(Vector2 mousePos)
+        {
+            BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, ChessConstants.TileSize, ChessConstants.BoardMargin);
+
+            EmitSignal(SignalName.UpdateMousePos, mousePos, boardPos, _boardController.GetPieceInfoAtPos(boardPos));
+        }
+
+        private void StartDrag(Vector2 mousePos)
+        {
+            var pieces = _boardController.GetVisualPieces();
+
+            var gridPos = GridMathHelpers.ConvertWorldCoordsToGridCoords(mousePos, ChessConstants.TileSize);
+            var boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, ChessConstants.TileSize, ChessConstants.BoardMargin);
+
+
+            if (_boardController.GetPieceInfoAtPos(boardPos).PieceId == ChessPieceId.Empty)
+            {
+                EmitSignal(SignalName.ToggleCellHighlight, gridPos);
+                return;
+            }
+
+            foreach (VisualChessPiece piece in pieces)
+            {
+                if (mousePos.DistanceTo(piece.Position) <= ChessConstants.TileSize.X / 2)
+                {
+                    IsDragging = true;
+                    PieceBeingDragged = piece;
+                    _pieceBeingDraggedInfo = _boardController.GetPieceInfoAtPos(boardPos);
+
+                    _originalDraggedPieceLoc = boardPos;
+
+                    var moves = _boardController.GetMovesForPiece(boardPos);
+
+                    if (moves != null)
+                    {
+                        foreach (var move in moves)
+                        {
+                            EmitSignal(SignalName.ToggleCellHighlight, GridMathHelpers.ConvertBoardCoordToGridChord(move, ChessConstants.BoardMargin));
+                        }
+                    }
+
+                    return;
+                }
+            }
+        }
+
+        private void EndDrag(Vector2 mousePos)
+        {
+            if (!IsDragging)
+            {
+                return;
+            }
+
+            IsDragging = false;
+
+
+            BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, ChessConstants.TileSize, ChessConstants.BoardMargin);
+
+            if (boardPos == _originalDraggedPieceLoc)
+            {
+                PieceBeingDragged.Position = GridMathHelpers.ConvertBoardCoordsToWorld(_originalDraggedPieceLoc, ChessConstants.TileSize, ChessConstants.BoardMargin);
+            }
+            else
+            {
+                bool success = _boardController.MovePiece(_originalDraggedPieceLoc, boardPos);
+                if (success)
+                {
+                    PieceBeingDragged.Position = _boardController.GetTileCenter(boardPos);
+                }
+                else
+                {
+                    PieceBeingDragged.Position = _boardController.GetTileCenter(_originalDraggedPieceLoc);
+                }
+
+            }
+
+            // remove highlights
+            EmitSignal(SignalName.ClearHighlights);
+
+            PieceBeingDragged = null;
+            _originalDraggedPieceLoc = null;
         }
     }
 }
