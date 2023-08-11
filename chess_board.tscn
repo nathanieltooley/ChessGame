@@ -174,4 +174,6 @@ script = ExtResource("11_0eej3")
 [connection signal="UpdateSideTime" from="Services/TimerService" to="MainGameGUI" method="OnUpdateTimerTime"]
 [connection signal="ColorIsInCheckUpdate" from="Controllers/BoardController" to="Services/GameInfoService" method="OnCheckUpdate"]
 [connection signal="ColorIsInCheckUpdate" from="Controllers/BoardController" to="DebugMenuLogic" method="OnColorInCheck"]
+[connection signal="ClearHighlights" from="Controllers/PlayerInputController" to="Boards/GraphicalBoard" method="ClearHighlights"]
+[connection signal="ToggleCellHighlight" from="Controllers/PlayerInputController" to="Boards/GraphicalBoard" method="ToggleHighlightCell"]
 [connection signal="UpdateMousePos" from="Controllers/PlayerInputController" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]
