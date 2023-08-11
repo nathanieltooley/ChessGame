@@ -16,6 +16,8 @@ public partial class DebugMenuLogic : Control
 
 	private Label _whiteCheckLabel;
 	private Label _blackCheckLabel;
+	private Label _whiteCheckmateLabel;
+	private Label _blackCheckmateLabel;
 
 	public override void _Ready()
 	{
@@ -27,6 +29,8 @@ public partial class DebugMenuLogic : Control
 		_pieceLabel = _debugContainer.GetNode<Label>("ChessPieceLabel");
 		_whiteCheckLabel = _debugContainer.GetNode<Label>("WhiteCheckLabel");
 		_blackCheckLabel = _debugContainer.GetNode<Label>("BlackCheckLabel");
+		_whiteCheckmateLabel = _debugContainer.GetNode<Label>("WhiteCheckmateLabel");
+		_blackCheckmateLabel = _debugContainer.GetNode<Label>("BlackCheckmateLabel");
 
         _fenLabel = GetNode<Label>("FENDebug");
 	}
@@ -64,6 +68,17 @@ public partial class DebugMenuLogic : Control
 		} else if (colorInCheck == ChessColor.Black)
 		{
 			_blackCheckLabel.Text = $"Black in Check?: {inCheck}";
+		}
+	}
+
+	public void OnColorInCheckmate(ChessColor colorInCm, bool inCm)
+	{
+		if (colorInCm == ChessColor.White)
+		{
+			_whiteCheckmateLabel.Text = $"White in Checkmate?: {inCm}";
+		} else
+		{
+			_blackCheckmateLabel.Text = $"Black in Checkmate?: {inCm}";
 		}
 	}
 }
