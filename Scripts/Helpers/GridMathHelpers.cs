@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using ChessGame.Scripts.DataTypes;
+using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,37 @@ namespace ChessGame.Scripts.Helpers
         public static Vector2I ConvertBoardCoordToGridChord(BoardPos boardPos, Vector2I gridMargin)
         {
             return new Vector2I(boardPos.File + gridMargin.X, boardPos.Rank  + gridMargin.Y);
+        }
+
+        public static BoardPos ConvertGridCoordToBoardCoords(Vector2I gridPos, Vector2I gridMargin)
+        {
+            return new BoardPos(gridPos.Y - gridMargin.Y, gridPos.X - gridMargin.X);
+        }
+
+        public static BoardPos InvertBoardPos(BoardPos pos)
+        {
+            return new BoardPos(7 - pos.Rank, 7 - pos.File);
+        }
+
+        public static Vector2I InvertGridPos(Vector2I gridPos)
+        {
+            BoardPos p = ConvertGridCoordToBoardCoords(gridPos, ChessConstants.BoardMargin);
+            BoardPos invP = InvertBoardPos(p);
+            return ConvertBoardCoordToGridChord(invP, ChessConstants.BoardMargin);
+        }
+
+        public static Vector2 CalculateTileCenter(BoardPos boardPos, bool inverted)
+        {
+            if (inverted)
+            {
+                boardPos = InvertBoardPos(boardPos);
+            }
+
+            Vector2 gridPosition = new Vector2(boardPos.File, boardPos.Rank) + ChessConstants.BoardMargin;
+            Vector2 worldPosition = gridPosition * ChessConstants.TileSize;
+            Vector2 center = worldPosition + (ChessConstants.TileSize / 2);
+
+            return center;
         }
     }
 }

@@ -17,6 +17,7 @@ namespace ChessGame.Scripts.Controllers
 
         private ChessColor _playerColor;
         private BoardController _boardController;
+        private GameInfoService _gameInfoService;
 
         [Signal]
         public delegate void UpdateMousePosEventHandler(Vector2 mousePos, BoardPos gridPos, PieceInfo piece);
@@ -29,10 +30,10 @@ namespace ChessGame.Scripts.Controllers
 
         public override void _Ready()
         {
-            GameInfoService gameInfoService = ServiceFactory.GetGameInfoService();
+            _gameInfoService = ServiceFactory.GetGameInfoService();
             _boardController = ControllerFactory.GetBoardController();
 
-            _playerColor = gameInfoService.PlayerSideColor;
+            _playerColor = _gameInfoService.PlayerSideColor;
         }
 
         public void InputHandler(InputEvent @event)
@@ -75,6 +76,11 @@ namespace ChessGame.Scripts.Controllers
         {
             BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, ChessConstants.TileSize, ChessConstants.BoardMargin);
 
+            if (_gameInfoService.ViewInverted())
+            {
+                boardPos = GridMathHelpers.InvertBoardPos(boardPos);
+            }
+
             EmitSignal(SignalName.UpdateMousePos, mousePos, boardPos, _boardController.GetPieceInfoAtPos(boardPos));
         }
 
@@ -85,6 +91,10 @@ namespace ChessGame.Scripts.Controllers
             var gridPos = GridMathHelpers.ConvertWorldCoordsToGridCoords(mousePos, ChessConstants.TileSize);
             var boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, ChessConstants.TileSize, ChessConstants.BoardMargin);
 
+            if (_gameInfoService.ViewInverted())
+            {
+                boardPos = GridMathHelpers.InvertBoardPos(boardPos);
+            }
 
             if (_boardController.GetPieceInfoAtPos(boardPos).PieceId == ChessPieceId.Empty)
             {
@@ -128,6 +138,11 @@ namespace ChessGame.Scripts.Controllers
 
 
             BoardPos boardPos = GridMathHelpers.ConvertWorldCoordsToBoardChords(mousePos, ChessConstants.TileSize, ChessConstants.BoardMargin);
+
+            if (_gameInfoService.ViewInverted())
+            {
+                boardPos = GridMathHelpers.InvertBoardPos(boardPos);
+            }
 
             if (boardPos == _originalDraggedPieceLoc)
             {

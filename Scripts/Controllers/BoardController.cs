@@ -2,6 +2,7 @@
 using ChessGame.Scripts.ChessBoard.Boards;
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Factories;
+using ChessGame.Scripts.Helpers;
 using Godot;
 using System.Collections.Generic;
 using System.Linq;
@@ -188,7 +189,7 @@ namespace ChessGame.Scripts.Controllers
 
         public Vector2 GetTileCenter(BoardPos pos)
         {
-            return GraphicalBoard.CalculateTileCenter(pos);
+            return GridMathHelpers.CalculateTileCenter(pos, _gameInfoService.ViewInverted());
         }
 
         public void Test()

@@ -15,19 +15,15 @@ namespace ChessGame.Scripts.Controllers
         private PieceInfo _piece;
         private BoardPos _piecePos;
 
-        private ChessColor _pieceMoverColor;
         private GameInfoService _gameInfoService;
-        private bool _isPlayer;
 
-        public MoveFinder(ILogicalBoard board, PieceInfo piece, BoardPos piecePos, ChessColor pieceMoverColor)
+        public MoveFinder(ILogicalBoard board, PieceInfo piece, BoardPos piecePos)
         {
             _gameInfoService = ServiceFactory.GetGameInfoService();
 
             _board = board;
             _piece = piece;
             _piecePos = piecePos;
-            _isPlayer = _gameInfoService.IsPlayerColor(pieceMoverColor);
-            _pieceMoverColor = pieceMoverColor;
         }
 
         public static bool IsMovePossible(BoardPos targetPos, List<BoardPos> capableMoves)
@@ -92,7 +88,7 @@ namespace ChessGame.Scripts.Controllers
                     if (ChessConstants.DiagonalDirections.Contains(line))
                     {
                         // Pawn Diagonal Attack Check
-                        if ((pieceAtTarget.PieceId != ChessPieceId.Empty) && pieceAtTarget.Color != _pieceMoverColor)
+                        if ((pieceAtTarget.PieceId != ChessPieceId.Empty) && pieceAtTarget.Color != _piece.Color)
                         {
                             capableMoves.Add(move);
                             continue;
@@ -113,7 +109,7 @@ namespace ChessGame.Scripts.Controllers
                 }
 
                 // Piece capture check, make sure that pawn can only capture diagonally
-                if ((pieceAtTarget.Color != _pieceMoverColor) && (pos.Rank == block.X) && (pos.File == block.Y) && _piece.PieceId != ChessPieceId.Pawn)
+                if ((pieceAtTarget.Color != _piece.Color) && (pos.Rank == block.X) && (pos.File == block.Y) && _piece.PieceId != ChessPieceId.Pawn)
                 {
                     capableMoves.Add(move);
                 }
@@ -137,7 +133,7 @@ namespace ChessGame.Scripts.Controllers
             switch (pieceId)
             {
                 case ChessPieceId.Pawn:
-                    return MoveCreators.GetPawnMoves(startingRank, startingFile, _isPlayer);
+                    return MoveCreators.GetPawnMoves(startingRank, startingFile, _piece.Color);
                 case ChessPieceId.Rook:
                     return MoveCreators.GetRookMoves(startingRank, startingFile);
                 case ChessPieceId.Knight:

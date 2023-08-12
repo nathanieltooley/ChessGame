@@ -1,4 +1,5 @@
 ﻿using ChessGame.Scripts.DataTypes;
+using ChessGame.Scripts.Factories;
 using ChessGame.Scripts.Helpers;
 using Godot;
 
@@ -10,15 +11,22 @@ namespace ChessGame.Scripts.ChessBoard.Boards
 
         private Node2D _rootPieceNode;
         private PackedScene _pieceTemplate;
+        private GameInfoService _gameInfoService;
 
         public override void _Ready()
         {
             _rootPieceNode = this;
             _pieceTemplate = ResourceLoader.Load<PackedScene>("res://TemplateScenes/base_chess_piece.tscn");
+            _gameInfoService = ServiceFactory.GetGameInfoService();
         }
 
         public void AddPiece(BoardPos piecePos, PieceInfo info)
         {
+            if (_gameInfoService.ViewInverted())
+            {
+                piecePos = GridMathHelpers.InvertBoardPos(piecePos);
+            }
+
             if (info.PieceId == ChessPieceId.Empty)
             {
                 return;
@@ -39,6 +47,11 @@ namespace ChessGame.Scripts.ChessBoard.Boards
 
         public void RemovePiece(BoardPos piecePos)
         {
+            if (_gameInfoService.ViewInverted())
+            {
+                piecePos = GridMathHelpers.InvertBoardPos(piecePos);
+            }
+
             VisualChessPiece pieceAtPos = _visBoard[piecePos.Rank, piecePos.File];
 
             if (pieceAtPos != null)
@@ -69,20 +82,21 @@ namespace ChessGame.Scripts.ChessBoard.Boards
 
         public VisualChessPiece GetPiece(BoardPos startingPos)
         {
+            if (_gameInfoService.ViewInverted())
+            {
+                startingPos = GridMathHelpers.InvertBoardPos(startingPos);
+            }
+
             return _visBoard[startingPos.Rank, startingPos.File];
-        }
-
-        public static Vector2 CalculateTileCenter(BoardPos boardPos)
-        {
-            Vector2 gridPosition = new Vector2(boardPos.File, boardPos.Rank) + ChessConstants.BoardMargin;
-            Vector2 worldPosition = gridPosition * ChessConstants.TileSize;
-            Vector2 center = worldPosition + (ChessConstants.TileSize / 2);
-
-            return center;
         }
 
         public bool IsCellHighlighted(Vector2I gridPos)
         {
+            if (_gameInfoService.ViewInverted())
+            {
+                gridPos = GridMathHelpers.InvertGridPos(gridPos);
+            }
+
             var td = GetCellTileData(1, gridPos);
 
             return td == null ? false : true;
@@ -90,6 +104,11 @@ namespace ChessGame.Scripts.ChessBoard.Boards
 
         public void ToggleHighlightCell(Vector2I gridPos)
         {
+            if (_gameInfoService.ViewInverted())
+            {
+                gridPos = GridMathHelpers.InvertGridPos(gridPos);
+            }
+
             if (!IsCellHighlighted(gridPos))
             {
                 SetCell(1, gridPos, 0, new Vector2I(0, 0));

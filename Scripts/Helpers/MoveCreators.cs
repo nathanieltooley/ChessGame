@@ -4,11 +4,11 @@ namespace ChessGame.Scripts.Helpers
 {
     public static class MoveCreators
     {
-        public static List<BoardPos> GetPawnMoves(int startingRank, int startingFile, bool isPlayer)
+        public static List<BoardPos> GetPawnMoves(int startingRank, int startingFile, ChessColor color)
         {
             List<BoardPos > moves = new List<BoardPos>();
 
-            if (!isPlayer)
+            if (color == ChessColor.Black)
             {
                 if (startingRank == 1)
                 {
@@ -24,7 +24,7 @@ namespace ChessGame.Scripts.Helpers
                 AddValidMove(startingRank + MoveDownBoard(1), startingFile + MoveRight(1), moves);
             }
 
-            if (isPlayer)
+            if (color == ChessColor.White)
             {
                 if (startingRank == 6)
                 {

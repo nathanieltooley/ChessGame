@@ -33,7 +33,7 @@ namespace ChessGame.Scripts.Controllers
 
                     if (pieceInfo.PieceId != ChessPieceId.Empty)
                     {
-                        MoveFinder mf = new MoveFinder(_logicBoard, pieceInfo, piecePos, pieceInfo.Color);
+                        MoveFinder mf = new MoveFinder(_logicBoard, pieceInfo, piecePos);
                         boardPosMatrix[rank, file] = mf.GetCapableMoves(piecePos);
                     }
                 }

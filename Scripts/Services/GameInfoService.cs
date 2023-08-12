@@ -76,6 +76,11 @@ public partial class GameInfoService : Node
         var check = color == ChessColor.White ? WhiteInCheck : BlackInCheck;
         return check;
     }
+
+    public bool ViewInverted()
+    {
+        return PlayerSideColor == ChessColor.Black;
+    }
 }
 
 public enum RunEnvironment
