@@ -9,6 +9,8 @@ public partial class MainGameGUI : Control
 
 	private Label _enemyTimer;
 	private Label _playerTimer;
+	private Control _gameOverMenu;
+	private Panel _fgPanel;
 
 	private Label[] timerMap = new Label[2];
 	private bool[] disabledMap = new bool[2];
@@ -20,6 +22,9 @@ public partial class MainGameGUI : Control
 
 		_enemyTimer = timerContainer.GetNode<Label>("EnemyTime");
 		_playerTimer = timerContainer.GetNode<Label>("PlayerTime");
+
+		_gameOverMenu = GetNode<Control>("GameOverMenu");
+		_fgPanel = GetNode<Panel>("FGBlur");
 
 		timerMap[0] = _enemyTimer;
 		timerMap[1] = _playerTimer;
@@ -73,5 +78,11 @@ public partial class MainGameGUI : Control
 
 		string secondsPrefix = seconds < 10 ? "0" : "";
 		timer.Text = $"{minutes}:{secondsPrefix}{seconds}";
+	}
+
+	public void ShowGameOverScreen(ChessColor winner)
+	{
+		_gameOverMenu.Visible = true;
+		_fgPanel.Visible = true;
 	}
 }

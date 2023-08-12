@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://caaargxpskoar"]
+[gd_scene load_steps=16 format=3 uid="uid://caaargxpskoar"]
 
 [ext_resource type="TileSet" uid="uid://c7ukin0acqjbo" path="res://Assets/BoardTiles/chess_board_tileset.tres" id="1_i0ywi"]
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_xg0fo"]
@@ -11,9 +11,13 @@
 [ext_resource type="Script" path="res://Scripts/Controllers/BoardController.cs" id="5_pof32"]
 [ext_resource type="Script" path="res://Scripts/Controllers/PlayerMovementController.cs" id="6_h8401"]
 [ext_resource type="Script" path="res://Scripts/Boards/GraphicalBoard.cs" id="8_p0nd3"]
+[ext_resource type="PackedScene" uid="uid://cjgfad3ywojqf" path="res://game_over.tscn" id="9_bgk5o"]
 [ext_resource type="Theme" uid="uid://c27w88x6c61gl" path="res://Assets/Themes/debugText.tres" id="10_ik7uf"]
 
 [sub_resource type="Theme" id="Theme_qwx6e"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0lfax"]
+bg_color = Color(0.0784314, 0.0784314, 0.0784314, 1)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_xg0fo")
@@ -87,6 +91,31 @@ theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 100
 text = "5:00"
 horizontal_alignment = 1
+
+[node name="GameOverMenu" parent="MainGameGUI" instance=ExtResource("9_bgk5o")]
+visible = false
+z_index = 2
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="FGBlur" type="Panel" parent="MainGameGUI"]
+visible = false
+self_modulate = Color(1, 1, 1, 0.85098)
+z_index = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0lfax")
 
 [node name="DebugMenuLogic" type="Control" parent="."]
 layout_mode = 3
@@ -182,6 +211,7 @@ script = ExtResource("8_p0nd3")
 [connection signal="ColorIsInCheckUpdate" from="Controllers/BoardController" to="Services/GameInfoService" method="OnCheckUpdate"]
 [connection signal="ColorIsInCheckUpdate" from="Controllers/BoardController" to="DebugMenuLogic" method="OnColorInCheck"]
 [connection signal="ColorIsInCheckmateUpdate" from="Controllers/BoardController" to="DebugMenuLogic" method="OnColorInCheckmate"]
+[connection signal="GameOver" from="Controllers/BoardController" to="MainGameGUI" method="ShowGameOverScreen"]
 [connection signal="ClearHighlights" from="Controllers/PlayerInputController" to="Boards/GraphicalBoard" method="ClearHighlights"]
 [connection signal="ToggleCellHighlight" from="Controllers/PlayerInputController" to="Boards/GraphicalBoard" method="ToggleHighlightCell"]
 [connection signal="UpdateMousePos" from="Controllers/PlayerInputController" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]

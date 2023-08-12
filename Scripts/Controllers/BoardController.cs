@@ -30,6 +30,8 @@ namespace ChessGame.Scripts.Controllers
         public delegate void ColorIsInCheckUpdateEventHandler(ChessColor color, bool inCheck);
         [Signal]
         public delegate void ColorIsInCheckmateUpdateEventHandler(ChessColor color, bool inCheckmate);
+        [Signal]
+        public delegate void GameOverEventHandler(ChessColor winner);
 
         public override void _Ready()
         {
@@ -135,6 +137,14 @@ namespace ChessGame.Scripts.Controllers
                 EmitSignal(SignalName.ColorIsInCheckmateUpdate, (int)ChessColor.White, whiteCheckMate);
                 blackCheckMate = CheckMateCheck(blackKingPos, ChessColor.White, _moveController.GetMovesAtPos(blackKingPos));
                 EmitSignal(SignalName.ColorIsInCheckmateUpdate, (int)ChessColor.Black, blackCheckMate);
+
+                if (whiteCheckMate)
+                {
+                    EmitSignal(SignalName.GameOver, (int)ChessColor.Black);
+                } else if (blackCheckMate)
+                {
+                    EmitSignal(SignalName.GameOver, (int)ChessColor.White);
+                }
 
                 EmitSignal(SignalName.ColorIsInCheckUpdate, (int)ChessColor.White, whiteInCheck);
                 EmitSignal(SignalName.ColorIsInCheckUpdate, (int)ChessColor.Black, blackInCheck);
