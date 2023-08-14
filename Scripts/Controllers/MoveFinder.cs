@@ -108,6 +108,40 @@ namespace ChessGame.Scripts.Controllers
                     capableMoves.Add(move);
                 }
 
+                // Castling Check
+                if (_piece.PieceId == ChessPieceId.King && MoveHelpers.IsCastleMove(_piecePos, move))
+                {
+                    if (_piece.Color == ChessColor.White && _gameInfoService.WhiteAnyCastlePossible())
+                    {
+                        CastleSide? castle = MoveHelpers.GetCastlingDirection(move);
+
+                        if (castle == CastleSide.KingSide && _gameInfoService.CanWKingCastle)
+                        {
+                            capableMoves.Add(move);
+                        }
+
+                        if (castle == CastleSide.QueenSide && _gameInfoService.CanWQueenCastle)
+                        {
+                            capableMoves.Add(move);
+                        }
+                    }
+
+                    if (_piece.Color == ChessColor.Black && _gameInfoService.BlackAnyCastlePossible())
+                    {
+                        CastleSide? castle = MoveHelpers.GetCastlingDirection(move);
+
+                        if (castle == CastleSide.KingSide && _gameInfoService.CanBKingCastle)
+                        {
+                            capableMoves.Add(move);
+                        }
+
+                        if (castle == CastleSide.QueenSide && _gameInfoService.CanBQueenCastle)
+                        {
+                            capableMoves.Add(move);
+                        }
+                    }
+                }
+
                 // Piece capture check, make sure that pawn can only capture diagonally
                 if ((pieceAtTarget.Color != _piece.Color) && (pos.Rank == block.X) && (pos.File == block.Y) && _piece.PieceId != ChessPieceId.Pawn)
                 {
