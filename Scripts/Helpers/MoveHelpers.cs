@@ -11,7 +11,6 @@ namespace ChessGame.Scripts.Helpers
 {
     public static class MoveHelpers
     {
-
         public static Dictionary<Vector2I, Vector2I> CreateBlockedDict(int startingRank, int startingFile, ILogicalBoard board)
         {
             Dictionary<Vector2I, Vector2I> blockedDict = new Dictionary<Vector2I, Vector2I>();
@@ -82,6 +81,100 @@ namespace ChessGame.Scripts.Helpers
             resultVec.Y = fileMag == 0 ? 0 : distance.Y / fileMag;
 
             return resultVec;
+        }
+
+        public static CastleSide? GetCastlingDirection(BoardPos movePos)
+        {
+            if (movePos.File == 6)
+            {
+                return CastleSide.KingSide;
+            } else if (movePos.File == 2)
+            {
+                return CastleSide.QueenSide;
+            }
+
+            return null;
+        }
+
+        public static bool IsCastleMove(BoardPos piecePos, BoardPos movePos)
+        {
+            int fileDiff = Math.Abs(movePos.File - piecePos.File);
+
+            if (fileDiff == 2)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static BoardPos CastleMoveRook(CastleSide side, ChessColor color) 
+        {
+            if (color == ChessColor.White)
+            {
+                if (side == CastleSide.KingSide)
+                {
+                    return new BoardPos(7, 5);
+                } else
+                {
+                    return new BoardPos(7, 3);
+                }
+            } else
+            {
+                if (side == CastleSide.KingSide)
+                {
+                    return new BoardPos(0, 5);
+                } else
+                {
+                    return new BoardPos(0, 3);
+                }
+            }
+        }
+
+        public static BoardPos GetPosOfRook(ChessColor color, CastleSide cSide)
+        {
+            if (color == ChessColor.White)
+            {
+                if (cSide == CastleSide.KingSide)
+                {
+                    return new BoardPos(7, 7);
+                } else
+                {
+                    return new BoardPos(7, 0);
+                }
+            } else
+            {
+                if (cSide == CastleSide.KingSide)
+                {
+                    return new BoardPos(0, 7);
+                } else
+                {
+                    return new BoardPos(0, 0);
+                }
+            }
+        }
+
+        public static BoardPos GetPosOfRookAfterCastling(ChessColor color, CastleSide side)
+        {
+            if (color == ChessColor.White)
+            {
+                if (side == CastleSide.KingSide)
+                {
+                    return new BoardPos(7, 5);
+                } else
+                {
+                    return new BoardPos(7, 3);
+                }
+            } else
+            {
+                if (side == CastleSide.KingSide)
+                {
+                    return new BoardPos(0, 5);
+                } else
+                {
+                    return new BoardPos(0, 3);
+                }
+            }
         }
     }
 }
