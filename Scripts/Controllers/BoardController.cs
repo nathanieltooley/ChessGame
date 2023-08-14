@@ -157,6 +157,29 @@ namespace ChessGame.Scripts.Controllers
                     _gBoard.MovePiece(rookPos, rookInfo, newRookPos);
                 }
 
+                if (movingPieceInfo.PieceId == ChessPieceId.Rook)
+                {
+                    if (pos.File == 0)
+                    {
+                        if (movingPieceInfo.Color == ChessColor.White)
+                        {
+                            _gameInfoService.CanWQueenCastle = false;
+                        } else
+                        {
+                            _gameInfoService.CanBQueenCastle = false;
+                        }
+                    } else if (pos.File == 7)
+                    {
+                        if (movingPieceInfo.Color == ChessColor.White)
+                        {
+                            _gameInfoService.CanWKingCastle = false;
+                        } else
+                        {
+                            _gameInfoService.CanBKingCastle = false;
+                        }
+                    }
+                }
+
                 _turnService.SwitchTurn();
 
                 _moveController.UpdateMoveCache();

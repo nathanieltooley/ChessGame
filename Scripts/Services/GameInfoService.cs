@@ -14,10 +14,10 @@ public partial class GameInfoService : Node
     public List<PieceInfo> CapturedWhitePieces { get; set; }
     public List<PieceInfo> CapturedBlackPieces { get; set; }
 
-    public bool CanWKingCastle { get; set; }
-    public bool CanWQueenCastle { get; set; }
-    public bool CanBKingCastle { get; set; }
-    public bool CanBQueenCastle { get; set; }
+    public bool CanWKingCastle { get; set; } = true;
+    public bool CanWQueenCastle { get; set; } = true;
+    public bool CanBKingCastle { get; set; } = true;
+    public bool CanBQueenCastle { get; set; } = true;
 
     public bool WhiteInCheck { get; set; }
     public bool BlackInCheck { get; set; }
