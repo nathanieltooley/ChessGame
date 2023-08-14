@@ -24,4 +24,10 @@ namespace ChessGame.Scripts
         Enemy = 0,
         Player = 1,
     }
+
+    public enum CastleSide
+    {
+        KingSide = 0,
+        QueenSide = 1
+    }
 }
