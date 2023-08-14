@@ -106,7 +106,10 @@ namespace ChessGame.Scripts.Controllers
                 if (absStartDistance < absBlockDistance || _piece.PieceId == ChessPieceId.Knight)
                 {
                     // we'll deal with castling later in the function
-                    if (!MoveHelpers.IsCastleMove(_piecePos, move))
+                    if (_piece.PieceId == ChessPieceId.King && MoveHelpers.IsCastleMove(_piecePos, move))
+                    {
+                        continue;
+                    } else
                     {
                         capableMoves.Add(move);
                     }
