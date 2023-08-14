@@ -14,10 +14,10 @@ public partial class GameInfoService : Node
     public List<PieceInfo> CapturedWhitePieces { get; set; }
     public List<PieceInfo> CapturedBlackPieces { get; set; }
 
-    public bool CanPlayerKingSideCastle { get; set; }
-    public bool CanPlayerQueenSideCastle { get; set; }
-    public bool CanBKingSideCastle { get; set; }
-    public bool CanBQueenSideCastle { get; set; }
+    public bool CanWKingCastle { get; set; }
+    public bool CanWQueenCastle { get; set; }
+    public bool CanBKingCastle { get; set; }
+    public bool CanBQueenCastle { get; set; }
 
     public bool WhiteInCheck { get; set; }
     public bool BlackInCheck { get; set; }
@@ -80,6 +80,16 @@ public partial class GameInfoService : Node
     public bool ViewInverted()
     {
         return PlayerSideColor == ChessColor.Black;
+    }
+
+    public bool WhiteAnyCastlePossible()
+    {
+        return CanWKingCastle || CanWQueenCastle;
+    }
+
+    public bool BlackAnyCastlePossible()
+    {
+        return CanBKingCastle || CanBQueenCastle;
     }
 }
 
