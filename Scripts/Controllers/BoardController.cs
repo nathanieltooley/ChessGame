@@ -12,7 +12,7 @@ namespace ChessGame.Scripts.Controllers
     public partial class BoardController : Node
     {
         private GraphicalBoard _gBoard { get; set; }
-        private ILogicalBoard _logicBoard { get; set; }
+        private LogicalBoard _logicBoard { get; set; }
         private PlayerMovementController _playerMovementController { get; set; }
         private MoveController _moveController { get; set; }
 

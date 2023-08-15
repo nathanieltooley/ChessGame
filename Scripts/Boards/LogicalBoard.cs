@@ -3,7 +3,7 @@ using Godot;
 
 namespace ChessGame.Scripts.ChessBoard
 {
-    public class LogicalBoard : ILogicalBoard
+    public class LogicalBoard
     {
         private PieceInfo[,] _board = new PieceInfo[8, 8];
 

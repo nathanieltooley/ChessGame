@@ -11,13 +11,13 @@ namespace ChessGame.Scripts.Controllers
 {
     public class MoveFinder
     {
-        private ILogicalBoard _board;
+        private LogicalBoard _board;
         private PieceInfo _piece;
         private BoardPos _piecePos;
 
         private GameInfoService _gameInfoService;
 
-        public MoveFinder(ILogicalBoard board, PieceInfo piece, BoardPos piecePos)
+        public MoveFinder(LogicalBoard board, PieceInfo piece, BoardPos piecePos)
         {
             _gameInfoService = ServiceFactory.GetGameInfoService();
 

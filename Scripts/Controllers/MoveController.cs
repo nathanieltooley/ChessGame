@@ -6,11 +6,11 @@ namespace ChessGame.Scripts.Controllers
 {
     public class MoveController
     {
-        private ILogicalBoard _logicBoard;
+        private LogicalBoard _logicBoard;
 
         public List<BoardPos>[,] MoveCache { get; set; }
 
-        public MoveController(ILogicalBoard logicalBoard)
+        public MoveController(LogicalBoard logicalBoard)
         {
             _logicBoard = logicalBoard;
         }
