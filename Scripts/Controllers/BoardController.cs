@@ -118,7 +118,7 @@ namespace ChessGame.Scripts.Controllers
             var result = capableMoves.SingleOrDefault((pos) => pos == targetPos);
             if (result != null)
             {
-                PawnChecks(pos, targetPos, movingPieceInfo, pieceColor, opposingColor);
+                PawnChecks(pos, targetPos, movingPieceInfo, opposingColor);
 
                 BoardDataHandler.MovePiece(_board, pos, targetPos);
                 _gBoard.MovePiece(pos, movingPieceInfo, targetPos);
