@@ -232,14 +232,14 @@ namespace ChessGame.Scripts.Controllers
             }
         }
 
-        private void PawnChecks(BoardPos pos, BoardPos targetPos, PieceInfo movingPieceInfo, ChessColor pieceColor, ChessColor opposingColor)
+        private void PawnChecks(BoardPos pos, BoardPos targetPos, PieceInfo movingPieceInfo, ChessColor opposingColor)
         {
             if (movingPieceInfo.PieceId == ChessPieceId.Pawn)
             {
                 // Double pawn move
                 if (MoveHelpers.GetDistanceFromStart(pos.Rank, pos.File, targetPos.Rank, targetPos.File).Abs().X == 2)
                 {
-                    _gameInfoService.ToggleEnpassant(pieceColor, pos.File);
+                    _gameInfoService.ToggleEnpassant(movingPieceInfo.Color, pos.File);
                 }
                 else if (MoveHelpers.IsEnpassant(pos, targetPos, GetPieceInfoAtPos(targetPos)))
                 {
