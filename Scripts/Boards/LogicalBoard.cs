@@ -57,5 +57,24 @@ namespace ChessGame.Scripts.ChessBoard
         {
             return _board;
         }
+
+        public BoardPos GetKingPos(ChessColor kingColor)
+        {
+            for (int rank = 0; rank < 8; rank++)
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    var boardPos = new BoardPos(rank, file);
+                    var pieceAtTile = GetPieceInfoAtPos(boardPos);
+
+                    if (pieceAtTile.PieceId == ChessPieceId.King && pieceAtTile.Color == kingColor)
+                    {
+                        return boardPos;
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

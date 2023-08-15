@@ -76,5 +76,23 @@ namespace ChessGame.Scripts.Controllers
         {
             return IsTileUnderAttack(kingPos, kingColor);
         }
+
+        public bool CheckMateCheck(BoardPos kingPos, ChessColor attackerColor, List<BoardPos> moves)
+        {
+            if (!IsTileUnderAttack(kingPos, attackerColor))
+            {
+                return false;
+            }
+
+            foreach (var move in moves)
+            {
+                if (!IsTileUnderAttack(move, attackerColor))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }
