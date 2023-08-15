@@ -117,19 +117,7 @@ namespace ChessGame.Scripts.Controllers
             var result = capableMoves.SingleOrDefault((pos) => pos == targetPos);
             if (result != null)
             {
-                if (movingPieceInfo.PieceId == ChessPieceId.Pawn)
-                {
-                    // Double pawn move
-                    if (MoveHelpers.GetDistanceFromStart(pos.Rank, pos.File, targetPos.Rank, targetPos.File).Abs().X == 2)
-                    {
-                        _gameInfoService.ToggleEnpassant(pieceColor, pos.File);
-                    }
-                    else if (MoveHelpers.IsEnpassant(pos, targetPos, GetPieceInfoAtPos(targetPos)))
-                    {
-                        BoardPos enPassantedPawnPos = MoveHelpers.GetPosOfDoubleMovePawn(opposingColor, targetPos.File);
-                        RemovePiece(enPassantedPawnPos);
-                    }
-                }
+                PawnChecks(pos, targetPos, movingPieceInfo, pieceColor, opposingColor);
 
                 _logicBoard.MovePiece(pos, targetPos);
                 _gBoard.MovePiece(pos, movingPieceInfo, targetPos);
@@ -166,48 +154,26 @@ namespace ChessGame.Scripts.Controllers
                     }
                 }
 
-                if (movingPieceInfo.PieceId == ChessPieceId.Rook)
-                {
-                    if (pos.File == 0)
-                    {
-                        if (movingPieceInfo.Color == ChessColor.White)
-                        {
-                            _gameInfoService.CanWQueenCastle = false;
-                        } else
-                        {
-                            _gameInfoService.CanBQueenCastle = false;
-                        }
-                    } else if (pos.File == 7)
-                    {
-                        if (movingPieceInfo.Color == ChessColor.White)
-                        {
-                            _gameInfoService.CanWKingCastle = false;
-                        } else
-                        {
-                            _gameInfoService.CanBKingCastle = false;
-                        }
-                    }
-                }
-
-                
+                RookCastleInvalidation(pos, movingPieceInfo);
 
                 _turnService.SwitchTurn();
 
                 _moveController.UpdateMoveCache();
-                SendFENUpdate(); 
+                SendFENUpdate();
 
                 bool whiteInCheck = _moveController.CheckCheck(whiteKingPos, ChessColor.Black);
                 bool blackInCheck = _moveController.CheckCheck(blackKingPos, ChessColor.White);
 
-                whiteCheckMate = CheckMateCheck(whiteKingPos, ChessColor.Black, _moveController.GetMovesAtPos(whiteKingPos));
+                whiteCheckMate = _moveController.CheckMateCheck(whiteKingPos, ChessColor.Black, _moveController.GetMovesAtPos(whiteKingPos));
                 EmitSignal(SignalName.ColorIsInCheckmateUpdate, (int)ChessColor.White, whiteCheckMate);
-                blackCheckMate = CheckMateCheck(blackKingPos, ChessColor.White, _moveController.GetMovesAtPos(blackKingPos));
+                blackCheckMate = _moveController.CheckMateCheck(blackKingPos, ChessColor.White, _moveController.GetMovesAtPos(blackKingPos));
                 EmitSignal(SignalName.ColorIsInCheckmateUpdate, (int)ChessColor.Black, blackCheckMate);
 
                 if (whiteCheckMate)
                 {
                     EmitSignal(SignalName.GameOver, (int)ChessColor.Black);
-                } else if (blackCheckMate)
+                }
+                else if (blackCheckMate)
                 {
                     EmitSignal(SignalName.GameOver, (int)ChessColor.White);
                 }
@@ -219,7 +185,7 @@ namespace ChessGame.Scripts.Controllers
                         _gameInfoService.CanWKingCastle = false;
                         _gameInfoService.CanWQueenCastle = false;
                     }
-                    
+
                     if (movingPieceInfo.Color == ChessColor.Black)
                     {
                         _gameInfoService.CanBKingCastle = false;
@@ -234,6 +200,52 @@ namespace ChessGame.Scripts.Controllers
             }
 
             return false;
+        }
+
+        private void RookCastleInvalidation(BoardPos pos, PieceInfo movingPieceInfo)
+        {
+            if (movingPieceInfo.PieceId == ChessPieceId.Rook)
+            {
+                if (pos.File == 0)
+                {
+                    if (movingPieceInfo.Color == ChessColor.White)
+                    {
+                        _gameInfoService.CanWQueenCastle = false;
+                    }
+                    else
+                    {
+                        _gameInfoService.CanBQueenCastle = false;
+                    }
+                }
+                else if (pos.File == 7)
+                {
+                    if (movingPieceInfo.Color == ChessColor.White)
+                    {
+                        _gameInfoService.CanWKingCastle = false;
+                    }
+                    else
+                    {
+                        _gameInfoService.CanBKingCastle = false;
+                    }
+                }
+            }
+        }
+
+        private void PawnChecks(BoardPos pos, BoardPos targetPos, PieceInfo movingPieceInfo, ChessColor pieceColor, ChessColor opposingColor)
+        {
+            if (movingPieceInfo.PieceId == ChessPieceId.Pawn)
+            {
+                // Double pawn move
+                if (MoveHelpers.GetDistanceFromStart(pos.Rank, pos.File, targetPos.Rank, targetPos.File).Abs().X == 2)
+                {
+                    _gameInfoService.ToggleEnpassant(pieceColor, pos.File);
+                }
+                else if (MoveHelpers.IsEnpassant(pos, targetPos, GetPieceInfoAtPos(targetPos)))
+                {
+                    BoardPos enPassantedPawnPos = MoveHelpers.GetPosOfDoubleMovePawn(opposingColor, targetPos.File);
+                    RemovePiece(enPassantedPawnPos);
+                }
+            }
         }
 
         public PieceInfo GetPieceInfoAtPos(BoardPos pos)
@@ -306,43 +318,6 @@ namespace ChessGame.Scripts.Controllers
         private void SendFENUpdate()
         {
             _gameInfoService.EmitFenStringSignal(FEN.Encrypt(_logicBoard.GetBoard()));
-        }
-
-        private BoardPos GetKingPos(ChessColor kingColor)
-        {
-            for (int rank = 0; rank < 8; rank++)
-            {
-                for (int file = 0; file < 8; file++)
-                {
-                    var boardPos = new BoardPos(rank, file);
-                    var pieceAtTile = _logicBoard.GetPieceInfoAtPos(boardPos);
-
-                    if (pieceAtTile.PieceId == ChessPieceId.King && pieceAtTile.Color == kingColor)
-                    {
-                        return boardPos;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private bool CheckMateCheck(BoardPos kingPos, ChessColor attackerColor, List<BoardPos> moves)
-        {
-            if (!_moveController.IsTileUnderAttack(kingPos, attackerColor))
-            {
-                return false;
-            }
-
-            foreach (var move in moves)
-            {
-                if (!_moveController.IsTileUnderAttack(move, attackerColor))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 }
