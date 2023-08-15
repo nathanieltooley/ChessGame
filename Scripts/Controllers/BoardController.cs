@@ -1,4 +1,5 @@
-﻿using ChessGame.Scripts.ChessBoard;
+﻿using ChessGame.Scripts.Boards;
+using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.ChessBoard.Boards;
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Factories;
@@ -12,7 +13,7 @@ namespace ChessGame.Scripts.Controllers
     public partial class BoardController : Node
     {
         private GraphicalBoard _gBoard { get; set; }
-        private LogicalBoard _logicBoard { get; set; }
+        private PieceInfo[,] _board { get; set; }
         private PlayerMovementController _playerMovementController { get; set; }
         private MoveController _moveController { get; set; }
 
@@ -40,9 +41,9 @@ namespace ChessGame.Scripts.Controllers
             _turnService = ServiceFactory.GetTurnService();
 
             _gBoard = BoardFactory.GetGraphicalBoard();
-            _logicBoard = BoardFactory.GetLogicalBoard();
+            _board = BoardDataHandler.CreateNewBoard();
             _playerMovementController = ControllerFactory.GetPlayerMovementController();
-            _moveController = ControllerFactory.GetMoveController(_logicBoard);
+            _moveController = ControllerFactory.GetMoveController(_board);
 
             _playerColor = _gameInfoService.PlayerSideColor;
         }
@@ -75,7 +76,7 @@ namespace ChessGame.Scripts.Controllers
         public void AddPiece(BoardPos pos, PieceInfo piece)
         {
             _gBoard.AddPiece(pos, piece);
-            _logicBoard.AddPiece(pos, piece);
+            BoardDataHandler.AddPiece(_board, pos, piece);
 
             SendFENUpdate();
         }
@@ -83,17 +84,17 @@ namespace ChessGame.Scripts.Controllers
         public void RemovePiece(BoardPos pos)
         {
             _gBoard.RemovePiece(pos);
-            _logicBoard.RemovePiece(pos);
+            BoardDataHandler.RemovePiece(_board, pos);
 
             SendFENUpdate();
         }
 
         public bool MovePiece(BoardPos pos, BoardPos targetPos)
         {
-            var movingPieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
+            var movingPieceInfo = BoardDataHandler.GetPieceInfoAtPos(_board, pos);
             var pieceColor = movingPieceInfo.Color;
-            var whiteKingPos = _logicBoard.GetKingPos(ChessColor.White);
-            var blackKingPos = _logicBoard.GetKingPos(ChessColor.Black);
+            var whiteKingPos = BoardSearching.GetKingPos(_board, ChessColor.White);
+            var blackKingPos = BoardSearching.GetKingPos(_board, ChessColor.Black);
             var opposingColor = MiscHelpers.InvertColor(pieceColor);
 
             var whiteCheckMate = false;
@@ -119,7 +120,7 @@ namespace ChessGame.Scripts.Controllers
             {
                 PawnChecks(pos, targetPos, movingPieceInfo, pieceColor, opposingColor);
 
-                _logicBoard.MovePiece(pos, targetPos);
+                BoardDataHandler.MovePiece(_board, pos, targetPos);
                 _gBoard.MovePiece(pos, movingPieceInfo, targetPos);
 
                 if (movingPieceInfo.PieceId == ChessPieceId.King)
@@ -139,7 +140,7 @@ namespace ChessGame.Scripts.Controllers
                         PieceInfo rookInfo = GetPieceInfoAtPos(rookPos);
                         BoardPos newRookPos = MoveHelpers.GetPosOfRookAfterCastling(movingPieceInfo.Color, cSide);
 
-                        _logicBoard.MovePiece(rookPos, newRookPos);
+                        BoardDataHandler.MovePiece(_board, rookPos, newRookPos);
                         _gBoard.MovePiece(rookPos, rookInfo, newRookPos);
 
                         invalidateCastle = true;
@@ -250,7 +251,7 @@ namespace ChessGame.Scripts.Controllers
 
         public PieceInfo GetPieceInfoAtPos(BoardPos pos)
         {
-            return _logicBoard.GetPieceInfoAtPos(pos);
+            return BoardDataHandler.GetPieceInfoAtPos(_board, pos);
         }
 
         public List<VisualChessPiece> GetVisualPieces()
@@ -302,7 +303,7 @@ namespace ChessGame.Scripts.Controllers
         private void UpdateBoard(PieceInfo[,] board)
         {
             _gBoard.ClearBoard();
-            _logicBoard.ClearBoard();
+            BoardDataHandler.ClearBoard(_board);
 
             for (int rank = 0; rank < 8; rank++)
             {
@@ -317,7 +318,7 @@ namespace ChessGame.Scripts.Controllers
 
         private void SendFENUpdate()
         {
-            _gameInfoService.EmitFenStringSignal(FEN.Encrypt(_logicBoard.GetBoard()));
+            _gameInfoService.EmitFenStringSignal(FEN.Encrypt(_board));
         }
     }
 }

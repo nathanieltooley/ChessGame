@@ -1,4 +1,5 @@
-﻿using ChessGame.Scripts.ChessBoard;
+﻿using ChessGame.Scripts.Boards;
+using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Factories;
 using ChessGame.Scripts.Helpers;
@@ -11,13 +12,13 @@ namespace ChessGame.Scripts.Controllers
 {
     public class MoveFinder
     {
-        private LogicalBoard _board;
+        private PieceInfo[,] _board;
         private PieceInfo _piece;
         private BoardPos _piecePos;
 
         private GameInfoService _gameInfoService;
 
-        public MoveFinder(LogicalBoard board, PieceInfo piece, BoardPos piecePos)
+        public MoveFinder(PieceInfo[,] board, PieceInfo piece, BoardPos piecePos)
         {
             _gameInfoService = ServiceFactory.GetGameInfoService();
 
@@ -63,7 +64,7 @@ namespace ChessGame.Scripts.Controllers
                     continue;
                 }
 
-                PieceInfo pieceAtTarget = _board.GetPieceInfoAtPos(pos);
+                PieceInfo pieceAtTarget = BoardDataHandler.GetPieceInfoAtPos(_board, pos);
 
                 // Same color Check
                 if (pieceAtTarget.Color == _piece.Color && pieceAtTarget.PieceId != ChessPieceId.Empty)

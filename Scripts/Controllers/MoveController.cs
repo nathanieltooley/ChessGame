@@ -1,4 +1,5 @@
-﻿using ChessGame.Scripts.ChessBoard;
+﻿using ChessGame.Scripts.Boards;
+using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.DataTypes;
 using System;
 using System.Collections.Generic;
@@ -6,13 +7,13 @@ namespace ChessGame.Scripts.Controllers
 {
     public class MoveController
     {
-        private LogicalBoard _logicBoard;
+        private PieceInfo[,] _board;
 
         public List<BoardPos>[,] MoveCache { get; set; }
 
-        public MoveController(LogicalBoard logicalBoard)
+        public MoveController(PieceInfo[,] logicalBoard)
         {
-            _logicBoard = logicalBoard;
+            _board = logicalBoard;
         }
 
         public List<BoardPos> GetMovesAtPos(BoardPos pos)
@@ -29,11 +30,11 @@ namespace ChessGame.Scripts.Controllers
                 for (int file = 0; file < 8; file++)
                 {
                     BoardPos piecePos = new BoardPos(rank, file);
-                    PieceInfo pieceInfo = _logicBoard.GetPieceInfoAtPos(piecePos);
+                    PieceInfo pieceInfo = BoardDataHandler.GetPieceInfoAtPos(_board, piecePos);
 
                     if (pieceInfo.PieceId != ChessPieceId.Empty)
                     {
-                        MoveFinder mf = new MoveFinder(_logicBoard, pieceInfo, piecePos);
+                        MoveFinder mf = new MoveFinder(_board, pieceInfo, piecePos);
                         boardPosMatrix[rank, file] = mf.GetCapableMoves(piecePos);
                     }
                 }
@@ -50,7 +51,7 @@ namespace ChessGame.Scripts.Controllers
                 {
                     var pos = new BoardPos(rank, file);
 
-                    PieceInfo piece = _logicBoard.GetPieceInfoAtPos(pos);
+                    PieceInfo piece = BoardDataHandler.GetPieceInfoAtPos(_board, pos);
                     if (piece.PieceId == ChessPieceId.Empty || piece.Color != attackerColor)
                     {
                         continue;

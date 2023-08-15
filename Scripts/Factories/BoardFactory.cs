@@ -17,11 +17,5 @@ namespace ChessGame.Scripts.Factories
         {
             return RootNode.GetNode<GraphicalBoard>("/root/Main/Boards/GraphicalBoard");
         }
-
-        public static LogicalBoard GetLogicalBoard()
-        {
-            //return RootNode.GetNode<LogicalBoard>("/root/Main/Boards/LogicalBoard");
-            return new LogicalBoard();
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ChessGame.Scripts.ChessBoard;
+﻿using ChessGame.Scripts.Boards;
+using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.DataTypes;
 using Godot;
 using System;
@@ -11,7 +12,7 @@ namespace ChessGame.Scripts.Helpers
 {
     public static class MoveHelpers
     {
-        public static Dictionary<Vector2I, Vector2I> CreateBlockedDict(int startingRank, int startingFile, LogicalBoard board)
+        public static Dictionary<Vector2I, Vector2I> CreateBlockedDict(int startingRank, int startingFile, PieceInfo[,] board)
         {
             Dictionary<Vector2I, Vector2I> blockedDict = new Dictionary<Vector2I, Vector2I>();
 
@@ -38,7 +39,7 @@ namespace ChessGame.Scripts.Helpers
             return blockedDict;
         }
 
-        public static Vector2I GetPointWhereLineIsBlocked(Vector2I diagonal, int startingRank, int startingFile, LogicalBoard board)
+        public static Vector2I GetPointWhereLineIsBlocked(Vector2I diagonal, int startingRank, int startingFile, PieceInfo[,] board)
         {
             int i = 1;
 
@@ -53,7 +54,7 @@ namespace ChessGame.Scripts.Helpers
                 bool rankOOB = tempRank < 0 || tempRank > 7;
                 bool fileOOB = tempFile < 0 || tempFile > 7;
 
-                if (rankOOB || fileOOB || board.GetPieceInfoAtPos(new BoardPos(tempRank, tempFile)).PieceId != ChessPieceId.Empty)
+                if (rankOOB || fileOOB || BoardDataHandler.GetPieceInfoAtPos(board, new BoardPos(tempRank, tempFile)).PieceId != ChessPieceId.Empty)
                 {
                     return new Vector2I(tempRank, tempFile);
                 }
