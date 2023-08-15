@@ -176,5 +176,62 @@ namespace ChessGame.Scripts.Helpers
                 }
             }
         }
+
+        public static BoardPos GetPosOfDoubleMovePawn(ChessColor color, int file)
+        {
+            if (color == ChessColor.White)
+            {
+                return new BoardPos(GetEnpassantableRank(color), file);
+            } else
+            {
+                return new BoardPos(GetEnpassantableRank(color), file);
+            }
+        }
+
+        public static int GetStartingPawnRank(ChessColor color)
+        {
+            if (color == ChessColor.White)
+            {
+                return 6;
+            } else
+            {
+                return 1;
+            }
+        }
+
+        public static int GetEnpassantableRank(ChessColor color)
+        {
+            if (color == ChessColor.White)
+            {
+                return 4;
+            } else
+            {
+                return 3;
+            }
+        }
+
+        public static bool BehindEnpassantableRank(ChessColor color, int targetRank)
+        {
+            if (color == ChessColor.White)
+            {
+                return targetRank > GetEnpassantableRank(color);
+            } else
+            {
+                return targetRank < GetEnpassantableRank(color);
+            }
+        }
+
+        // this assumes that MoveFinder's logic is correct and has correctly added a en passant move as a capable move
+        public static bool IsEnpassant(BoardPos startingPos, BoardPos movePos, PieceInfo pieceAtTarget)
+        {
+            Vector2I distanceFromStart = GetDistanceFromStart(startingPos.Rank, startingPos.File, movePos.Rank, movePos.File).Abs();
+
+            if ( distanceFromStart.Equals(new Vector2I(1, 1)) && pieceAtTarget.PieceId == ChessPieceId.Empty)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

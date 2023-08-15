@@ -22,12 +22,17 @@ public partial class GameInfoService : Node
     public bool WhiteInCheck { get; set; }
     public bool BlackInCheck { get; set; }
 
+    public bool[] WhiteEnpassantArray { get; set; }
+    public bool[] BlackEnpassantArray { get; set; }
+
     [Signal]
     public delegate void UpdateBoardStateEventHandler(string fenString);
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
+        WhiteEnpassantArray = new bool[8];
+        BlackEnpassantArray = new bool[8];
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -90,6 +95,28 @@ public partial class GameInfoService : Node
     public bool BlackAnyCastlePossible()
     {
         return CanBKingCastle || CanBQueenCastle;
+    }
+
+    public void ToggleEnpassant(ChessColor color, int file)
+    {
+        if (ChessColor.White == color)
+        {
+            WhiteEnpassantArray[file] = !WhiteEnpassantArray[file];
+        } else
+        {
+            BlackEnpassantArray[file] = !BlackEnpassantArray[file];
+        }
+    }
+
+    public bool FileInEnPassantPosition(ChessColor color, int file)
+    {
+        if (color == ChessColor.White)
+        {
+            return WhiteEnpassantArray[file];
+        } else
+        {
+            return BlackEnpassantArray[file];
+        }
     }
 }
 
