@@ -94,13 +94,12 @@ namespace ChessGame.Scripts.Controllers
             var pieceColor = movingPieceInfo.Color;
             var whiteKingPos = GetKingPos(ChessColor.White);
             var blackKingPos = GetKingPos(ChessColor.Black);
-            var attackingColor = pieceColor == ChessColor.White ? ChessColor.Black : ChessColor.White;
+            var opposingColor = MiscHelpers.InvertColor(pieceColor);
 
             var whiteCheckMate = false;
             var blackCheckMate = false;
 
             var invalidateCastle = false;
-            var castling = false;
 
             List<BoardPos> capableMoves = _moveController.GetMovesAtPos(pos);
 
@@ -115,46 +114,56 @@ namespace ChessGame.Scripts.Controllers
                 return false;
             }
 
-            
-            if (movingPieceInfo.PieceId == ChessPieceId.King)
-            {
-                // Can't move a king into check
-                if (_moveController.IsTileUnderAttack(targetPos, attackingColor))
-                {
-                    return false;
-                }
-
-                // Castling
-                if (MoveHelpers.IsCastleMove(pos, targetPos))
-                {
-                    // move rook to other side of king
-                    castling = true;
-                    invalidateCastle = true;
-                } else
-                {
-                    // Other type of move (invalidate castling)
-                    if (movingPieceInfo.Color == ChessColor.White)
-                    {
-                        invalidateCastle = true;
-                    }
-                }
-            }
-
             var result = capableMoves.SingleOrDefault((pos) => pos == targetPos);
             if (result != null)
             {
+                if (movingPieceInfo.PieceId == ChessPieceId.Pawn)
+                {
+                    // Double pawn move
+                    if (MoveHelpers.GetDistanceFromStart(pos.Rank, pos.File, targetPos.Rank, targetPos.File).Abs().X == 2)
+                    {
+                        _gameInfoService.ToggleEnpassant(pieceColor, pos.File);
+                    }
+                    else if (MoveHelpers.IsEnpassant(pos, targetPos, GetPieceInfoAtPos(targetPos)))
+                    {
+                        BoardPos enPassantedPawnPos = MoveHelpers.GetPosOfDoubleMovePawn(opposingColor, targetPos.File);
+                        RemovePiece(enPassantedPawnPos);
+                    }
+                }
+
                 _logicBoard.MovePiece(pos, targetPos);
                 _gBoard.MovePiece(pos, movingPieceInfo, targetPos);
 
-                if (castling)
+                if (movingPieceInfo.PieceId == ChessPieceId.King)
                 {
-                    CastleSide cSide = (CastleSide)MoveHelpers.GetCastlingDirection(targetPos);
-                    BoardPos rookPos = MoveHelpers.GetPosOfRook(movingPieceInfo.Color, cSide);
-                    PieceInfo rookInfo = GetPieceInfoAtPos(rookPos);
-                    BoardPos newRookPos = MoveHelpers.GetPosOfRookAfterCastling(movingPieceInfo.Color, cSide);
+                    // Can't move a king into check
+                    if (_moveController.IsTileUnderAttack(targetPos, opposingColor))
+                    {
+                        return false;
+                    }
 
-                    _logicBoard.MovePiece(rookPos, newRookPos);
-                    _gBoard.MovePiece(rookPos, rookInfo, newRookPos);
+                    // Castling
+                    if (MoveHelpers.IsCastleMove(pos, targetPos))
+                    {
+                        // move rook to other side of king
+                        CastleSide cSide = (CastleSide)MoveHelpers.GetCastlingDirection(targetPos);
+                        BoardPos rookPos = MoveHelpers.GetPosOfRook(movingPieceInfo.Color, cSide);
+                        PieceInfo rookInfo = GetPieceInfoAtPos(rookPos);
+                        BoardPos newRookPos = MoveHelpers.GetPosOfRookAfterCastling(movingPieceInfo.Color, cSide);
+
+                        _logicBoard.MovePiece(rookPos, newRookPos);
+                        _gBoard.MovePiece(rookPos, rookInfo, newRookPos);
+
+                        invalidateCastle = true;
+                    }
+                    else
+                    {
+                        // Other type of move (invalidate castling)
+                        if (movingPieceInfo.Color == ChessColor.White)
+                        {
+                            invalidateCastle = true;
+                        }
+                    }
                 }
 
                 if (movingPieceInfo.PieceId == ChessPieceId.Rook)
@@ -180,6 +189,8 @@ namespace ChessGame.Scripts.Controllers
                     }
                 }
 
+                
+
                 _turnService.SwitchTurn();
 
                 _moveController.UpdateMoveCache();
@@ -200,8 +211,6 @@ namespace ChessGame.Scripts.Controllers
                 {
                     EmitSignal(SignalName.GameOver, (int)ChessColor.White);
                 }
-
-                
 
                 if (invalidateCastle)
                 {
