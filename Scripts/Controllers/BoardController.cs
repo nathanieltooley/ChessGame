@@ -92,8 +92,8 @@ namespace ChessGame.Scripts.Controllers
         {
             var movingPieceInfo = _logicBoard.GetPieceInfoAtPos(pos);
             var pieceColor = movingPieceInfo.Color;
-            var whiteKingPos = GetKingPos(ChessColor.White);
-            var blackKingPos = GetKingPos(ChessColor.Black);
+            var whiteKingPos = _logicBoard.GetKingPos(ChessColor.White);
+            var blackKingPos = _logicBoard.GetKingPos(ChessColor.Black);
             var opposingColor = MiscHelpers.InvertColor(pieceColor);
 
             var whiteCheckMate = false;
