@@ -2,6 +2,7 @@
 using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Factories;
+using ChessGame.Scripts.Helpers;
 using System;
 using System.Collections.Generic;
 namespace ChessGame.Scripts.Controllers

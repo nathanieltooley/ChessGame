@@ -2,13 +2,12 @@
 using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Factories;
-using ChessGame.Scripts.Helpers;
 using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ChessGame.Scripts.Controllers
+namespace ChessGame.Scripts.Helpers
 {
     public static class MoveFinder
     {
@@ -77,7 +76,7 @@ namespace ChessGame.Scripts.Controllers
                     if (ChessConstants.DiagonalDirections.Contains(line))
                     {
                         // Pawn Diagonal Attack Check
-                        if ((pieceAtTarget.PieceId != ChessPieceId.Empty) && pieceAtTarget.Color != piece.Color)
+                        if (pieceAtTarget.PieceId != ChessPieceId.Empty && pieceAtTarget.Color != piece.Color)
                         {
                             capableMoves.Add(move);
                             continue;
@@ -106,12 +105,14 @@ namespace ChessGame.Scripts.Controllers
                     if (piece.PieceId == ChessPieceId.King && MoveHelpers.IsCastleMove(piecePos, move))
                     {
                         continue;
-                    } else
+                    }
+                    else
                     {
                         capableMoves.Add(move);
                     }
-                    
-                } else if (absStartDistance > absBlockDistance)
+
+                }
+                else if (absStartDistance > absBlockDistance)
                 {
                     continue;
                 }
@@ -151,7 +152,7 @@ namespace ChessGame.Scripts.Controllers
                 }
 
                 // Piece capture check, make sure that pawn can only capture diagonally
-                if ((pieceAtTarget.Color != piece.Color) && (pos.Rank == block.X) && (pos.File == block.Y) && piece.PieceId != ChessPieceId.Pawn)
+                if (pieceAtTarget.Color != piece.Color && pos.Rank == block.X && pos.File == block.Y && piece.PieceId != ChessPieceId.Pawn)
                 {
                     capableMoves.Add(move);
                 }
