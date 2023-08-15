@@ -1,5 +1,4 @@
 ﻿using ChessGame.Scripts.Boards;
-using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.ChessBoard.Boards;
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Factories;

@@ -10,22 +10,8 @@ using System.Linq;
 
 namespace ChessGame.Scripts.Controllers
 {
-    public class MoveFinder
+    public static class MoveFinder
     {
-        private PieceInfo[,] _board;
-        private PieceInfo _piece;
-        private BoardPos _piecePos;
-
-        private GameInfoService _gameInfoService;
-
-        public MoveFinder(PieceInfo[,] board, PieceInfo piece, BoardPos piecePos)
-        {
-            _gameInfoService = ServiceFactory.GetGameInfoService();
-
-            _board = board;
-            _piece = piece;
-            _piecePos = piecePos;
-        }
 
         public static bool IsMovePossible(BoardPos targetPos, List<BoardPos> capableMoves)
         {
@@ -40,16 +26,16 @@ namespace ChessGame.Scripts.Controllers
             return false;
         }
 
-        public List<BoardPos> GetCapableMoves(BoardPos piecePos)
+        public static List<BoardPos> GetCapableMoves(BoardPos piecePos, PieceInfo piece, PieceInfo[,] board, GameInfoService gameInfoService)
         {
             int startingRank = piecePos.Rank;
             int startingFile = piecePos.File;
 
-            ChessColor opposingColor = MiscHelpers.InvertColor(_piece.Color);
+            ChessColor opposingColor = MiscHelpers.InvertColor(piece.Color);
 
-            List<BoardPos> theoreticalMoves = GetMovesAssumingEmptyBoard();
+            List<BoardPos> theoreticalMoves = GetMovesAssumingEmptyBoard(piece, piecePos);
             List<BoardPos> capableMoves = new List<BoardPos>();
-            Dictionary<Vector2I, Vector2I> blockedDict = MoveHelpers.CreateBlockedDict(startingRank, startingFile, _board);
+            Dictionary<Vector2I, Vector2I> blockedDict = MoveHelpers.CreateBlockedDict(startingRank, startingFile, board);
 
             foreach (var move in theoreticalMoves)
             {
@@ -64,10 +50,10 @@ namespace ChessGame.Scripts.Controllers
                     continue;
                 }
 
-                PieceInfo pieceAtTarget = BoardDataHandler.GetPieceInfoAtPos(_board, pos);
+                PieceInfo pieceAtTarget = BoardDataHandler.GetPieceInfoAtPos(board, pos);
 
                 // Same color Check
-                if (pieceAtTarget.Color == _piece.Color && pieceAtTarget.PieceId != ChessPieceId.Empty)
+                if (pieceAtTarget.Color == piece.Color && pieceAtTarget.PieceId != ChessPieceId.Empty)
                 {
                     continue;
                 }
@@ -86,12 +72,12 @@ namespace ChessGame.Scripts.Controllers
                 Vector2I absStartDistance = distanceFromStartingTile.Abs();
                 Vector2I absBlockDistance = blockDistance.Abs();
 
-                if (_piece.PieceId == ChessPieceId.Pawn)
+                if (piece.PieceId == ChessPieceId.Pawn)
                 {
                     if (ChessConstants.DiagonalDirections.Contains(line))
                     {
                         // Pawn Diagonal Attack Check
-                        if ((pieceAtTarget.PieceId != ChessPieceId.Empty) && pieceAtTarget.Color != _piece.Color)
+                        if ((pieceAtTarget.PieceId != ChessPieceId.Empty) && pieceAtTarget.Color != piece.Color)
                         {
                             capableMoves.Add(move);
                             continue;
@@ -99,7 +85,7 @@ namespace ChessGame.Scripts.Controllers
                         // Remove diagonal attack if there is no enemy piece
                         else
                         {
-                            bool enPassantThisFile = _gameInfoService.FileInEnPassantPosition(opposingColor, move.File);
+                            bool enPassantThisFile = gameInfoService.FileInEnPassantPosition(opposingColor, move.File);
 
                             if (enPassantThisFile && MoveHelpers.BehindEnpassantableRank(opposingColor, move.Rank))
                             {
@@ -114,10 +100,10 @@ namespace ChessGame.Scripts.Controllers
 
                 // if this move is closer to the piece than the block
                 // or if knight
-                if (absStartDistance < absBlockDistance || _piece.PieceId == ChessPieceId.Knight)
+                if (absStartDistance < absBlockDistance || piece.PieceId == ChessPieceId.Knight)
                 {
                     // we'll deal with castling later in the function
-                    if (_piece.PieceId == ChessPieceId.King && MoveHelpers.IsCastleMove(_piecePos, move))
+                    if (piece.PieceId == ChessPieceId.King && MoveHelpers.IsCastleMove(piecePos, move))
                     {
                         continue;
                     } else
@@ -131,33 +117,33 @@ namespace ChessGame.Scripts.Controllers
                 }
 
                 // Castling Check
-                if (_piece.PieceId == ChessPieceId.King && MoveHelpers.IsCastleMove(_piecePos, move))
+                if (piece.PieceId == ChessPieceId.King && MoveHelpers.IsCastleMove(piecePos, move))
                 {
-                    if (_piece.Color == ChessColor.White && _gameInfoService.WhiteAnyCastlePossible())
+                    if (piece.Color == ChessColor.White && gameInfoService.WhiteAnyCastlePossible())
                     {
                         CastleSide? castle = MoveHelpers.GetCastlingDirection(move);
 
-                        if (castle == CastleSide.KingSide && _gameInfoService.CanWKingCastle)
+                        if (castle == CastleSide.KingSide && gameInfoService.CanWKingCastle)
                         {
                             capableMoves.Add(move);
                         }
 
-                        if (castle == CastleSide.QueenSide && _gameInfoService.CanWQueenCastle)
+                        if (castle == CastleSide.QueenSide && gameInfoService.CanWQueenCastle)
                         {
                             capableMoves.Add(move);
                         }
                     }
 
-                    if (_piece.Color == ChessColor.Black && _gameInfoService.BlackAnyCastlePossible())
+                    if (piece.Color == ChessColor.Black && gameInfoService.BlackAnyCastlePossible())
                     {
                         CastleSide? castle = MoveHelpers.GetCastlingDirection(move);
 
-                        if (castle == CastleSide.KingSide && _gameInfoService.CanBKingCastle)
+                        if (castle == CastleSide.KingSide && gameInfoService.CanBKingCastle)
                         {
                             capableMoves.Add(move);
                         }
 
-                        if (castle == CastleSide.QueenSide && _gameInfoService.CanBQueenCastle)
+                        if (castle == CastleSide.QueenSide && gameInfoService.CanBQueenCastle)
                         {
                             capableMoves.Add(move);
                         }
@@ -165,7 +151,7 @@ namespace ChessGame.Scripts.Controllers
                 }
 
                 // Piece capture check, make sure that pawn can only capture diagonally
-                if ((pieceAtTarget.Color != _piece.Color) && (pos.Rank == block.X) && (pos.File == block.Y) && _piece.PieceId != ChessPieceId.Pawn)
+                if ((pieceAtTarget.Color != piece.Color) && (pos.Rank == block.X) && (pos.File == block.Y) && piece.PieceId != ChessPieceId.Pawn)
                 {
                     capableMoves.Add(move);
                 }
@@ -174,12 +160,12 @@ namespace ChessGame.Scripts.Controllers
             return capableMoves;
         }
 
-        public List<BoardPos> GetMovesAssumingEmptyBoard()
+        private static List<BoardPos> GetMovesAssumingEmptyBoard(PieceInfo piece, BoardPos piecePos)
         {
-            ChessPieceId pieceId = _piece.PieceId;
+            ChessPieceId pieceId = piece.PieceId;
 
-            int startingRank = _piecePos.Rank;
-            int startingFile = _piecePos.File;
+            int startingRank = piecePos.Rank;
+            int startingFile = piecePos.File;
 
             // Player starts at bottom
             // Ai starts at the top
@@ -189,7 +175,7 @@ namespace ChessGame.Scripts.Controllers
             switch (pieceId)
             {
                 case ChessPieceId.Pawn:
-                    return MoveCreators.GetPawnMoves(startingRank, startingFile, _piece.Color);
+                    return MoveCreators.GetPawnMoves(startingRank, startingFile, piece.Color);
                 case ChessPieceId.Rook:
                     return MoveCreators.GetRookMoves(startingRank, startingFile);
                 case ChessPieceId.Knight:

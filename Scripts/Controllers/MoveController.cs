@@ -1,6 +1,7 @@
 ﻿using ChessGame.Scripts.Boards;
 using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.DataTypes;
+using ChessGame.Scripts.Factories;
 using System;
 using System.Collections.Generic;
 namespace ChessGame.Scripts.Controllers
@@ -34,8 +35,7 @@ namespace ChessGame.Scripts.Controllers
 
                     if (pieceInfo.PieceId != ChessPieceId.Empty)
                     {
-                        MoveFinder mf = new MoveFinder(_board, pieceInfo, piecePos);
-                        boardPosMatrix[rank, file] = mf.GetCapableMoves(piecePos);
+                        boardPosMatrix[rank, file] = MoveFinder.GetCapableMoves(piecePos, pieceInfo, _board, ServiceFactory.GetGameInfoService());
                     }
                 }
             }
