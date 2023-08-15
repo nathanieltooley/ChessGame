@@ -1,6 +1,7 @@
 using ChessGame.Scripts;
 using ChessGame.Scripts.Controllers;
 using ChessGame.Scripts.Factories;
+using ChessGame.Scripts.Helpers;
 using Godot;
 
 public partial class Main : Node2D
@@ -23,7 +24,7 @@ public partial class Main : Node2D
 
         _boardController = ControllerFactory.GetBoardController();
 
-        aiColor = InvertColor(playerColor);
+        aiColor = MiscHelpers.InvertColor(playerColor);
 
         ChessSide whitePlayer;
         ChessSide blackPlayer;
@@ -63,18 +64,5 @@ public partial class Main : Node2D
 	public override void _Process(double delta)
 	{
 
-    }
-
-
-    private ChessColor InvertColor(ChessColor color)
-    {
-        if (color == ChessColor.White)
-        {
-            return ChessColor.Black;
-        }
-        else
-        {
-            return ChessColor.White;
-        }
     }
 }
