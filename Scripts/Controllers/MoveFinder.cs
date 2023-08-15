@@ -44,6 +44,8 @@ namespace ChessGame.Scripts.Controllers
             int startingRank = piecePos.Rank;
             int startingFile = piecePos.File;
 
+            ChessColor opposingColor = MiscHelpers.InvertColor(_piece.Color);
+
             List<BoardPos> theoreticalMoves = GetMovesAssumingEmptyBoard();
             List<BoardPos> capableMoves = new List<BoardPos>();
             Dictionary<Vector2I, Vector2I> blockedDict = MoveHelpers.CreateBlockedDict(startingRank, startingFile, _board);
@@ -96,6 +98,14 @@ namespace ChessGame.Scripts.Controllers
                         // Remove diagonal attack if there is no enemy piece
                         else
                         {
+                            bool enPassantThisFile = _gameInfoService.FileInEnPassantPosition(opposingColor, move.File);
+
+                            if (enPassantThisFile && MoveHelpers.BehindEnpassantableRank(opposingColor, move.Rank))
+                            {
+                                capableMoves.Add(move);
+                                continue;
+                            }
+
                             continue;
                         }
                     }
