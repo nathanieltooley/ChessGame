@@ -152,6 +152,14 @@ namespace ChessGame.Scripts.Controllers
                             invalidateCastle = true;
                         }
                     }
+
+                    if (movingPieceInfo.Color == ChessColor.White)
+                    {
+                        whiteKingPos = targetPos;
+                    } else
+                    {
+                        blackKingPos = targetPos;
+                    }
                 }
 
                 RookCastleInvalidation(pos, movingPieceInfo);
