@@ -19,10 +19,5 @@ namespace ChessGame.Scripts.Factories
         {
             return RootNode.GetNode<PlayerMovementController>("/root/Main/Controllers/PlayerInputController");
         }
-
-        public static MoveController GetMoveController(PieceInfo[,] board)
-        {
-            return new MoveController(board);
-        }
     }
 }

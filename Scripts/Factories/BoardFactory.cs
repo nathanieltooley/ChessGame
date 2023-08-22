@@ -1,11 +1,5 @@
-﻿using ChessGame.Scripts.ChessBoard;
-using ChessGame.Scripts.ChessBoard.Boards;
+﻿using ChessGame.Scripts.ChessBoard.Boards;
 using Godot;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessGame.Scripts.Factories
 {

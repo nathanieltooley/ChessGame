@@ -14,7 +14,8 @@ namespace ChessGame.Scripts.Controllers
         private GraphicalBoard _gBoard { get; set; }
         private PieceInfo[,] _board { get; set; }
         private PlayerMovementController _playerMovementController { get; set; }
-        private MoveController _moveController { get; set; }
+
+        private List<BoardPos>[,] _moveCache;
 
         private List<PieceInfo> _whitePieces = new List<PieceInfo>();
         private List<PieceInfo> _blackPieces = new List<PieceInfo>();
@@ -42,7 +43,6 @@ namespace ChessGame.Scripts.Controllers
             _gBoard = BoardFactory.GetGraphicalBoard();
             _board = BoardDataHandler.CreateNewBoard();
             _playerMovementController = ControllerFactory.GetPlayerMovementController();
-            _moveController = ControllerFactory.GetMoveController(_board);
 
             _playerColor = _gameInfoService.PlayerSideColor;
         }
@@ -69,7 +69,7 @@ namespace ChessGame.Scripts.Controllers
         {
             PieceInfo[,] fenBoard = GetBoardFromFEN(fenString);
             UpdateBoard(fenBoard);
-            _moveController.UpdateMoveCache();
+            _moveCache = MoveController.CreateMoveCache(_board);
         }
 
         public void AddPiece(BoardPos pos, PieceInfo piece)
@@ -101,7 +101,7 @@ namespace ChessGame.Scripts.Controllers
 
             var invalidateCastle = false;
 
-            List<BoardPos> capableMoves = _moveController.GetMovesAtPos(pos);
+            List<BoardPos> capableMoves = _moveCache[pos.Rank, pos.File];
 
             if (pieceColor != _turnService.GetCurrentTurnColor())
             {
@@ -125,7 +125,7 @@ namespace ChessGame.Scripts.Controllers
                 if (movingPieceInfo.PieceId == ChessPieceId.King)
                 {
                     // Can't move a king into check
-                    if (_moveController.IsTileUnderAttack(targetPos, opposingColor))
+                    if (MoveController.IsTileUnderAttack(_board, targetPos, opposingColor, _moveCache))
                     {
                         return false;
                     }
@@ -166,15 +166,15 @@ namespace ChessGame.Scripts.Controllers
 
                 _turnService.SwitchTurn();
 
-                _moveController.UpdateMoveCache();
+                _moveCache = MoveController.CreateMoveCache(_board);
                 SendFENUpdate();
 
-                bool whiteInCheck = _moveController.CheckCheck(whiteKingPos, ChessColor.Black);
-                bool blackInCheck = _moveController.CheckCheck(blackKingPos, ChessColor.White);
+                bool whiteInCheck = MoveController.CheckCheck(_board, whiteKingPos, ChessColor.Black, _moveCache);
+                bool blackInCheck = MoveController.CheckCheck(_board, blackKingPos, ChessColor.White, _moveCache);
 
-                whiteCheckMate = _moveController.CheckMateCheck(whiteKingPos, ChessColor.Black, _moveController.GetMovesAtPos(whiteKingPos));
+                whiteCheckMate = MoveController.CheckMateCheck(_board, whiteKingPos, ChessColor.Black, _moveCache[whiteKingPos.Rank, whiteKingPos.File], _moveCache);
                 EmitSignal(SignalName.ColorIsInCheckmateUpdate, (int)ChessColor.White, whiteCheckMate);
-                blackCheckMate = _moveController.CheckMateCheck(blackKingPos, ChessColor.White, _moveController.GetMovesAtPos(blackKingPos));
+                blackCheckMate = MoveController.CheckMateCheck(_board, blackKingPos, ChessColor.White, _moveCache[blackKingPos.Rank, blackKingPos.File], _moveCache);
                 EmitSignal(SignalName.ColorIsInCheckmateUpdate, (int)ChessColor.Black, blackCheckMate);
 
                 if (whiteCheckMate)
@@ -283,7 +283,7 @@ namespace ChessGame.Scripts.Controllers
 
         public List<BoardPos> GetMovesForPiece(BoardPos pos)
         {
-            List<BoardPos> moves = _moveController.GetMovesAtPos(pos);
+            List<BoardPos> moves = _moveCache[pos.Rank, pos.File];
             return moves;
         }
 

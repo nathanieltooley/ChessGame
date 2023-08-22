@@ -7,23 +7,9 @@ using System;
 using System.Collections.Generic;
 namespace ChessGame.Scripts.Controllers
 {
-    public class MoveController
+    public static class MoveController
     {
-        private PieceInfo[,] _board;
-
-        public List<BoardPos>[,] MoveCache { get; set; }
-
-        public MoveController(PieceInfo[,] logicalBoard)
-        {
-            _board = logicalBoard;
-        }
-
-        public List<BoardPos> GetMovesAtPos(BoardPos pos)
-        {
-            return MoveCache[pos.Rank, pos.File];
-        }
-
-        public void UpdateMoveCache()
+        public static List<BoardPos>[,] CreateMoveCache(PieceInfo[,] board)
         {
             List<BoardPos>[,] boardPosMatrix = new List<BoardPos>[8, 8];
 
@@ -32,19 +18,19 @@ namespace ChessGame.Scripts.Controllers
                 for (int file = 0; file < 8; file++)
                 {
                     BoardPos piecePos = new BoardPos(rank, file);
-                    PieceInfo pieceInfo = BoardDataHandler.GetPieceInfoAtPos(_board, piecePos);
+                    PieceInfo pieceInfo = BoardDataHandler.GetPieceInfoAtPos(board, piecePos);
 
                     if (pieceInfo.PieceId != ChessPieceId.Empty)
                     {
-                        boardPosMatrix[rank, file] = MoveFinder.GetCapableMoves(piecePos, pieceInfo, _board, ServiceFactory.GetGameInfoService());
+                        boardPosMatrix[rank, file] = MoveFinder.GetCapableMoves(piecePos, pieceInfo, board, ServiceFactory.GetGameInfoService());
                     }
                 }
             }
 
-            MoveCache = boardPosMatrix;
+            return boardPosMatrix;
         }
 
-        public bool IsTileUnderAttack(BoardPos boardPos, ChessColor attackerColor)
+        public static bool IsTileUnderAttack(PieceInfo[,] board, BoardPos boardPos, ChessColor attackerColor, List<BoardPos>[,] moveCache)
         {
             for (int rank = 0; rank < 8; rank++)
             {
@@ -52,14 +38,14 @@ namespace ChessGame.Scripts.Controllers
                 {
                     var pos = new BoardPos(rank, file);
 
-                    PieceInfo piece = BoardDataHandler.GetPieceInfoAtPos(_board, pos);
+                    PieceInfo piece = BoardDataHandler.GetPieceInfoAtPos(board, pos);
                     if (piece.PieceId == ChessPieceId.Empty || piece.Color != attackerColor)
                     {
                         continue;
                     }
                     else
                     {
-                        var moves = GetMovesAtPos(pos);
+                        var moves = moveCache[pos.Rank, pos.File];
                         foreach (var move in moves)
                         {
                             if (move == boardPos)
@@ -74,21 +60,21 @@ namespace ChessGame.Scripts.Controllers
             return false;
         }
 
-        public bool CheckCheck(BoardPos kingPos, ChessColor kingColor)
+        public static bool CheckCheck(PieceInfo[,] board, BoardPos kingPos, ChessColor kingColor, List<BoardPos>[,] moveCache)
         {
-            return IsTileUnderAttack(kingPos, kingColor);
+            return IsTileUnderAttack(board, kingPos, kingColor, moveCache);
         }
 
-        public bool CheckMateCheck(BoardPos kingPos, ChessColor attackerColor, List<BoardPos> moves)
+        public static bool CheckMateCheck(PieceInfo[,] board, BoardPos kingPos, ChessColor attackerColor, List<BoardPos> moves, List<BoardPos>[,] moveCache)
         {
-            if (!IsTileUnderAttack(kingPos, attackerColor))
+            if (!IsTileUnderAttack(board, kingPos, attackerColor, moveCache))
             {
                 return false;
             }
 
             foreach (var move in moves)
             {
-                if (!IsTileUnderAttack(move, attackerColor))
+                if (!IsTileUnderAttack(board, move, attackerColor, moveCache))
                 {
                     return false;
                 }
