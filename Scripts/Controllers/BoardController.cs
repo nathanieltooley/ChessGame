@@ -117,6 +117,27 @@ namespace ChessGame.Scripts.Controllers
             var result = capableMoves.SingleOrDefault((pos) => pos == targetPos);
             if (result != null)
             {
+                PieceInfo[,] futureBoard = (PieceInfo[,])_board.Clone();
+                BoardDataHandler.MovePiece(futureBoard, pos, targetPos);
+
+                List<BoardPos>[,] _futureBoardMoveCache = MoveController.CreateMoveCache(futureBoard);
+
+                bool movedIntoCheck = false;
+
+                if (pieceColor == ChessColor.White)
+                {
+                    movedIntoCheck = MoveController.CheckCheck(futureBoard, whiteKingPos, ChessColor.Black, _futureBoardMoveCache);
+                }
+                else
+                {
+                    movedIntoCheck = MoveController.CheckCheck(futureBoard, blackKingPos, ChessColor.White, _futureBoardMoveCache);
+                }
+
+                if (movedIntoCheck)
+                {
+                    return false;
+                }
+
                 PawnChecks(pos, targetPos, movingPieceInfo, opposingColor);
 
                 BoardDataHandler.MovePiece(_board, pos, targetPos);
