@@ -46,5 +46,10 @@ namespace ChessGame.Scripts
             }
         } 
         public static bool operator !=(BoardPos a, BoardPos b) { return !(a == b); }
+
+        public override string ToString()
+        {
+            return $"Rank: {Rank}, File: {File}";
+        }
     }
 }
