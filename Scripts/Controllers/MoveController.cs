@@ -60,9 +60,9 @@ namespace ChessGame.Scripts.Controllers
             return false;
         }
 
-        public static bool CheckCheck(PieceInfo[,] board, BoardPos kingPos, ChessColor kingColor, List<BoardPos>[,] moveCache)
+        public static bool CheckCheck(PieceInfo[,] board, BoardPos kingPos, ChessColor attackerColor, List<BoardPos>[,] moveCache)
         {
-            return IsTileUnderAttack(board, kingPos, kingColor, moveCache);
+            return IsTileUnderAttack(board, kingPos, attackerColor, moveCache);
         }
 
         public static bool CheckMateCheck(PieceInfo[,] board, BoardPos kingPos, ChessColor attackerColor, List<BoardPos> moves, List<BoardPos>[,] moveCache)
