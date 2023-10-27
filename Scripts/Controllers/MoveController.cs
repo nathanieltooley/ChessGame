@@ -65,14 +65,16 @@ namespace ChessGame.Scripts.Controllers
             return IsTileUnderAttack(board, kingPos, attackerColor, moveCache);
         }
 
-        public static bool CheckMateCheck(PieceInfo[,] board, BoardPos kingPos, ChessColor attackerColor, List<BoardPos> moves, List<BoardPos>[,] moveCache)
+        public static bool CheckMateCheck(PieceInfo[,] board, BoardPos kingPos, ChessColor attackerColor, List<BoardPos> kingsMoves, List<BoardPos>[,] moveCache)
         {
+            // Check to see if king's position is under attack
             if (!IsTileUnderAttack(board, kingPos, attackerColor, moveCache))
             {
                 return false;
             }
 
-            foreach (var move in moves)
+            // Check all of the king's moves to see if those are under attack as well
+            foreach (var move in kingsMoves)
             {
                 if (!IsTileUnderAttack(board, move, attackerColor, moveCache))
                 {
