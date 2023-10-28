@@ -1,9 +1,8 @@
 ﻿using ChessGame.Scripts.Boards;
-using ChessGame.Scripts.ChessBoard;
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Factories;
 using ChessGame.Scripts.Helpers;
-using System;
+using Godot;
 using System.Collections.Generic;
 namespace ChessGame.Scripts.Controllers
 {
@@ -67,10 +66,28 @@ namespace ChessGame.Scripts.Controllers
 
         public static bool CheckMateCheck(PieceInfo[,] board, BoardPos kingPos, ChessColor attackerColor, List<BoardPos> kingsMoves, List<BoardPos>[,] moveCache)
         {
+            List<BoardPos> attackerPositions = new List<BoardPos>();
             // Check to see if king's position is under attack
             if (!IsTileUnderAttack(board, kingPos, attackerColor, moveCache))
             {
                 return false;
+            }
+
+            for (int rank = 0; rank < 8; rank++)
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    PieceInfo tileInfo = BoardDataHandler.GetPieceInfoAtPos(board, new BoardPos(rank, file));
+
+                    if (tileInfo.PieceId == ChessPieceId.Empty)
+                    {
+                        continue;
+                    }
+
+                    if (moveCache[rank, file].FindAll(x => x.Rank == kingPos.Rank && x.File == kingPos.File).Count > 0) {
+                        attackerPositions.Add(new BoardPos(rank, file));
+                    }
+                }
             }
 
             // Check all of the king's moves to see if those are under attack as well
@@ -81,6 +98,31 @@ namespace ChessGame.Scripts.Controllers
                     return false;
                 }
             }
+
+            // Check if any of the tiles between the attacker and the king are able to be blocked by friendly pieces
+
+            foreach (var attackerPos in attackerPositions)
+            {
+                PieceInfo attacker = BoardDataHandler.GetPieceInfoAtPos(board, attackerPos);
+                
+                // Skip knight since he can jump over pieces
+                if (attacker.PieceId == ChessPieceId.Knight)
+                {
+                    continue;
+                }
+
+                Vector2I line = MoveHelpers.GetLineMoveIsOn(attackerPos.Rank, attackerPos.File, kingPos.Rank, kingPos.File);
+
+                foreach (BoardPos pos in MoveHelpers.GetSpacesOnLine(attackerPos, line, board))
+                {
+                    if (IsTileUnderAttack(board, pos, MiscHelpers.InvertColor(attackerColor), moveCache))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            
 
             return true;
         }
