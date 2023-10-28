@@ -4,9 +4,6 @@ using ChessGame.Scripts.DataTypes;
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessGame.Scripts.Helpers
 {
@@ -82,6 +79,21 @@ namespace ChessGame.Scripts.Helpers
             resultVec.Y = fileMag == 0 ? 0 : distance.Y / fileMag;
 
             return resultVec;
+        }
+
+        public static List<BoardPos> GetSpacesOnLine(BoardPos startPos, Vector2I line, PieceInfo[,] board)
+        {
+            var block = GetPointWhereLineIsBlocked(line, startPos.Rank, startPos.File, board);
+            List<BoardPos> spaces = new List<BoardPos>();
+            BoardPos currentPos = startPos + line;
+
+            while (currentPos.Rank != block.X || currentPos.File != block.Y)
+            {
+                spaces.Add(currentPos);
+                currentPos += line;
+            }
+
+            return spaces;
         }
 
         public static CastleSide? GetCastlingDirection(BoardPos movePos)
