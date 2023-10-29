@@ -1,5 +1,9 @@
 ﻿
 using ChessGame.Scripts.DataTypes;
+using ChessGame.Scripts.Helpers;
+using Godot;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ChessGame.Scripts.Boards
 {
@@ -22,6 +26,46 @@ namespace ChessGame.Scripts.Boards
             }
 
             return null;
+        }
+
+        public static List<BoardPos> GetAllAttackerPositions(PieceInfo[,] board, BoardPos posAttacked, List<BoardPos>[,] moveCache)
+        {
+            List<BoardPos> attackerPositions = new List<BoardPos>();
+            for (int rank = 0; rank < 8; rank++)
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    PieceInfo tileInfo = BoardDataHandler.GetPieceInfoAtPos(board, new BoardPos(rank, file));
+
+                    if (tileInfo.PieceId == ChessPieceId.Empty)
+                    {
+                        continue;
+                    }
+
+                    if (moveCache[rank, file].FindAll(x => x.Rank == posAttacked.Rank && x.File == posAttacked.File).Count > 0)
+                    {
+                        attackerPositions.Add(new BoardPos(rank, file));
+                    }
+                }
+            }
+
+            return attackerPositions;
+        }
+
+        public static List<BoardPos> GetAllBlockingPiecePositions(PieceInfo[,] board, List<BoardPos>[,] moveCache, BoardPos kingPos, BoardPos attackerPosition)
+        {
+            List<BoardPos> blockingPositions = new List<BoardPos>();
+
+            PieceInfo attacker = BoardDataHandler.GetPieceInfoAtPos(board, attackerPosition);
+
+            Vector2I line = MoveHelpers.GetLineMoveIsOn(attackerPosition.Rank, attackerPosition.File, kingPos.Rank, kingPos.File);
+
+            foreach (BoardPos pos in MoveHelpers.GetSpacesOnLine(attackerPosition, line, board))
+            {
+                blockingPositions = blockingPositions.Concat(GetAllAttackerPositions(board, pos, moveCache)).ToList();
+            }
+            
+            return blockingPositions;
         }
     }
 }
