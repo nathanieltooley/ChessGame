@@ -119,7 +119,14 @@ namespace ChessGame.Scripts.Controllers
                 {
                     
                     var blockers = BoardSearching.GetAllBlockingPiecePositions(_board, _moveCache, kingPos, attacker);
+                    
+                    // Capturing the attacking piece can also be considered "blocking"
+                    if (_moveCache[pos.Rank, pos.File].Any((mPos) => mPos == attacker))
+                    {
+                        continue;
+                    }
 
+                    // If this piece has no possible moves that can block check, it fails this move regardless
                     if (!blockers.Any((blockerPos) => blockerPos == pos))
                     {
                         return false;
