@@ -111,7 +111,20 @@ namespace ChessGame.Scripts.Controllers
             // King in Check Check
             if (_gameInfoService.ColorInCheck(pieceColor) && movingPieceInfo.PieceId != ChessPieceId.King)
             {
-                return false;
+
+                BoardPos kingPos = pieceColor == ChessColor.White ? whiteKingPos : blackKingPos;
+                var attackers = BoardSearching.GetAllAttackerPositions(_board, kingPos, _moveCache);
+
+                foreach (var attacker in attackers)
+                {
+                    
+                    var blockers = BoardSearching.GetAllBlockingPiecePositions(_board, _moveCache, kingPos, attacker);
+
+                    if (!blockers.Any((blockerPos) => blockerPos == pos))
+                    {
+                        return false;
+                    }
+                } 
             }
 
             var result = capableMoves.SingleOrDefault((pos) => pos == targetPos);
