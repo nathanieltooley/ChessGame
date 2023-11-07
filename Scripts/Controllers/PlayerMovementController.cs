@@ -25,6 +25,8 @@ namespace ChessGame.Scripts.Controllers
         public delegate void ToggleCellHighlightEventHandler(Vector2I gridPos);
         [Signal]
         public delegate void ClearHighlightsEventHandler();
+        [Signal]
+        public delegate void PlaySoundEventHandler(string audioResPath);
 
         // Called every frame. 'delta' is the elapsed time since the previous frame.
 
@@ -154,6 +156,7 @@ namespace ChessGame.Scripts.Controllers
                 if (success)
                 {
                     PieceBeingDragged.Position = _boardController.GetTileCenter(boardPos);
+                    EmitSignal(SignalName.PlaySound, "res://Assets//Audio//chess_piece_place.mp3");
                 }
                 else
                 {

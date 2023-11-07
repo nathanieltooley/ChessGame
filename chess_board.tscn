@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://caaargxpskoar"]
+[gd_scene load_steps=17 format=3 uid="uid://caaargxpskoar"]
 
 [ext_resource type="TileSet" uid="uid://c7ukin0acqjbo" path="res://Assets/BoardTiles/chess_board_tileset.tres" id="1_i0ywi"]
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_xg0fo"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://Scripts/Services/TimerService.cs" id="4_d08ub"]
 [ext_resource type="Script" path="res://Scripts/Controllers/BoardController.cs" id="5_pof32"]
 [ext_resource type="Script" path="res://Scripts/Controllers/PlayerMovementController.cs" id="6_h8401"]
+[ext_resource type="Script" path="res://Scripts/Controllers/AudioController.cs" id="8_iecf1"]
 [ext_resource type="Script" path="res://Scripts/Boards/GraphicalBoard.cs" id="8_p0nd3"]
 [ext_resource type="PackedScene" uid="uid://cjgfad3ywojqf" path="res://game_over.tscn" id="9_bgk5o"]
 [ext_resource type="Theme" uid="uid://c27w88x6c61gl" path="res://Assets/Themes/debugText.tres" id="10_ik7uf"]
@@ -43,6 +44,9 @@ script = ExtResource("5_pof32")
 
 [node name="PlayerInputController" type="Node" parent="Controllers"]
 script = ExtResource("6_h8401")
+
+[node name="AudioController" type="Node" parent="Controllers"]
+script = ExtResource("8_iecf1")
 
 [node name="MainGameGUI" type="Control" parent="."]
 layout_mode = 3
@@ -213,5 +217,6 @@ script = ExtResource("8_p0nd3")
 [connection signal="ColorIsInCheckmateUpdate" from="Controllers/BoardController" to="DebugMenuLogic" method="OnColorInCheckmate"]
 [connection signal="GameOver" from="Controllers/BoardController" to="MainGameGUI" method="ShowGameOverScreen"]
 [connection signal="ClearHighlights" from="Controllers/PlayerInputController" to="Boards/GraphicalBoard" method="ClearHighlights"]
+[connection signal="PlaySound" from="Controllers/PlayerInputController" to="Controllers/AudioController" method="PlaySound"]
 [connection signal="ToggleCellHighlight" from="Controllers/PlayerInputController" to="Boards/GraphicalBoard" method="ToggleHighlightCell"]
 [connection signal="UpdateMousePos" from="Controllers/PlayerInputController" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]
