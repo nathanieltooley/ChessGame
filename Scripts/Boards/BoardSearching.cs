@@ -28,7 +28,7 @@ namespace ChessGame.Scripts.Boards
             return null;
         }
 
-        public static List<BoardPos> GetAllAttackerPositions(PieceInfo[,] board, BoardPos posAttacked, List<BoardPos>[,] moveCache)
+        public static List<BoardPos> GetAllAttackerPositions(PieceInfo[,] board, BoardPos posAttacked, List<BoardPos>[,] moveCache, ChessColor ignoreColor)
         {
             List<BoardPos> attackerPositions = new List<BoardPos>();
             for (int rank = 0; rank < 8; rank++)
@@ -37,7 +37,20 @@ namespace ChessGame.Scripts.Boards
                 {
                     PieceInfo tileInfo = BoardDataHandler.GetPieceInfoAtPos(board, new BoardPos(rank, file));
 
+                    // Ignore if there is no piece
                     if (tileInfo.PieceId == ChessPieceId.Empty)
+                    {
+                        continue;
+                    }
+
+                    // Ignore piece if it is the wrong color
+                    if (tileInfo.Color == ignoreColor)
+                    {
+                        continue;
+                    }
+
+                    // Don't look at the piece that is being attacked, for obvious reasons
+                    if (posAttacked == new BoardPos(rank, file))
                     {
                         continue;
                     }
@@ -52,7 +65,7 @@ namespace ChessGame.Scripts.Boards
             return attackerPositions;
         }
 
-        public static List<BoardPos> GetAllBlockingPiecePositions(PieceInfo[,] board, List<BoardPos>[,] moveCache, BoardPos kingPos, BoardPos attackerPosition)
+        public static List<BoardPos> GetAllBlockingPiecePositions(PieceInfo[,] board, List<BoardPos>[,] moveCache, BoardPos kingPos, BoardPos attackerPosition, ChessColor attackerColor)
         {
             List<BoardPos> blockingPositions = new List<BoardPos>();
 
@@ -62,9 +75,11 @@ namespace ChessGame.Scripts.Boards
 
             foreach (BoardPos pos in MoveHelpers.GetSpacesOnLine(attackerPosition, line, board))
             {
-                blockingPositions = blockingPositions.Concat(GetAllAttackerPositions(board, pos, moveCache)).ToList();
+                blockingPositions = blockingPositions.Concat(GetAllAttackerPositions(board, pos, moveCache, attackerColor)).ToList();
             }
             
+            // Don't add the king to these positions
+            blockingPositions.RemoveAll(x => x.Rank == kingPos.Rank && x.File == kingPos.File);
             return blockingPositions;
         }
     }
