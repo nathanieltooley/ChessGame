@@ -113,12 +113,13 @@ namespace ChessGame.Scripts.Controllers
             {
 
                 BoardPos kingPos = pieceColor == ChessColor.White ? whiteKingPos : blackKingPos;
-                var attackers = BoardSearching.GetAllAttackerPositions(_board, kingPos, _moveCache);
+                // Get all pieces attacking the king, ignoring any pieces that are the same color as the king
+                var attackers = BoardSearching.GetAllAttackerPositions(_board, kingPos, _moveCache, pieceColor);
 
                 foreach (var attacker in attackers)
                 {
                     
-                    var blockers = BoardSearching.GetAllBlockingPiecePositions(_board, _moveCache, kingPos, attacker);
+                    var blockers = BoardSearching.GetAllBlockingPiecePositions(_board, _moveCache, kingPos, attacker, MiscHelpers.InvertColor(pieceColor));
                     
                     // Capturing the attacking piece can also be considered "blocking"
                     if (_moveCache[pos.Rank, pos.File].Any((mPos) => mPos == attacker))

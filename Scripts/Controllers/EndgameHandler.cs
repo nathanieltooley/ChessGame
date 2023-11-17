@@ -48,11 +48,14 @@ namespace ChessGame.Scripts.Controllers
             // Check if any of the tiles between the attacker and the king are able to be blocked by friendly pieces
             bool canBeBlocked = false;
 
-            var attackers = BoardSearching.GetAllAttackerPositions(_board, kingPos, _moveCache);
+            // Get all piece currently attacking the king, ignoring it's own color
+            var attackers = BoardSearching.GetAllAttackerPositions(_board, kingPos, _moveCache, MiscHelpers.InvertColor(attackerColor));
 
             foreach (var attacker in attackers)
             {
-                if (BoardSearching.GetAllBlockingPiecePositions(_board, _moveCache, kingPos, attacker).Count != 0)
+                // Get all piece positions that could defend the king from an attack
+                // ignoring pieces that match the color of the attacking pieces
+                if (BoardSearching.GetAllBlockingPiecePositions(_board, _moveCache, kingPos, attacker, attackerColor).Count != 0)
                 {
                     canBeBlocked = true;
                 }
