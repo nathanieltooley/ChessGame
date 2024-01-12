@@ -16,6 +16,8 @@ namespace ChessGame.Scripts.Controllers
         private PlayerMovementController _playerMovementController { get; set; }
 
         private List<BoardPos>[,] _moveCache;
+        private MoveInfoController _currentMoveInfo;
+        private MoveInfoController _futureMoveInfo;
 
         private List<PieceInfo> _whitePieces = new List<PieceInfo>();
         private List<PieceInfo> _blackPieces = new List<PieceInfo>();
@@ -42,6 +44,9 @@ namespace ChessGame.Scripts.Controllers
 
             _gBoard = BoardFactory.GetGraphicalBoard();
             _board = BoardDataHandler.CreateNewBoard();
+       
+            
+
             _playerMovementController = ControllerFactory.GetPlayerMovementController();
 
             _playerColor = _gameInfoService.PlayerSideColor;
@@ -69,7 +74,10 @@ namespace ChessGame.Scripts.Controllers
         {
             PieceInfo[,] fenBoard = GetBoardFromFEN(fenString);
             UpdateBoard(fenBoard);
-            _moveCache = MoveHelpers.CreateMoveCache(_board);
+
+            _currentMoveInfo = new MoveInfoController(_board, _gameInfoService);
+            _futureMoveInfo = new MoveInfoController(_board, _gameInfoService);
+            _moveCache = _currentMoveInfo.GetCalculatedMoves();
         }
 
         public void AddPiece(BoardPos pos, PieceInfo piece)
@@ -103,6 +111,7 @@ namespace ChessGame.Scripts.Controllers
 
             List<BoardPos> capableMoves = _moveCache[pos.Rank, pos.File];
 
+            // Can only move during that color's turn
             if (pieceColor != _turnService.GetCurrentTurnColor())
             {
                 return false;
@@ -135,17 +144,22 @@ namespace ChessGame.Scripts.Controllers
                 } 
             }
 
+            // See if this move is a possible move
             var result = capableMoves.SingleOrDefault((pos) => pos == targetPos);
+            // If pos is a possible move then:
             if (result != null)
             {
                 PieceInfo[,] futureBoard = (PieceInfo[,])_board.Clone();
                 BoardDataHandler.MovePiece(futureBoard, pos, targetPos);
+                _futureMoveInfo.UpdateBoard(futureBoard);
 
-                List<BoardPos>[,] _futureBoardMoveCache = MoveHelpers.CreateMoveCache(futureBoard);
+                // Calculate the possible moves next turn
+                List<BoardPos>[,] _futureBoardMoveCache = _futureMoveInfo.GetCalculatedMoves();
 
                 bool movedIntoCheck = false;
                 EndgameHandler endHandFuture = new EndgameHandler(_board, _futureBoardMoveCache);
 
+                // Find the black and white kings during the next move
                 BoardPos futureBlackKingPos = BoardSearching.GetKingPos(futureBoard, ChessColor.Black);
                 BoardPos futureWhiteKingPos = BoardSearching.GetKingPos(futureBoard, ChessColor.White);
                 
@@ -166,9 +180,12 @@ namespace ChessGame.Scripts.Controllers
 
                 PawnChecks(pos, targetPos, movingPieceInfo, opposingColor);
 
+                // If we pass all checks, actually move the piece
                 BoardDataHandler.MovePiece(_board, pos, targetPos);
                 _gBoard.MovePiece(pos, movingPieceInfo, targetPos);
+                MoveInfoController.CloneMoveInfo(_currentMoveInfo, _futureMoveInfo);
 
+                // King Checks
                 if (movingPieceInfo.PieceId == ChessPieceId.King)
                 {
                     // Can't move a king into check
@@ -213,7 +230,8 @@ namespace ChessGame.Scripts.Controllers
 
                 _turnService.SwitchTurn();
 
-                _moveCache = MoveHelpers.CreateMoveCache(_board);
+                // Create the moves for next turn
+                _moveCache = _currentMoveInfo.GetCalculatedMoves();
                 SendFENUpdate();
 
                 EndgameHandler endHandCurrent = new EndgameHandler(_board, _moveCache);
@@ -221,6 +239,7 @@ namespace ChessGame.Scripts.Controllers
                 bool whiteInCheck = endHandCurrent.CheckCheck(whiteKingPos, ChessColor.Black);
                 bool blackInCheck = endHandCurrent.CheckCheck(blackKingPos, ChessColor.White);
 
+                // Determine checkmate status
                 whiteCheckMate = endHandCurrent.CheckMateCheck(whiteKingPos, ChessColor.Black, _moveCache[whiteKingPos.Rank, whiteKingPos.File]);
                 EmitSignal(SignalName.ColorIsInCheckmateUpdate, (int)ChessColor.White, whiteCheckMate);
                 blackCheckMate = endHandCurrent.CheckMateCheck(blackKingPos, ChessColor.White, _moveCache[blackKingPos.Rank, blackKingPos.File]);
