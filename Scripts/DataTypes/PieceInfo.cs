@@ -18,5 +18,14 @@ namespace ChessGame.Scripts.DataTypes
         {
             return pieceInfo.PieceId == ChessPieceId.Empty; 
         }
+        public static bool operator ==(PieceInfo left, PieceInfo right)
+        {
+            return (left.PieceId == right.PieceId && left.Color == right.Color);
+        }
+
+        public static bool operator !=(PieceInfo left, PieceInfo right)
+        {
+            return !(left == right);
+        }
     }
 }

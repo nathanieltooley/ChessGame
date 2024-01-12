@@ -58,5 +58,22 @@ namespace ChessGame.Scripts.Boards
                 }
             }
         }
+
+        public static List<BoardPos> GetBoardDiffs(PieceInfo[,] board1, PieceInfo[,] board2)
+        {
+            List<BoardPos> diffs = new List<BoardPos>();
+            for (int rank = 0;  rank < 8; rank++) 
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    if (board1[rank, file] != board2[rank, file])
+                    {
+                        diffs.Add(new BoardPos(rank, file));
+                    }
+                }
+            }
+            
+            return diffs;
+        }
     }
 }
