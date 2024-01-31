@@ -36,7 +36,7 @@ namespace ChessGame.Scripts.Controllers
         [Signal]
         public delegate void GameOverEventHandler(ChessColor winner);
 
-        public override void _Ready()
+        public void InitNewGame()
         {
             _gameInfoService = ServiceFactory.GetGameInfoService();
             _timerService = ServiceFactory.GetTimerService();
@@ -44,12 +44,15 @@ namespace ChessGame.Scripts.Controllers
 
             _gBoard = BoardFactory.GetGraphicalBoard();
             _board = BoardDataHandler.CreateNewBoard();
-       
-            
 
             _playerMovementController = ControllerFactory.GetPlayerMovementController();
 
             _playerColor = _gameInfoService.PlayerSideColor;
+        }
+
+        public override void _Ready()
+        {
+            InitNewGame();
         }
 
         public override void _Process(double delta)

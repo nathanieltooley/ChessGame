@@ -1,4 +1,4 @@
-﻿using ChessGame.Scripts.DataTypes;
+using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Factories;
 using ChessGame.Scripts.Helpers;
 using Godot;

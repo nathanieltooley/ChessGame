@@ -9,7 +9,7 @@ namespace ChessGame.Scripts.Factories
 
         public static GraphicalBoard GetGraphicalBoard()
         {
-            return RootNode.GetNode<GraphicalBoard>("/root/Main/Boards/GraphicalBoard");
+            return RootNode.GetNode<GraphicalBoard>("/root/Main/GraphicalBoard");
         }
     }
 }

@@ -9,6 +9,11 @@ public partial class Main : Node2D
 
     private BoardController _boardController;
 
+    private TurnService _turnService;
+    private GameInfoService _gameInfoService;
+    private TimerService _timerService;
+    private Control _gameOverMenu;
+
     [Export]
     private ChessColor playerColor = ChessColor.White;
     private ChessColor aiColor = ChessColor.Black;
@@ -16,13 +21,21 @@ public partial class Main : Node2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
-        RunEnvironment runEnv = GetNode<RunInfo>("/root/RunInfo").GameRunEnvironment;
-
-        GameInfoService gameInfoService = ServiceFactory.GetGameInfoService();
-        TurnService turnService = ServiceFactory.GetTurnService();
-        TimerService timerService = ServiceFactory.GetTimerService();
+        _gameInfoService = ServiceFactory.GetGameInfoService();
+        _turnService = ServiceFactory.GetTurnService();
+        _timerService = ServiceFactory.GetTimerService();
 
         _boardController = ControllerFactory.GetBoardController();
+
+        _gameOverMenu = GetNode<Control>("MainGameGUI/GameOverMenu");
+
+        Load();
+        
+    }
+
+    public void Load()
+    {
+        RunEnvironment runEnv = GetNode<RunInfo>("/root/RunInfo").GameRunEnvironment;
 
         aiColor = MiscHelpers.InvertColor(playerColor);
 
@@ -34,20 +47,21 @@ public partial class Main : Node2D
         {
             whitePlayer = ChessSide.Player;
             blackPlayer = ChessSide.Enemy;
-        } else
+        }
+        else
         {
             whitePlayer = ChessSide.Enemy;
             blackPlayer = ChessSide.Player;
         }
 
         // Setup Services
-        gameInfoService.SetupGameInfo(runEnv, playerColor, aiColor);
-        turnService.Setup(whitePlayer, blackPlayer);
-        timerService.Setup(blackPlayer);
+        _gameInfoService.SetupGameInfo(runEnv, playerColor, aiColor);
+        _turnService.Setup(whitePlayer, blackPlayer);
+        _timerService.Setup(blackPlayer);
 
         // Init Timer BG Colors
-        timerService.EmitTimerColorUpdateSignal(ChessSide.Enemy, aiColor);
-        timerService.EmitTimerColorUpdateSignal(ChessSide.Player, playerColor);
+        _timerService.EmitTimerColorUpdateSignal(ChessSide.Enemy, aiColor);
+        _timerService.EmitTimerColorUpdateSignal(ChessSide.Player, playerColor);
 
         switch (runEnv)
         {
@@ -60,9 +74,15 @@ public partial class Main : Node2D
         }
     }
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
+    public void OnRestartButtonPressed()
+    {
+        // Load();
+        // _gameOverMenu.Visible = false;
+        GetTree().ChangeSceneToFile("res://chess_board.tscn");
+    }
 
+    public void OnReturnButtonPressed()
+    {
+        GetTree().ChangeSceneToFile("res://MainMenu.tscn");
     }
 }

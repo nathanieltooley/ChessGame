@@ -12,13 +12,15 @@
 [ext_resource type="Script" path="res://Scripts/Controllers/PlayerMovementController.cs" id="6_h8401"]
 [ext_resource type="Script" path="res://Scripts/Controllers/AudioController.cs" id="8_iecf1"]
 [ext_resource type="Script" path="res://Scripts/Boards/GraphicalBoard.cs" id="8_p0nd3"]
-[ext_resource type="PackedScene" uid="uid://cjgfad3ywojqf" path="res://game_over.tscn" id="9_bgk5o"]
 [ext_resource type="Theme" uid="uid://c27w88x6c61gl" path="res://Assets/Themes/debugText.tres" id="10_ik7uf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0lfax"]
+bg_color = Color(0.14902, 0.14902, 0.14902, 1)
 
 [sub_resource type="Theme" id="Theme_qwx6e"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0lfax"]
-bg_color = Color(0.0784314, 0.0784314, 0.0784314, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_36sfy"]
+bg_color = Color(0.184314, 0.184314, 0.184314, 1)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_xg0fo")
@@ -37,6 +39,20 @@ script = ExtResource("3_5nhfk")
 [node name="TimerService" type="Node" parent="Services"]
 script = ExtResource("4_d08ub")
 
+[node name="GraphicalBoard" type="TileMap" parent="."]
+tile_set = ExtResource("1_i0ywi")
+cell_quadrant_size = 128
+format = 2
+layer_0/tile_data = PackedInt32Array(196612, 65536, 0, 262148, 0, 0, 327684, 65536, 0, 393220, 0, 0, 458756, 65536, 0, 524292, 0, 0, 589828, 65536, 0, 655364, 0, 0, 196613, 0, 0, 262149, 65536, 0, 327685, 0, 0, 393221, 65536, 0, 458757, 0, 0, 524293, 65536, 0, 589829, 0, 0, 655365, 65536, 0, 196614, 65536, 0, 262150, 0, 0, 327686, 65536, 0, 393222, 0, 0, 458758, 65536, 0, 524294, 0, 0, 589830, 65536, 0, 655366, 0, 0, 196615, 0, 0, 262151, 65536, 0, 327687, 0, 0, 393223, 65536, 0, 458759, 0, 0, 524295, 65536, 0, 589831, 0, 0, 655367, 65536, 0, 196616, 65536, 0, 262152, 0, 0, 327688, 65536, 0, 393224, 0, 0, 458760, 65536, 0, 524296, 0, 0, 589832, 65536, 0, 655368, 0, 0, 196617, 0, 0, 262153, 65536, 0, 327689, 0, 0, 393225, 65536, 0, 458761, 0, 0, 524297, 65536, 0, 589833, 0, 0, 655369, 65536, 0, 196618, 65536, 0, 262154, 0, 0, 327690, 65536, 0, 393226, 0, 0, 458762, 65536, 0, 524298, 0, 0, 589834, 65536, 0, 655370, 0, 0, 196611, 0, 0, 262147, 65536, 0, 327683, 0, 0, 393219, 65536, 0, 458755, 0, 0, 524291, 65536, 0, 589827, 0, 0, 655363, 65536, 0)
+layer_1/name = "Highlight"
+layer_1/enabled = true
+layer_1/modulate = Color(0.878431, 0, 0.286275, 1)
+layer_1/y_sort_enabled = false
+layer_1/y_sort_origin = 0
+layer_1/z_index = 0
+layer_1/tile_data = PackedInt32Array()
+script = ExtResource("8_p0nd3")
+
 [node name="Controllers" type="Node" parent="."]
 
 [node name="BoardController" type="Node" parent="Controllers"]
@@ -47,79 +63,6 @@ script = ExtResource("6_h8401")
 
 [node name="AudioController" type="Node" parent="Controllers"]
 script = ExtResource("8_iecf1")
-
-[node name="MainGameGUI" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 1200.0
-offset_bottom = 897.0
-script = ExtResource("1_ykarp")
-
-[node name="BG" type="PanelContainer" parent="MainGameGUI"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="MainGameGUI"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.613
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_constants/margin_top = 220
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 200
-
-[node name="TimeContainer" type="VBoxContainer" parent="MainGameGUI/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 170
-
-[node name="EnemyTime" type="Label" parent="MainGameGUI/MarginContainer/TimeContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_outline_size = 15
-theme_override_font_sizes/font_size = 100
-text = "5:00"
-horizontal_alignment = 1
-
-[node name="PlayerTime" type="Label" parent="MainGameGUI/MarginContainer/TimeContainer"]
-layout_mode = 2
-theme = SubResource("Theme_qwx6e")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_outline_size = 15
-theme_override_font_sizes/font_size = 100
-text = "5:00"
-horizontal_alignment = 1
-
-[node name="GameOverMenu" parent="MainGameGUI" instance=ExtResource("9_bgk5o")]
-visible = false
-z_index = 2
-custom_minimum_size = Vector2(300, 200)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_right = 0.0
-offset_bottom = 0.0
-
-[node name="FGBlur" type="Panel" parent="MainGameGUI"]
-visible = false
-self_modulate = Color(1, 1, 1, 0.85098)
-z_index = 1
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_0lfax")
 
 [node name="DebugMenuLogic" type="Control" parent="."]
 layout_mode = 3
@@ -192,21 +135,124 @@ theme = ExtResource("10_ik7uf")
 layout_mode = 2
 theme = ExtResource("10_ik7uf")
 
-[node name="Boards" type="Node" parent="."]
+[node name="MainGameGUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1200.0
+offset_bottom = 897.0
+script = ExtResource("1_ykarp")
 
-[node name="GraphicalBoard" type="TileMap" parent="Boards"]
-tile_set = ExtResource("1_i0ywi")
-cell_quadrant_size = 128
-format = 2
-layer_0/tile_data = PackedInt32Array(196612, 65536, 0, 262148, 0, 0, 327684, 65536, 0, 393220, 0, 0, 458756, 65536, 0, 524292, 0, 0, 589828, 65536, 0, 655364, 0, 0, 196613, 0, 0, 262149, 65536, 0, 327685, 0, 0, 393221, 65536, 0, 458757, 0, 0, 524293, 65536, 0, 589829, 0, 0, 655365, 65536, 0, 196614, 65536, 0, 262150, 0, 0, 327686, 65536, 0, 393222, 0, 0, 458758, 65536, 0, 524294, 0, 0, 589830, 65536, 0, 655366, 0, 0, 196615, 0, 0, 262151, 65536, 0, 327687, 0, 0, 393223, 65536, 0, 458759, 0, 0, 524295, 65536, 0, 589831, 0, 0, 655367, 65536, 0, 196616, 65536, 0, 262152, 0, 0, 327688, 65536, 0, 393224, 0, 0, 458760, 65536, 0, 524296, 0, 0, 589832, 65536, 0, 655368, 0, 0, 196617, 0, 0, 262153, 65536, 0, 327689, 0, 0, 393225, 65536, 0, 458761, 0, 0, 524297, 65536, 0, 589833, 0, 0, 655369, 65536, 0, 196618, 65536, 0, 262154, 0, 0, 327690, 65536, 0, 393226, 0, 0, 458762, 65536, 0, 524298, 0, 0, 589834, 65536, 0, 655370, 0, 0, 196611, 0, 0, 262147, 65536, 0, 327683, 0, 0, 393219, 65536, 0, 458755, 0, 0, 524291, 65536, 0, 589827, 0, 0, 655363, 65536, 0)
-layer_1/name = "Highlight"
-layer_1/enabled = true
-layer_1/modulate = Color(0.878431, 0, 0.286275, 1)
-layer_1/y_sort_enabled = false
-layer_1/y_sort_origin = 0
-layer_1/z_index = 0
-layer_1/tile_data = PackedInt32Array()
-script = ExtResource("8_p0nd3")
+[node name="BG" type="Panel" parent="MainGameGUI"]
+self_modulate = Color(1, 1, 1, 0.85098)
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0lfax")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainGameGUI"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.613
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_top = 220
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 200
+
+[node name="TimeContainer" type="VBoxContainer" parent="MainGameGUI/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 170
+
+[node name="EnemyTime" type="Label" parent="MainGameGUI/MarginContainer/TimeContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 100
+text = "5:00"
+horizontal_alignment = 1
+
+[node name="PlayerTime" type="Label" parent="MainGameGUI/MarginContainer/TimeContainer"]
+layout_mode = 2
+theme = SubResource("Theme_qwx6e")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 100
+text = "5:00"
+horizontal_alignment = 1
+
+[node name="FGBlur" type="Panel" parent="MainGameGUI"]
+visible = false
+self_modulate = Color(1, 1, 1, 0.85098)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0lfax")
+
+[node name="GameOverMenu" type="Control" parent="MainGameGUI"]
+visible = false
+top_level = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MainGameGUI/GameOverMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -106.5
+offset_top = -96.0
+offset_right = 106.5
+offset_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_36sfy")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainGameGUI/GameOverMenu/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainGameGUI/GameOverMenu/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="MainGameGUI/GameOverMenu/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Game Over"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="MainGameGUI/GameOverMenu/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+tooltip_text = "test"
+text = "Restart"
+
+[node name="ReturnButton" type="Button" parent="MainGameGUI/GameOverMenu/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Return to Main Menu"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainGameGUI/GameOverMenu/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 100
 
 [connection signal="UpdateBoardState" from="Services/GameInfoService" to="DebugMenuLogic" method="OnUpdateBoardState"]
 [connection signal="SetTimerColor" from="Services/TimerService" to="MainGameGUI" method="OnSetTimerColor"]
@@ -216,7 +262,9 @@ script = ExtResource("8_p0nd3")
 [connection signal="ColorIsInCheckUpdate" from="Controllers/BoardController" to="DebugMenuLogic" method="OnColorInCheck"]
 [connection signal="ColorIsInCheckmateUpdate" from="Controllers/BoardController" to="DebugMenuLogic" method="OnColorInCheckmate"]
 [connection signal="GameOver" from="Controllers/BoardController" to="MainGameGUI" method="ShowGameOverScreen"]
-[connection signal="ClearHighlights" from="Controllers/PlayerInputController" to="Boards/GraphicalBoard" method="ClearHighlights"]
+[connection signal="ClearHighlights" from="Controllers/PlayerInputController" to="GraphicalBoard" method="ClearHighlights"]
 [connection signal="PlaySound" from="Controllers/PlayerInputController" to="Controllers/AudioController" method="PlaySound"]
-[connection signal="ToggleCellHighlight" from="Controllers/PlayerInputController" to="Boards/GraphicalBoard" method="ToggleHighlightCell"]
+[connection signal="ToggleCellHighlight" from="Controllers/PlayerInputController" to="GraphicalBoard" method="ToggleHighlightCell"]
 [connection signal="UpdateMousePos" from="Controllers/PlayerInputController" to="DebugMenuLogic" method="OnChessBoardUpdateMousePos"]
+[connection signal="pressed" from="MainGameGUI/GameOverMenu/PanelContainer/MarginContainer/VBoxContainer/RestartButton" to="." method="OnRestartButtonPressed"]
+[connection signal="pressed" from="MainGameGUI/GameOverMenu/PanelContainer/MarginContainer/VBoxContainer/ReturnButton" to="." method="OnReturnButtonPressed"]
