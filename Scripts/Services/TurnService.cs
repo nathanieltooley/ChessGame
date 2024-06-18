@@ -5,7 +5,7 @@ using System;
 
 public partial class TurnService : Node
 {
-	private short _turnIndex = 0;
+	private short _turnCount = 0;
 	private ChessColor[] _colorArray = new ChessColor[] { ChessColor.White, ChessColor.Black };
 	private ChessSide[] _sideArray = new ChessSide[2];
 
@@ -27,23 +27,18 @@ public partial class TurnService : Node
 
     public ChessColor GetCurrentTurnColor() 
     {
-        return _colorArray[_turnIndex];
+        return _colorArray[_turnCount % 2];
     }
 
     public ChessSide GetCurrentTurnSide()
     {
-        return _sideArray[_turnIndex];
+        return _sideArray[_turnCount % 2];
     }
 
     public void SwitchTurn()
     {
         var startingTurnSide = GetCurrentTurnSide();
-        _turnIndex++;
-
-        if (_turnIndex > 1)
-        {
-            _turnIndex = 0;
-        }
+        _turnCount++;
 
         TimerService _timerService = ServiceFactory.GetTimerService();
 
