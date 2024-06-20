@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://butm5xq7qmd0"]
+[gd_scene load_steps=3 format=3 uid="uid://butm5xq7qmd0"]
 
 [ext_resource type="Script" path="res://Scripts/UI/MainMenu.cs" id="1_svoc1"]
+[ext_resource type="Script" path="res://Scripts/UI/ColorPanel.cs" id="2_by33c"]
 
-[node name="GUI" type="Control"]
+[node name="GUI" type="Control" node_paths=PackedStringArray("playGameButton", "panel", "colorCheckBox")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,6 +11,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_svoc1")
+playGameButton = NodePath("MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton")
+panel = NodePath("MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton/ColorPanel")
+colorCheckBox = NodePath("MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton/ColorPanel/Margin/PanelContainer/HBoxContainer/ColorCheckButton")
 
 [node name="MainMenu" type="Control" parent="."]
 anchors_preset = 0
@@ -46,7 +50,58 @@ size_flags_horizontal = 4
 layout_mode = 2
 text = "play game"
 
+[node name="ColorPanel" type="PanelContainer" parent="MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton" node_paths=PackedStringArray("_animTimer")]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 0
+offset_left = 275.0
+offset_top = 3.0
+offset_right = 435.0
+offset_bottom = 74.0
+pivot_offset = Vector2(0, 35)
+script = ExtResource("2_by33c")
+_animTimer = NodePath("Timer")
+
+[node name="Margin" type="MarginContainer" parent="MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton/ColorPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="PanelContainer" type="VBoxContainer" parent="MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton/ColorPanel/Margin"]
+layout_mode = 2
+
+[node name="ColorLabel" type="Label" parent="MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton/ColorPanel/Margin/PanelContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "Color"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton/ColorPanel/Margin/PanelContainer"]
+layout_mode = 2
+
+[node name="White" type="Label" parent="MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton/ColorPanel/Margin/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "White"
+
+[node name="ColorCheckButton" type="CheckButton" parent="MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton/ColorPanel/Margin/PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Black" type="Label" parent="MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton/ColorPanel/Margin/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "Black"
+
+[node name="Timer" type="Timer" parent="MainMenu/PanelContainer/CenterContainer/VBoxContainer/MarginContainer/PlayButton/ColorPanel"]
+wait_time = 0.15
+one_shot = true
+
 [node name="MarginContainer2" type="MarginContainer" parent="MainMenu/PanelContainer/CenterContainer/VBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(250, 75)
 layout_mode = 2
 size_flags_horizontal = 4

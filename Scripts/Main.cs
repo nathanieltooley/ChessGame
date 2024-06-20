@@ -14,10 +14,6 @@ public partial class Main : Node2D
     private TimerService _timerService;
     private Control _gameOverMenu;
 
-    [Export]
-    private ChessColor playerColor = ChessColor.White;
-    private ChessColor aiColor = ChessColor.Black;
-
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
@@ -35,9 +31,11 @@ public partial class Main : Node2D
 
     public void Load()
     {
-        RunEnvironment runEnv = GetNode<RunInfo>("/root/RunInfo").GameRunEnvironment;
+        RunInfo runInfo = GetNode<RunInfo>("/root/RunInfo");
+        RunEnvironment runEnv = runInfo.GameRunEnvironment;
 
-        aiColor = MiscHelpers.InvertColor(playerColor);
+        var playerColor = runInfo.PlayerColor;
+        var aiColor = MiscHelpers.InvertColor(playerColor);
 
         ChessSide whitePlayer;
         ChessSide blackPlayer;

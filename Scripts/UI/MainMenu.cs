@@ -1,9 +1,23 @@
+using ChessGame.Scripts;
+using ChessGame.Scripts.Helpers;
 using Godot;
 using System;
 
 public partial class MainMenu : Control
 {
+	[Export]
+	private Button playGameButton;
+
+	[Export]
+	private ColorPanel panel;
+
+	[Export]
+	private CheckButton colorCheckBox;
+
 	private RunInfo _gameState;
+	private ChessColor _playerColor = ChessColor.White;
+
+	private bool colorPanelOpen = false;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -17,8 +31,18 @@ public partial class MainMenu : Control
 
 	public void PlayButtonPressed()
 	{
-		_gameState.GameRunEnvironment = RunEnvironment.Normal;
-		GetTree().ChangeSceneToFile("res://chess_board.tscn");
+		if (!colorPanelOpen)
+		{
+			playGameButton.Text = "press again to start";
+			panel.Activate();
+			colorPanelOpen = true;
+		} else
+		{
+            _gameState.GameRunEnvironment = RunEnvironment.Normal;
+			_gameState.PlayerColor = colorCheckBox.ButtonPressed ? ChessColor.Black : ChessColor.White;
+            GetTree().ChangeSceneToFile("res://chess_board.tscn");
+		}
+
 	}
 
 	public void TestButtonPressed()
@@ -26,4 +50,9 @@ public partial class MainMenu : Control
 		_gameState.GameRunEnvironment = RunEnvironment.Test;
         GetTree().ChangeSceneToFile("res://chess_board.tscn");
     }
+
+	public void ColorCheckToggled()
+	{
+		_playerColor = MiscHelpers.InvertColor(_playerColor);
+	}
 }
