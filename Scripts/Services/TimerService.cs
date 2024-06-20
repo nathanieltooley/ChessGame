@@ -1,6 +1,7 @@
 using ChessGame.Scripts;
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Factories;
+using ChessGame.Scripts.Helpers;
 using Godot;
 using Godot.Collections;
 using System;
@@ -16,6 +17,8 @@ public partial class TimerService : Node
     public delegate void SetTimerColorEventHandler(ChessSide side, Color color);
     [Signal]
     public delegate void ToggleTimerEventHandler(ChessSide side);
+    [Signal]
+    public delegate void GameOverOOTEventHandler(ChessColor winner);
 
     private float _startingTime = 300;
     private float _playerTimer;
@@ -65,6 +68,12 @@ public partial class TimerService : Node
         _timerMap[currentTurn] = newTime;
 
         EmitTimerUpdateTimeSignal(_turnService.GetCurrentTurnSide(), newTime);
+
+        if (newTime <= 0)
+        {
+            var winnerColor = MiscHelpers.InvertColor(_turnService.GetCurrentTurnColor());
+            EmitSignal(SignalName.GameOverOOT, (int)winnerColor);
+        }
     }
 
     public void EmitTimerColorUpdateSignal(ChessSide side, ChessColor color)
