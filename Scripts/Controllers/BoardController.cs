@@ -160,7 +160,7 @@ namespace ChessGame.Scripts.Controllers
                 List<BoardPos>[,] _futureBoardMoveCache = _futureMoveInfo.GetCalculatedMoves();
 
                 bool movedIntoCheck = false;
-                EndgameHandler endHandFuture = new EndgameHandler(_board, _futureBoardMoveCache);
+                EndgameHandler endGameFuture = new EndgameHandler(_board, _futureBoardMoveCache);
 
                 // Find the black and white kings during the next move
                 BoardPos futureBlackKingPos = BoardSearching.GetKingPos(futureBoard, ChessColor.Black);
@@ -169,11 +169,11 @@ namespace ChessGame.Scripts.Controllers
 
                 if (pieceColor == ChessColor.White)
                 {
-                    movedIntoCheck = endHandFuture.CheckCheck(futureWhiteKingPos, ChessColor.Black);
+                    movedIntoCheck = endGameFuture.CheckCheck(futureWhiteKingPos, ChessColor.Black);
                 }
                 else
                 {
-                    movedIntoCheck = endHandFuture.CheckCheck(futureBlackKingPos, ChessColor.White);
+                    movedIntoCheck = endGameFuture.CheckCheck(futureBlackKingPos, ChessColor.White);
                 }
 
                 if (movedIntoCheck)
