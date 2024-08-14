@@ -1,4 +1,5 @@
 using ChessGame.Scripts;
+using ChessGame.Scripts.Factories;
 using Godot;
 using System;
 
@@ -19,6 +20,7 @@ public partial class MainGameGUI : Control
     public override void _Ready()
 	{
 		var timerContainer = GetNode<VBoxContainer>("MarginContainer/TimeContainer");
+		var timerService = ServiceFactory.GetTimerService();
 
 		_enemyTimer = timerContainer.GetNode<Label>("EnemyTime");
 		_playerTimer = timerContainer.GetNode<Label>("PlayerTime");
@@ -31,6 +33,9 @@ public partial class MainGameGUI : Control
 
 		disabledMap[0] = false;
 		disabledMap[1] = false;
+
+		OnUpdateTimerTime(ChessSide.Player, timerService.StartingTime);
+		OnUpdateTimerTime(ChessSide.Enemy, timerService.StartingTime);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

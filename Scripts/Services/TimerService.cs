@@ -1,7 +1,6 @@
 using ChessGame.Scripts;
 using ChessGame.Scripts.DataTypes;
 using ChessGame.Scripts.Factories;
-using ChessGame.Scripts.Helpers;
 using Godot;
 using Godot.Collections;
 using System;
@@ -9,6 +8,9 @@ using System;
 public partial class TimerService : Node
 {
     public bool TimersPaused { get; set; } = false;
+
+    [Export]
+    public float StartingTime = 300;
 
     // Timer Signals
     [Signal]
@@ -18,9 +20,8 @@ public partial class TimerService : Node
     [Signal]
     public delegate void ToggleTimerEventHandler(ChessSide side);
     [Signal]
-    public delegate void GameOverOOTEventHandler(ChessColor winner);
+    public delegate void GameOverOOTEventHandler(ChessSide side);
 
-    private float _startingTime = 300;
     private float _playerTimer;
     private float _enemyTimer;
 
@@ -33,8 +34,8 @@ public partial class TimerService : Node
 	{
         _turnService = ServiceFactory.GetTurnService();
 
-        _playerTimer = _startingTime;
-        _enemyTimer = _startingTime;
+        _playerTimer = StartingTime;
+        _enemyTimer = StartingTime;
 
         _timerMap = new Dictionary<ChessSide, float>
         {
@@ -64,15 +65,15 @@ public partial class TimerService : Node
         float _timer;
         _timerMap.TryGetValue(currentTurn, out _timer);
 
-        float newTime = _timer + (float)delta;
+        float newTime = Godot.Mathf.Max(_timer + (float)delta, 0);
         _timerMap[currentTurn] = newTime;
 
         EmitTimerUpdateTimeSignal(_turnService.GetCurrentTurnSide(), newTime);
 
         if (newTime <= 0)
         {
-            var winnerColor = MiscHelpers.InvertColor(_turnService.GetCurrentTurnColor());
-            EmitSignal(SignalName.GameOverOOT, (int)winnerColor);
+            TimersPaused = true;
+            EmitSignal(SignalName.GameOverOOT, (int)_turnService.GetCurrentTurnSide());
         }
     }
 
