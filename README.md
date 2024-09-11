@@ -6,3 +6,4 @@ This is a simple Chess implementation written in C# using Godot. Currently there
 You can perform all legal moves in chess including Castling, En passant, and pawn promotion.
 
 ## Demo
+<video src="./chess-demo.mp4" width="320" height="240" controls></video>
